@@ -1,103 +1,59 @@
-const express = require('express');
-// var mysql = require('mysql');
-const { Client } = require('pg');
-var mysql = require('mysql')
-const app = express();
+//node modules
+const express = require('express')
 const axios = require('axios')
 const bcrypt = require('bcryptjs')
+const bodyParser = require('body-parser')
+const nodemailer = require('nodemailer')
+const otpGenerator = require('otp-generator')
+var session = require('cookie-session')
 
-//bodyparser for ejs 
-const bodyParser = require('body-parser') 
+//for postgres
+const { Client } = require('pg')
 
-//cookie session to store cookies
-var session = require('cookie-session');
+const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  });
+  client.connect()
 
-//geocoder for google maps api
-var geocoder = require('geocoder');
-
+//app.use
+const app = express()
 app.use(express.static('views'))
- 
+
 app.use(session({
     name: 'session',
     keys: ['key1', 'key2']
-  }))
+}))
 
-let port = process.env.PORT || 4200;
+app.use(bodyParser.urlencoded({ extended: false}))
+app.set('trust proxy', 1)
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.set('trust proxy', 1);
+let port = process.env.PORT || 4200
+app.listen(port, () => {
+    console.log(`app is listening on http://localhost:${port}` );
+});
 
 
-//db connection(mysql)
-// const client = new Client({
-//     connectionString: process.env.DATABASE_URL,
-//     ssl: {
-//       rejectUnauthorized: false
-//     }
-//   });
-//   client.connect()
-
-var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'na33',
-    database: 'capstone_testdb',
-    port: 3306
-  });
-
-  connection.connect(function(err) {
-    if(err){
-        console.log("error");
-    }
-    else {
-        console.log("connected");
-    }
-  });
-
-//view engine
+//view engine(EJS)
 app.set('view engine', 'ejs')
 
-//render home page using express
+//ROUTES
 app.get("/", (req,res) =>{
-    res.redirect('/homepage')
-});
-
-//homepage
-app.get("/homepage", (req,res) =>{
     var user = req.session.username;
-    if(req.session.username){
-        res.render('pages/homepage', { user });
-        res.render('pages/signup', { user });
-    }
-    else if(!req.session.username){
-        res.send("Homepage without session");
-        
-    }
-    
+    var cart_count = req.session.cart_count
+    res.render('pages/homepage', { user, cart_count })
 });
 
-//login page
-app.get("/login", (req,res) =>{
-    res.render('pages/login');
-});
-
-// app.get("/navbar", (req,res) =>{
-//     data1 = 'heyoo'
-//     res.render('pages/navbar', { data1 });
-//     res.redirect('/login')
-// });
-
-//goes to here after clicking submit. this code validates login
+//VALIDATIONof login
 app.post("/login", (req,res) =>{
     let userlogin = req.body.user;
     let passlogin = req.body.pass;
-    
-    // const query = {
-    //     name: 'fetch account',
-    //     text: 'SELECT * FROM accounts WHERE user_name = $1 AND password = $2',
-    //     values: [userlogin, passlogin]
-    // }
-    connection.query(`SELECT * FROM accounts WHERE user_name = '${userlogin}'`, (error, rows) => {
+
+    client.query(`SET SCHEMA 'test'`)
+
+    client.query(`SELECT * FROM accounts WHERE user_name = '${userlogin}'`, (error, rows) => {
                 if(error){
                     res.send('error')
                 }
@@ -112,7 +68,17 @@ app.post("/login", (req,res) =>{
                         }
                         else if(validPass){
                             req.session.username = userlogin;
-                            res.redirect('/homepage')
+                            var user = req.session.username
+                            client.query(`SELECT user_name FROM cart WHERE user_name = '${user}'`, (error, cart) => {
+                                if(error){
+                                    console.log('error')
+                                }
+                                else if(!error){                                    
+                                    req.session.cart_count = cart.length
+                                    res.redirect('/')
+                                }
+                            });
+                            
                         }
                         
                     }
@@ -121,159 +87,251 @@ app.post("/login", (req,res) =>{
     });
 });
 
-//testing lang tatanggalin din mamaya 
-app.get("/db", (req,res) =>{
-    connection.query(`SELECT * FROM accounts WHERE user_name = 'nae' AND password = 'qwe'`, (error, rows) => {
-        if(error){
-            res.send(rows)
-        }
-        else if(!error){
-            res.send(rows)
-            if(rows.length == 0){
-                res.send('error');
-            }
-            else if(rows.length > 0){
-                res.send(rows)
-            }
-            // res.render('pages/index', { rows } );
-        }
-});
-})
-
-app.get("/signup", (req,res) =>{
-    res.render('pages/signup');
-});
-
+//VALIDATION of signup
 app.post("/signup", (req,res) =>{
-    let fname = req.body.fname;
-    let lname = req.body.lname;
-    let phone_num = req.body.phone_num;
-    let username = req.body.user;
-    let password = req.body.pass;
-    let password2 = req.body.pass2;
+    if(req.body.password != req.body.password2){
+        console.log(err)
+        return res.send({
+            success: false,
+            statusCode: 400
+        })
+    }
+    else{
+        var salt = bcrypt.genSaltSync(10);
+        var hashed_password = bcrypt.hashSync(req.body.password, salt);
 
-    connection.query(`SELECT * FROM accounts WHERE user_name = '${username}'`, (error, rows) => {
+        let sqlQuery ={
+            text: `CALL register($1,$2,$3,$4,$5,$6,$7,$8, null)`,
+            values: [req.body.user, hashed_password, req.body.email, req.body.fname, req.body.mName, req.body.lName, req.body.bday, req.body.phone_num]
+        }
+        client.query(`SET SCHEMA 'test'`)
+        client.query(sqlQuery, (err, result) =>{
+            let {vaccount_id} = result.rows[0]
+
+            if(err){
+                console.log(err)
+                return res.send({
+                    success: false,
+                    statusCode: 400
+                })
+            }
+            else if(vaccount_id != null){ // IF NOT NULL THEN SUCCESS
+                console.log(vaccount_id)
+                console.log('SUCCESS') 
+                return res.send({
+                    success: 'Success',
+                    statusCode: 200,
+                })
+            }
+            else{
+                console.log('ACCOUNT EXISTS') // IF NULL THEN EXISTING
+                console.log(vaccount_id)
+                return res.send({
+                    success: 'ACCOUNT EXISTS',
+                    statusCode: 200,
+                })
+            }
+        })
+    }
+});
+
+//PAGE of items
+app.get("/items", (req,res) =>{
+    var user = req.session.username
+    var cart_count = req.session.cart_count
+    client.query(`SET SCHEMA 'test'`)
+
+    client.query('SELECT * FROM item', (error, rows) => {
         if(error){
-            console.log("error")
+            console.log('error')
         }
         else if(!error){
-            if(rows.length > 0){
-                res.send("Username already taken");
-                res.redirect('/signup');
+            res.render('pages/item-page', { result:rows, user, cart_count })
+        }
+    });
+});
+
+//add to cart button
+app.post("/items", (req,res) =>{
+    var user = req.session.username
+    var item_id = req.body.addtocart
+    message = 0
+    client.query(`SET SCHEMA 'test'`)
+
+    if(!user){
+        res.redirect('/')
+    }
+    if(user){
+        client.query(`SELECT item_id FROM cart WHERE user_name = '${user}' AND item_id = ${item_id}`, (error, rows) => {
+            if(error){
+                console.log('error')
             }
-            else if(!rows.length){
-                if(password === password2){
-
-                    var salt = bcrypt.genSaltSync(10);
-                    var hashed_password = bcrypt.hashSync(password, salt);
-                    connection.query(`INSERT INTO accounts(user_name, password) VALUES('${username}', '${hashed_password}')`, (error, rows) =>{
-                        if(error) throw error;
+            else if(!error){
+                if(rows.length){
+                    console.log('Item is already in the cart!')
+                    
+                    res.redirect('/items')
+                }
+                else if(rows.length == 0){
+                    client.query(`INSERT INTO cart VALUES('${user}', '${item_id}', 1) `, (error, rows) => {
+                        if(error){
+                            console.log('error')
+                        }
+                        else if(!error){
+                            req.session.cart_count += 1
+                            res.redirect('/items')
+                        }
                     });
-                    connection.query(`INSERT INTO user_information(first_name, last_name, phone_number) VALUES('${fname}', '${lname}', '${phone_num}')`, (error, rows) =>{
-                        if(error) throw error;
-                    });
-                    connection.query(`INSERT INTO currency(user_name) VALUES('${username}')`, (error, rows) =>{
-                        if(error) throw error;
-                    });
-                    res.redirect('/login');
-
-                    // try {
-                        
-                    //     console.log(hash)
-                    // } catch (e) {
-                    //     console.log(e)
-                    //     res.status(500).send('Something went wrong')
-                    // }
-
                 }
             }
-            // res.render('pages/index', { rows } );
-        }
-    });
+        });
+    }
+})
 
-});
-
-app.get("/items", (req,res) =>{
-    connection.query('SELECT * FROM item', (error, rows) => {
-        if(error){
-            console.log('error')
-        }
-        else if(!error){
-            res.render('pages/all_items', { result:rows });
-        }
-    });
-});
-
+//VIEWING of a specific item
 app.get("/items/view/:id", (req,res) =>{
     var itemId = req.params.id
-    var username = req.session.username
-    connection.query(`SELECT * FROM item WHERE item_id = ${itemId}`, (error, rows) => {
+    var user = req.session.username
+    var cart_count = req.session.cart_count
+    client.query(`SET SCHEMA 'test'`)
+
+    client.query(`SELECT * FROM item WHERE item_id = ${itemId}`, (error, rows) => {
         if(error){
             console.log('error')
         }
         else if(!error){
-            connection.query(`UPDATE item SET clicks = clicks + 1 WHERE item_id = ${itemId}`, (error) => {
+            client.query(`UPDATE item SET clicks = clicks + 1 WHERE item_id = ${itemId}`, (error) => {
+                if(error){
+                    console.log('error')
+                }                
+            });
+            client.query(`SELECT start, end, reservee FROM reserved_date WHERE item_id = ${itemId}`, (error, dates) => {
                 if(error){
                     console.log('error')
                 }
                 else if(!error){
-                    //{ } can have many items
-                    // res.render('pages/view_item', { rows });
-                    res.render('pages/item-list', { rows, username})
-                    
+                    res.render('pages/view-item', { rows, user, result:dates, cart_count })
+                    // { 'start': moment('<%= date.start_date %>'), 'end': moment('<%= date.start_date %>') }
                 }
+                
             });
         }
     });
-    
 });
 
-app.get("/profile/:username", (req,res) =>{
-
-    var username = req.params.username
-    connection.query(`SELECT * FROM seller_info WHERE seller_user = '${username}'`, (error, rows) => {
-        if(error){
-            // res.status(404)
-        }
-        else if(!error){
-            res.render('pages/user_profile', {rows})
-        }
-    });
-    
-});
-
+//availability(reservation calendar)
 app.post("/items/view/:id", (req,res) =>{
     var daterange = req.body.daterange
     var startDate
     var endDate
     [startDate, endDate] = daterange.split(' - ');
-    console.log(`start date: ${startDate}   end date: ${endDate}`)
-    
+    console.log(`${startDate}-${endDate}`)
 });
 
+//VIEW profile
+app.get("/profile/:username", (req,res) =>{
 
-app.get("/location", (req,res) => {
-    res.send('hello')
-    async function doGetRequest() {
-        let res = await axios.get('https://api.opencagedata.com/geocode/v1/json?q=3572+mag+araullo&key=8c247b3959294b92a568bb45668556f1');
-        let data = res.data;
+    var username = req.params.username
+    client.query(`SET SCHEMA 'test'`)
 
-        console.log(data.results[0].geometry.lat)
-        console.log(data.results[0].geometry.lng)
-
+    client.query(`SELECT * FROM seller_info WHERE seller_user = '${username}'`, (error, rows) => {
+        if(error){
+            // res.status(404)
         }
-      doGetRequest();
-})
-
-app.get("/newlogin", (req,res) => {
-    res.render('pages/newlogin')
-})
-//logout logic (ilalagay pa sa button)
-app.get('/logout',function(req,res){
-    req.session.destroy();
-    res.redirect('/homepage')
+        else if(!error){
+            res.render('pages/user-profile', {rows})
+        }
     });
+});
 
-app.listen(port, () => {
-    console.log(`app is listening on port http://localhost:${port}` );
+app.get("/sendmail", (req,res) => {
+    async function main() {
+
+        // create reusable transporter object using the default SMTP transport
+        let transporter = nodemailer.createTransport({
+            host: "smtp.sendgrid.net",
+            port: 465,
+            auth: {
+                user: "apikey",
+                pass: "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"
+          },
+        });
+      
+        // send mail with defined transport object
+        let info = await transporter.sendMail({
+          from: '"Naedenglee" <naedenglee.capstone@gmail.com>', // sender address
+          to: "artaberdo@gmail.com", // list of receivers
+          subject: "TEST SENDGRID", // Subject line
+          text: "pak uuuu galing node tooo", // plain text body
+          html: "<b>pak uuuu galing node tooo</b><br><button>Login</button>", // html body
+        });
+      
+        console.log("Message sent: %s", info.messageId);
+        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+      
+        // Preview only available when sending through an Ethereal account
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+      }
+      
+      main().catch(console.error);
+});
+
+app.get("/emailform", (req,res) => {
+    res.render('pages/try_emailform')
+});
+
+app.post("/emailform", (req,res) => {
+    var email = req.body.email
+    var otp = otpGenerator.generate(6, { upperCaseAlphabets: true, specialChars: false });
+    req.session.emailotp = otp
+    
+    async function main() {
+
+        // create reusable transporter object using the default SMTP transport
+        let transporter = nodemailer.createTransport({
+            host: "smtp.sendgrid.net",
+            port: 465,
+            auth: {
+                user: "apikey",
+                pass: "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"
+          },
+        });
+      
+        // send mail with defined transport object
+        let info = await transporter.sendMail({
+          from: '"Naedenglee" <naedenglee.capstone@gmail.com>', // sender address
+          to: `${email}`, // list of receivers
+          subject: "EMAIL OTP - Mang-Hiram", // Subject line
+          text: "Hello Nae", // plain text body
+          html: `<b>OTP: ${req.session.emailotp}</b><br>`, // html body
+        });
+      
+        console.log("Message sent: %s", info.messageId);
+        res.render('pages/try_validateemail', { email })
+      }
+      
+      main().catch(console.error);
+
+});
+
+app.post("/validate_email", (req,res) => {
+    var otp = req.body.otp
+
+    if(otp == req.session.emailotp){
+        console.log('OTP matched!')
+        res.send('OTP matched!')
+        req.session.otp = null
+    }
+    else if(otp != req.session.emailotp){
+        console.log('error')
+        res.send('error')
+    }
+
+});
+
+//logout
+app.get('/logout',function(req,res){
+    req.session = null
+    res.redirect('/')
 });
