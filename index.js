@@ -51,7 +51,7 @@ app.post("/login", (req,res) =>{
     let userlogin = req.body.user;
     let passlogin = req.body.pass;
 
-    client.query(`SET SCHEMA 'test'`)
+    client.query(`SET SCHEMA 'public'`)
 
     client.query(`SELECT * FROM account WHERE username = '${userlogin}'`, (error, rows) => {
                 if(error){
@@ -104,7 +104,7 @@ app.post("/signup", (req,res) =>{
             text: `CALL register($1,$2,$3,$4,$5,$6,$7,$8, null)`,
             values: [req.body.username, hashed_password, req.body.email, req.body.fname, null, req.body.lName, req.body.bday, req.body.phone_num]
         }
-        client.query(`SET SCHEMA 'test'`)
+        client.query(`SET SCHEMA 'public'`)
         client.query(sqlQuery, (err, result) =>{
             let {vaccount_id} = result.rows[0]
 
