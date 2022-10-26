@@ -53,7 +53,7 @@ app.post("/login", (req,res) =>{
 
     client.query(`SET SCHEMA 'test'`)
 
-    client.query(`SELECT * FROM accounts WHERE user_name = '${userlogin}'`, (error, rows) => {
+    client.query(`SELECT * FROM account WHERE user_name = '${userlogin}'`, (error, rows) => {
                 if(error){
                     res.send('error')
                 }
