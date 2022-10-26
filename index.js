@@ -49,9 +49,7 @@ app.get("/", (req,res) =>{
 //VALIDATIONof login
 app.post("/login", (req,res) =>{
     let userlogin = req.body.user;
-    let passlogin = req.body.pass;
-
-    
+    let passlogin = req.body.pass;    
 
     client.query(`SELECT * FROM "public".account WHERE username = '${userlogin}'`, (error, rows) => {
                 if(error){
@@ -71,10 +69,8 @@ app.post("/login", (req,res) =>{
                         else if(validPass){
                             req.session.username = userlogin;
                             var user = req.session.username
-                            console.log('success3')
                             client.query(`SELECT username FROM cart WHERE username = '${user}'`, (error, cart) => {
-                                if(error){
-                                    
+                                if(error){                                    
                                     res.redirect('/')
                                 }
                                 else if(!error){                                    
@@ -85,8 +81,7 @@ app.post("/login", (req,res) =>{
                             
                         }
                         
-                    }
-                    
+                    }                    
                 }
     });
 });
