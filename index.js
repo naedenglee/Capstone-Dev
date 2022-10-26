@@ -62,7 +62,7 @@ app.post("/login", (req,res) =>{
                         res.send('error2');
                     }
                     else if(rows){
-                        console.log('succ1')
+                        console.log(rows)
                         validPass = bcrypt.compareSync(passlogin, rows[0].password);
                         console.log(validPass)
                         if(!validPass){
