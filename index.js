@@ -102,7 +102,7 @@ app.post("/signup", (req,res) =>{
 
         let sqlQuery ={
             text: `CALL register($1,$2,$3,$4,$5,$6,$7,$8, null)`,
-            values: [req.body.user, hashed_password, req.body.email, req.body.fname, req.body.mName, req.body.lName, req.body.bday, req.body.phone_num]
+            values: [req.body.username, hashed_password, req.body.email, req.body.fname, null, req.body.lName, req.body.bday, req.body.phone_num]
         }
         client.query(`SET SCHEMA 'test'`)
         client.query(sqlQuery, (err, result) =>{
