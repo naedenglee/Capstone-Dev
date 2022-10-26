@@ -53,7 +53,7 @@ app.post("/login", (req,res) =>{
 
     client.query(`SET SCHEMA 'test'`)
 
-    client.query(`SELECT * FROM account WHERE user_name = '${userlogin}'`, (error, rows) => {
+    client.query(`SELECT * FROM account WHERE username = '${userlogin}'`, (error, rows) => {
                 if(error){
                     res.send('error')
                 }
@@ -69,7 +69,7 @@ app.post("/login", (req,res) =>{
                         else if(validPass){
                             req.session.username = userlogin;
                             var user = req.session.username
-                            client.query(`SELECT user_name FROM cart WHERE user_name = '${user}'`, (error, cart) => {
+                            client.query(`SELECT user_name FROM cart WHERE username = '${user}'`, (error, cart) => {
                                 if(error){
                                     console.log('error')
                                 }
@@ -160,7 +160,7 @@ app.post("/items", (req,res) =>{
         res.redirect('/')
     }
     if(user){
-        client.query(`SELECT item_id FROM cart WHERE user_name = '${user}' AND item_id = ${item_id}`, (error, rows) => {
+        client.query(`SELECT item_id FROM cart WHERE username = '${user}' AND item_id = ${item_id}`, (error, rows) => {
             if(error){
                 console.log('error')
             }
