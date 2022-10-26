@@ -118,10 +118,8 @@ app.post("/signup", (req,res) =>{
             else if(vaccount_id != null){ // IF NOT NULL THEN SUCCESS
                 console.log(vaccount_id)
                 console.log('SUCCESS') 
-                return res.send({
-                    success: 'Success',
-                    statusCode: 200,
-                })
+                return res.redirect('/')
+                
             }
             else{
                 console.log('ACCOUNT EXISTS') // IF NULL THEN EXISTING
