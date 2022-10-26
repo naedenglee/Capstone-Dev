@@ -69,7 +69,7 @@ app.post("/login", (req,res) =>{
                         else if(validPass){
                             req.session.username = userlogin;
                             var user = req.session.username
-                            client.query(`SELECT user_name FROM cart WHERE username = '${user}'`, (error, cart) => {
+                            client.query(`SELECT username FROM cart WHERE username = '${user}'`, (error, cart) => {
                                 if(error){
                                     console.log('error')
                                 }
