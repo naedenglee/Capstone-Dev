@@ -51,9 +51,9 @@ app.post("/login", (req,res) =>{
     let userlogin = req.body.user;
     let passlogin = req.body.pass;
 
-    client.query(`SET SCHEMA 'public'`)
+    
 
-    client.query(`SELECT * FROM account WHERE username = '${userlogin}'`, (error, rows) => {
+    client.query(`SELECT * FROM "public".account WHERE username = '${userlogin}'`, (error, rows) => {
                 if(error){
                     res.send('error')
                 }
@@ -62,17 +62,19 @@ app.post("/login", (req,res) =>{
                         res.send('error');
                     }
                     else if(rows){
-                        
+                        console.log('succ1')
                         validPass = bcrypt.compareSync(passlogin, rows[0].password);
+                        console.log(validPass)
                         if(!validPass){
                             res.send('error')
                         }
                         else if(validPass){
                             req.session.username = userlogin;
                             var user = req.session.username
+                            console.log('success3')
                             client.query(`SELECT username FROM cart WHERE username = '${user}'`, (error, cart) => {
                                 if(error){
-                                    res.send('error')
+                                    
                                     res.redirect('/')
                                 }
                                 else if(!error){                                    
