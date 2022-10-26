@@ -63,7 +63,7 @@ app.post("/login", (req,res) =>{
                     }
                     else if(rows){
                         
-                        validPass = bcrypt.compareSync(passlogin, rows.rows[0].password);
+                        validPass = bcrypt.compareSync(passlogin, rows[0].password);
                         if(!validPass){
                             res.send('error')
                         }
@@ -72,7 +72,8 @@ app.post("/login", (req,res) =>{
                             var user = req.session.username
                             client.query(`SELECT username FROM cart WHERE username = '${user}'`, (error, cart) => {
                                 if(error){
-                                    console.log('error')
+                                    res.send('error')
+                                    res.redirect('/')
                                 }
                                 else if(!error){                                    
                                     req.session.cart_count = cart.length
