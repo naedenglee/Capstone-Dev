@@ -62,7 +62,8 @@ app.post("/login", (req,res) =>{
                         res.send('error');
                     }
                     else if(rows){
-                        validPass = bcrypt.compareSync(passlogin, rows[0].password);
+                        
+                        validPass = bcrypt.compareSync(passlogin, rows.rows[0].password);
                         if(!validPass){
                             res.send('error')
                         }
