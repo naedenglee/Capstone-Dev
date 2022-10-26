@@ -55,18 +55,18 @@ app.post("/login", (req,res) =>{
 
     client.query(`SELECT * FROM "public".account WHERE username = '${userlogin}'`, (error, rows) => {
                 if(error){
-                    res.send('error')
+                    res.send('error1')
                 }
                 else if(!error){
                     if(!rows){
-                        res.send('error');
+                        res.send('error2');
                     }
                     else if(rows){
                         console.log('succ1')
                         validPass = bcrypt.compareSync(passlogin, rows[0].password);
                         console.log(validPass)
                         if(!validPass){
-                            res.send('error')
+                            res.send('error3')
                         }
                         else if(validPass){
                             req.session.username = userlogin;
