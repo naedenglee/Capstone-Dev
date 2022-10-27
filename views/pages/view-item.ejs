@@ -56,12 +56,12 @@ crossorigin=""></script>
 
                   <h4 style="font-weight: bold;">Description:</h4>
              
-                  <div class="desc" style="font: weight 1px; color: darkslategrey;"><%= rows[0].item_description %></div>
+                  <div class="desc" style="font: weight 1px; color: darkslategrey;"><%= result[0].item_description %></div>
                       <!-- line separator -->
                     <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                       
                        <!-- di ko sure kung i-div ko to o ok lang na naka <p> -->
-                    <p style="font-weight: bold;">Rental fee: <%= rows[0].rate %><br>
+                    <p style="font-weight: bold;">Rental fee: <%= result[0].rate %><br>
                         Deposit fee:<br>
                         Size:<br>
                          Branch:
@@ -70,7 +70,7 @@ crossorigin=""></script>
                 </div>
                 <!----- 2nd column ------>
                   <div class="column">
-                    <h3 style="text-align: center;"><%= rows[0].item_name %></h3>
+                    <h3 style="text-align: center;"><%= result[0].item_name %></h3>
                   <div class="box1">
                    <!-- <label for="start">Start date:</label>
                      <input type="date" id="start" name="date-start"
@@ -100,8 +100,8 @@ crossorigin=""></script>
               </div>
 
               <br>
-              <h4>Item owned by <%= rows[0].seller %></h4>
-              <a target="_blank" href="/profile/<%= rows[0].seller %>">
+              <h4>Item owned by <%= result.seller %></h4>
+              <a target="_blank" href="/profile/<%= result.seller %>">
                <img class="img2" src="/images/profile.png" alt="profile" style="width:100px"> </a>
                <!-- CSS STAR RATING -->
                    <span class="fa fa-star checked"></span>
@@ -113,7 +113,7 @@ crossorigin=""></script>
                    <br>
                    <br>
                <button class="btn-message">Message</button>
-               <a href="/profile/<%= rows[0].seller %>"><button class="btn-profile">See Profile</button></a>
+               <a href="/profile/<%= result.seller %>"><button class="btn-profile">See Profile</button></a>
                
                </div>
              </div>
@@ -132,7 +132,7 @@ crossorigin=""></script>
           isInvalidDate: function(date) {
             var dateRanges = [];                                 
 
-              <% result.forEach(function(reserved){ %>
+              <% result_date.forEach(function(reserved){ %>
                 dateRanges.push({ 'start': moment('<%= reserved.start %>'), 'end': moment('<%= reserved.end %>') })
               <% }) %>
                 
