@@ -84,7 +84,7 @@
           <div class="card-body">
             <h5 class="Item-Name"><%= item.item_name %></h5>
             <p class="Item-category" style="color: gray;"><%= item.item_category %></p>
-            <p class="Item-Description">Description: <%= item.item_description %><br> Rate: <%= item.rental_rate %><br> Owner: </p>
+            <p class="Item-Description" style="white-space: pre-wrap;" >Description: <%= item.item_description %><br> Rate: <%= item.rental_rate %><br> Owner: </p>
             </a>
             <form method="post" action="/items">
               <button name="addtocart" type="submit" value="<%= item.item_id %>">Add To Cart</button>
