@@ -57,7 +57,7 @@ app.post('/login', (req, res)=>{
     client.query(`SET SCHEMA 'test'`)
     client.query(sqlQuery, (error, result) => {
         if(error){
-            res.send('error')
+            res.send('error1')
         }
         else if(!error){
             let {vid} = result.rows[0]
