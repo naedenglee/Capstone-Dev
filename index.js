@@ -143,7 +143,7 @@ app.get("/items", (req,res) =>{
             console.log('error1')
         }
         else if(!error){
-            res.render('pages/item-page', { result:rows, user, cart_count })
+            res.render('pages/item-page', { result:rows.rows, user, cart_count })
         }
     });
 });
