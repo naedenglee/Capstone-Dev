@@ -57,6 +57,7 @@ app.post('/login', (req, res)=>{
     client.query(`SET SCHEMA 'test'`)
     client.query(sqlQuery, (error, result) => {
         if(error){
+            console.log(error)
             res.send('error1')
         }
         else if(!error){
