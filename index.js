@@ -197,12 +197,13 @@ app.get("/items/view/:id", (req,res) =>{
             console.log('error')
         }
         else if(!error){
-            client.query(`UPDATE item SET clicks = clicks + 1 WHERE item_id = ${itemId}`, (error) => {
-                if(error){
-                    console.log('error')
-                }                
-            });
-            client.query(`SELECT start, end, reservee FROM reserved_date WHERE item_id = ${itemId}`, (error, dates) => {
+            //click model
+            // client.query(`UPDATE item SET clicks = clicks + 1 WHERE item_id = ${itemId}`, (error) => {
+            //     if(error){
+            //         console.log('error')
+            //     }                
+            // });
+            client.query(`SELECT rental_date, reservation_end, customer_id FROM reserved_date WHERE item_id = ${itemId}`, (error, dates) => {
                 if(error){
                     console.log('error')
                 }
