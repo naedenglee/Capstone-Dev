@@ -136,11 +136,11 @@ app.post("/signup", (req,res) =>{
 app.get("/items", (req,res) =>{
     var user = req.session.username
     var cart_count = req.session.cart_count
-    client.query(`SET SCHEMA 'test'`)
+    console.log('succ1')
 
-    client.query('SELECT * FROM item', (error, rows) => {
+    client.query('SELECT * FROM "public".item', (error, rows) => {
         if(error){
-            console.log('error')
+            console.log('error1')
         }
         else if(!error){
             res.render('pages/item-page', { result:rows, user, cart_count })
