@@ -54,7 +54,7 @@ app.post('/login', (req, res)=>{
         values: [req.body.user, req.body.pass]
     }
 
-    client.query(`SET SCHEMA 'test'`)
+    client.query(`SET SCHEMA 'public'`)
     client.query(sqlQuery, (error, result) => {
         if(error){
             console.log(error)
