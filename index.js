@@ -194,7 +194,7 @@ app.get("/items/view/:id", (req,res) =>{
 
     client.query(`SELECT * FROM item WHERE item_id = ${itemId}`, (error, rows) => {
         if(error){
-            console.log('error')
+            console.log('error1')
         }
         else if(!error){
             //click model
@@ -205,9 +205,10 @@ app.get("/items/view/:id", (req,res) =>{
             // });
             client.query(`SELECT rental_date, reservation_end, customer_id FROM reserved_date WHERE item_id = ${itemId}`, (error, dates) => {
                 if(error){
-                    console.log('error')
+                    console.log('error2')
                 }
                 else if(!error){
+                    console.log('error no')
                     res.render('pages/view-item', { result:rows.rows, user, result_date:dates.rows, cart_count })
                     // { 'start': moment('<%= date.start_date %>'), 'end': moment('<%= date.start_date %>') }
                 }
