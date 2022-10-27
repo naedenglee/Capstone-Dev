@@ -153,13 +153,12 @@ app.post("/items", (req,res) =>{
     var user = req.session.username
     var item_id = req.body.addtocart
     message = 0
-    client.query(`SET SCHEMA 'test'`)
 
     if(!user){
         res.redirect('/')
     }
     if(user){
-        client.query(`SELECT item_id FROM cart WHERE username = '${user}' AND item_id = ${item_id}`, (error, rows) => {
+        client.query(`SELECT item_id FROM "public".cart WHERE username = '${user}' AND item_id = ${item_id}`, (error, rows) => {
             if(error){
                 console.log('error')
             }
@@ -170,7 +169,7 @@ app.post("/items", (req,res) =>{
                     res.redirect('/items')
                 }
                 else if(rows.length == 0){
-                    client.query(`INSERT INTO cart VALUES('${user}', '${item_id}', 1) `, (error, rows) => {
+                    client.query(`INSERT INTO "public".cart VALUES('${user}', '${item_id}', 1) `, (error, rows) => {
                         if(error){
                             console.log('error')
                         }
@@ -190,9 +189,8 @@ app.get("/items/view/:id", (req,res) =>{
     var itemId = req.params.id
     var user = req.session.username
     var cart_count = req.session.cart_count
-    client.query(`SET SCHEMA 'test'`)
 
-    client.query(`SELECT * FROM item WHERE item_id = ${itemId}`, (error, rows) => {
+    client.query(`SELECT * FROM "public".item WHERE item_id = ${itemId}`, (error, rows) => {
         if(error){
             console.log('error1')
         }
@@ -203,7 +201,8 @@ app.get("/items/view/:id", (req,res) =>{
             //         console.log('error')
             //     }                
             // });
-            client.query(`SELECT rental_date, reservation_end, customer_id FROM reserved_date WHERE item_id = ${itemId}`, (error, dates) => {
+            // client.query(`SELECT rental_date, reservation_end, customer_id FROM "public".reservation WHERE item_id = ${itemId}`, (error, dates) => {
+            client.query(`SELECT rental_date, reservation_end, customer_id FROM "public".reservation WHERE inventory_id = ${itemId}`, (error, dates) => {
                 if(error){
                     console.log('error2')
                 }
