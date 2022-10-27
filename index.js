@@ -77,7 +77,7 @@ app.post('/login', (req, res)=>{
                 else{
                     console.log('YOU ARE NOW LOGGED IN')
                     console.log(req.body.user)
-                    req.session.user = req.body.user;
+                    req.session.username = req.body.user;
                     let cartQuery = {
                         text: `SELECT 1 FROM cart WHERE account_id = $1`,
                         values: [vid] 
