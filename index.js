@@ -47,44 +47,57 @@ app.get("/", (req,res) =>{
 });
 
 //VALIDATIONof login
-app.post("/login", (req,res) =>{
-    let userlogin = req.body.user;
-    let passlogin = req.body.pass;    
+app.post('/login', (req, res)=>{
 
-    client.query(`SELECT * FROM "public".account WHERE username = '${userlogin}'`, (error, rows) => {
-                if(error){
-                    res.send('error1')
+    var sqlQuery = {
+        text: `CALL check_login($1, $2, NULL)`,
+        values: [req.body.user, req.body.pass]
+    }
+
+    client.query(`SET SCHEMA 'test'`)
+    client.query(sqlQuery, (error, result) => {
+        if(error){
+            res.send('error')
+        }
+        else if(!error){
+            let {vid} = result.rows[0]
+
+            if(vid == null){ // DATABASE RETURNS vid NULL 
+                return res.send('ACCOUNT DOES NOT EXIST');
+            }
+
+            else if(vid != null){ // IF ACCOUNT DOES EXIST
+                let {vpassword} = result.rows[0]
+                validPass = bcrypt.compareSync(req.body.pass, vpassword) 
+                if(!validPass){
+                    res.send('WRONG PASSWORD ENTER YOUR PASSWORD AGAIN!')
+                    //refresh password forms
                 }
-                else if(!error){
-                    if(!rows){
-                        res.send('error2');
+                else{
+                    console.log('YOU ARE NOW LOGGED IN')
+                    console.log(req.body.user)
+                    req.session.user = req.body.user;
+                    let cartQuery = {
+                        text: `SELECT 1 FROM cart WHERE account_id = $1`,
+                        values: [vid] 
                     }
-                    else if(rows){
-                        let {password} = rows.rows[0]
-                        validPass = bcrypt.compareSync(passlogin, password);
-                        console.log(validPass)
-                        if(!validPass){
-                            res.send('error3')
+                    client.query(cartQuery, (error, result) =>{
+                        if(error){
+                            console.log('CART error')
+                            console.log(error)
                         }
-                        else if(validPass){
-                            req.session.username = userlogin;
-                            var user = req.session.username
-                            client.query(`SELECT username FROM cart WHERE username = '${user}'`, (error, cart) => {
-                                if(error){                                    
-                                    res.redirect('/')
-                                }
-                                else if(!error){                                    
-                                    req.session.cart_count = cart.length
-                                    res.redirect('/')
-                                }
-                            });
-                            
+                        else if(!error){
+                            console.log('GOOD CART QUERY')
+                            req.session.cart_count = result.length
+                            res.redirect('/')
                         }
-                        
-                    }                    
-                }
-    });
+                    })
+                };
+            }
+        }
+    })
 });
+
 
 //VALIDATION of signup
 app.post("/signup", (req,res) =>{
