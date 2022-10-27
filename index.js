@@ -207,7 +207,7 @@ app.get("/items/view/:id", (req,res) =>{
                     console.log('error')
                 }
                 else if(!error){
-                    res.render('pages/view-item', { rows, user, result:dates, cart_count })
+                    res.render('pages/view-item', { result:rows.rows, user, result_date:dates.rows, cart_count })
                     // { 'start': moment('<%= date.start_date %>'), 'end': moment('<%= date.start_date %>') }
                 }
                 
