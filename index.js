@@ -44,13 +44,14 @@ app.get("/", (req,res) =>{
     var user = req.session.username;
     var cart_count = req.session.cart_count
     var user_id = req.session.userid
+    client.query(`SET SCHEMA 'public'`)
 
     if(!user){
         res.render('pages/homepage', { user, cart_count })
     }
     if(user){
         let currencyQuery = {
-            text: `SELECT 3 FROM "public".account_currency WHERE account_id = $1`,
+            text: `SELECT user_currency FROM account_currency WHERE account_id = $1`,
             values: [user_id] 
         }
         client.query(currencyQuery, (error, result) =>{
