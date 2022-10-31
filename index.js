@@ -62,8 +62,8 @@ app.get("/", (req,res) =>{
             else if(!error){
                 console.log('GOOD WALLET QUERY')                
                 console.log(result.rows[0].user_currency)
-                
-                res.render('pages/homepage', { user, cart_count, result })
+                var currency = result.rows[0].user_currency
+                res.render('pages/homepage', { user, cart_count, currency })
             }
         })
     }
