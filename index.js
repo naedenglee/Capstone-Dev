@@ -50,7 +50,7 @@ app.get("/", (req,res) =>{
     }
     if(user){
         let currencyQuery = {
-            text: `SELECT 3 FROM cart WHERE account_id = $1`,
+            text: `SELECT 3 FROM "public".account_currency WHERE account_id = $1`,
             values: [user_id] 
         }
         client.query(currencyQuery, (error, result) =>{
