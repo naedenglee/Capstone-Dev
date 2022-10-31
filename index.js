@@ -43,6 +43,27 @@ app.set('view engine', 'ejs')
 app.get("/", (req,res) =>{
     var user = req.session.username;
     var cart_count = req.session.cart_count
+
+    if(user){
+        let currencyQuery = {
+            text: `SELECT 3 FROM cart WHERE account_id = $1`,
+            values: [user] 
+        }
+        client.query(currencyQuery, (error, result) =>{
+            if(error){
+                console.log('WALLET error')
+                console.log(error)
+            }
+            else if(!error){
+                console.log('GOOD WALLET QUERY')
+                console.log(result.rows.user_currency)
+                console.log(result.rows[0].user_currency)
+                var currency = result.rows.user_currency
+                res.render('pages/homepage', { user, cart_count, currency })
+            }
+        })
+    }
+
     res.render('pages/homepage', { user, cart_count })
 });
 
