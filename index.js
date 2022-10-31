@@ -112,6 +112,7 @@ app.post('/login', (req, res)=>{
                         else if(!error){
                             console.log('GOOD CART QUERY')
                             req.session.cart_count = result.rows.length
+                            console.log(vid)
                             req.session.userid = vid
                             res.redirect('/')
                         }
