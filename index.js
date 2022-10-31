@@ -43,11 +43,12 @@ app.set('view engine', 'ejs')
 app.get("/", (req,res) =>{
     var user = req.session.username;
     var cart_count = req.session.cart_count
+    var user_id = req.session.userid
 
     if(user){
         let currencyQuery = {
             text: `SELECT 3 FROM cart WHERE account_id = $1`,
-            values: [user] 
+            values: [user_id] 
         }
         client.query(currencyQuery, (error, result) =>{
             if(error){
@@ -58,8 +59,7 @@ app.get("/", (req,res) =>{
                 console.log('GOOD WALLET QUERY')
                 console.log(result.rows.user_currency)
                 console.log(result.rows[0].user_currency)
-                var currency = result.rows.user_currency
-                res.render('pages/homepage', { user, cart_count, currency })
+                res.render('pages/homepage', { user, cart_count, result:result.rows })
             }
         })
     }
@@ -111,6 +111,7 @@ app.post('/login', (req, res)=>{
                         else if(!error){
                             console.log('GOOD CART QUERY')
                             req.session.cart_count = result.rows.length
+                            req.session.userid = vid
                             res.redirect('/')
                         }
                     })
