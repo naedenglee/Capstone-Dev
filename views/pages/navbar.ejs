@@ -37,7 +37,11 @@
                       <span class='badge badge-warning' id='lblCartCount'> <%= cart_count %> </span>
                     </a>
                 </li>
-                <li><a class="dropdown-item" href="#">Wallet: <% result[0].user_currency %></a></li>
+                <% if(result[0].user_currency == 0){ %>
+                  <li><a class="dropdown-item" href="#">Wallet: ₱0 %></a></li>
+                <% } else if(result[0].user_currency > 0){ %>
+                  <li><a class="dropdown-item" href="#">Wallet: ₱<% result[0].user_currency %></a></li>
+                <% } %>                
                 <li><a class="dropdown-item" href="/logout">Logout</a></li>
               </ul>
             </div>
