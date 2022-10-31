@@ -45,6 +45,9 @@ app.get("/", (req,res) =>{
     var cart_count = req.session.cart_count
     var user_id = req.session.userid
 
+    if(!user){
+        res.render('pages/homepage', { user, cart_count })
+    }
     if(user){
         let currencyQuery = {
             text: `SELECT 3 FROM cart WHERE account_id = $1`,
@@ -65,7 +68,7 @@ app.get("/", (req,res) =>{
         })
     }
 
-    res.render('pages/homepage', { user, cart_count })
+    
 });
 
 //VALIDATIONof login
