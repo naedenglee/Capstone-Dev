@@ -50,13 +50,13 @@ crossorigin=""></script>
         <div class="row">
             <div class="column">
                 <div class="polaroid">
-                  <img src="<%= result.image_path %>" alt="" style="width:100%">
+                  <img src="<%= result.rows[0].image_path %>" alt="" style="width:100%">
                       <div class="p-container"></div>
                   </div>
 
                   <h4 style="font-weight: bold;">Description:</h4>
              
-                  <div class="desc" style="font: weight 1px; color: darkslategrey;"><%= result.item_description %></div>
+                  <div class="desc" style="font: weight 1px; color: darkslategrey;"><%= result.rows[0].item_description %></div>
                       <!-- line separator -->
                     <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                       
