@@ -276,7 +276,7 @@ app.get("/items2/view/:id", (req,res) =>{
         else if(!error){
             let {item_id, account_id, item_quantity, 
                 item_name, item_category, item_description, rental_rate, 
-                replacementm, cost, date_posted} = result.rows[0]
+                replacementm, cost, date_posted, image_path} = result.rows[0]
                 
                 console.log('good item query 1')
 
