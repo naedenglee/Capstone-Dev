@@ -114,7 +114,7 @@ app.post('/login', (req, res)=>{
                             console.log(result.rows[0].user_currency)
                             req.session.currency = result.rows[0].user_currency
                             currency = req.session.currency
-                            res.render('pages/homepage', { user:req.session.username, cart_count:req.session.cart_count, currency })
+                            res.redirect('/')
                         }
                     })
             
@@ -256,6 +256,48 @@ app.get("/items/view/:id", (req,res) =>{
         }
     });
 });
+
+app.get("/items2/view/:id", (req,res) =>{
+
+    var sqlQuery = {
+        text: `SELECT * FROM view_item($1)`,
+        values:[req.params.id] 
+    }
+
+    var sqlQuery2 = {
+        text: `SELECT * FROM check_available($1)`,
+        values: [req.params.id]
+    }
+
+    client.query(sqlQuery, (error, result) => {
+        if(error){
+            res.send(error)
+        }
+        else if(!error){
+            let {item_id, account_id, item_quantity, 
+                item_name, item_category, item_description, rental_rate, 
+                replacementm, cost, date_posted} = result.rows[0]
+
+            if(item_id == null){ // DATABASE RETURNS vinventory_id NULL 
+                return res.send('Item does not Exist!')
+            }
+
+            else if(vinventory_id != null){ // IF ACCOUNT DOES EXIST
+                client.query(sqlQuery2, (error, dates) => {
+                    if(error){
+                        res.send(error)
+                    }
+                    else if(!error){
+                        
+                        res.render('pages/view-item', { result, user:req.session.user, result_date:dates.rows, cart_count:req.session.cart_count })
+                    }
+                })
+
+                
+            }
+        }
+    })
+})
 
 //availability(reservation calendar)
 app.post("/items/view/:id", (req,res) =>{

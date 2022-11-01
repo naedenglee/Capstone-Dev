@@ -133,7 +133,7 @@ crossorigin=""></script>
             var dateRanges = [];                                 
 
               <% result_date.forEach(function(reserved){ %>
-                dateRanges.push({ 'start': moment('<%= reserved.start %>'), 'end': moment('<%= reserved.end %>') })
+                dateRanges.push({ 'start': moment('<%= reserved.start_date %>'), 'end': moment('<%= reserved.end_date %>') })
               <% }) %>
                 
             return dateRanges.reduce(function(bool, range) {
