@@ -291,8 +291,8 @@ app.get("/items2/view/:id", (req,res) =>{
                     }
                     else if(!error){
                         console.log('good item query 2')
-                        console.log(result)
-                        res.render('pages/view-item', { result, user:req.session.user, result_date:dates.rows[0], cart_count:req.session.cart_count })
+                        console.log(dates)
+                        res.render('pages/view-item', { result, user:req.session.user, result_date:dates, cart_count:req.session.cart_count })
                     }
                 })
 
