@@ -44,30 +44,9 @@ app.get("/", (req,res) =>{
     var user = req.session.username;
     var cart_count = req.session.cart_count
     var user_id = req.session.userid
-    client.query(`SET SCHEMA 'public'`)
+    var currency = req.session.currency
 
-    if(!user){
-        res.render('pages/homepage', { user, cart_count })
-    }
-    if(user){
-        let currencyQuery = {
-            text: `SELECT user_currency FROM account_currency WHERE account_id = $1`,
-            values: [user_id] 
-        }
-        client.query(currencyQuery, (error, result) =>{
-            if(error){
-                console.log('WALLET error')
-                console.log(error)
-            }
-            else if(!error){
-                console.log('GOOD WALLET QUERY')                
-                console.log(result.rows[0].user_currency)
-                var currency = result.rows[0].user_currency
-                res.render('pages/homepage', { user, cart_count, currency })
-            }
-        })
-    }
-
+    res.render('pages/homepage', { user, cart_count, currency })
     
 });
 
@@ -116,10 +95,29 @@ app.post('/login', (req, res)=>{
                             console.log('GOOD CART QUERY')
                             req.session.cart_count = result.rows.length
                             console.log(vid)
-                            req.session.userid = vid
-                            res.redirect('/')
                         }
                     })
+
+                    let currencyQuery = {
+                        text: `SELECT user_currency FROM account_currency WHERE account_id = $1`,
+                        values: [vid]
+                    }
+
+                    client.query(currencyQuery, (error, result) =>{
+                        if(error){
+                            console.log('WALLET error')
+                            console.log(error)
+                        }
+                        else if(!error){
+                            console.log('GOOD WALLET QUERY')                
+                            console.log(result.rows[0].user_currency)
+                            req.session.currency = result.rows[0].user_currency
+                            currency = req.session.currency
+                            res.render('pages/homepage', { user, cart_count, currency })
+                        }
+                    })
+            
+            
                 };
             }
         }
@@ -177,6 +175,7 @@ app.post("/signup", (req,res) =>{
 app.get("/items", (req,res) =>{
     var user = req.session.username
     var cart_count = req.session.cart_count
+    var currency = req.session.currency
     console.log('succ1')
 
     client.query('SELECT * FROM "public".item', (error, rows) => {
@@ -184,7 +183,7 @@ app.get("/items", (req,res) =>{
             console.log('error1')
         }
         else if(!error){
-            res.render('pages/item-page', { result:rows.rows, user, cart_count })
+            res.render('pages/item-page', { result:rows.rows, user, cart_count, currency })
         }
     });
 });
