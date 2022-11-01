@@ -82,7 +82,7 @@ app.post('/login', (req, res)=>{
                     console.log('YOU ARE NOW LOGGED IN')
                     console.log(req.body.user)
                     req.session.username = req.body.user;
-                    var user = req.session.username
+                    // var user = req.session.username
                     let cartQuery = {
                         text: `SELECT 1 FROM cart WHERE account_id = $1`,
                         values: [vid] 
@@ -114,7 +114,7 @@ app.post('/login', (req, res)=>{
                             console.log(result.rows[0].user_currency)
                             req.session.currency = result.rows[0].user_currency
                             currency = req.session.currency
-                            res.render('pages/homepage', { user, cart_count, currency })
+                            res.render('pages/homepage', { user:req.session.username, cart_count:req.session.cart_count, currency })
                         }
                     })
             
