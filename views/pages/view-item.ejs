@@ -61,7 +61,7 @@ crossorigin=""></script>
                     <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                       
                        <!-- di ko sure kung i-div ko to o ok lang na naka <p> -->
-                    <p style="font-weight: bold;">Rental fee: <%= result.rental_rate %><br>
+                    <p style="font-weight: bold;">Rental fee: <%= result.rows[0].rental_rate %><br>
                         Deposit fee:<br>
                         Size:<br>
                          Branch:
@@ -70,7 +70,7 @@ crossorigin=""></script>
                 </div>
                 <!----- 2nd column ------>
                   <div class="column">
-                    <h3 style="text-align: center;"><%= result.item_name %></h3>
+                    <h3 style="text-align: center;"><%= result.rows[0].item_name %></h3>
                   <div class="box1">
                    <!-- <label for="start">Start date:</label>
                      <input type="date" id="start" name="date-start"
@@ -100,8 +100,8 @@ crossorigin=""></script>
               </div>
 
               <br>
-              <h4>Item owned by <%= result.seller %></h4>
-              <a target="_blank" href="/profile/<%= result.seller %>">
+              <h4>Item owned by <%= result.rows[0].seller %></h4>
+              <a target="_blank" href="/profile/<%= result.rows[0].seller %>">
                <img class="img2" src="/images/profile.png" alt="profile" style="width:100px"> </a>
                <!-- CSS STAR RATING -->
                    <span class="fa fa-star checked"></span>
@@ -113,7 +113,7 @@ crossorigin=""></script>
                    <br>
                    <br>
                <button class="btn-message">Message</button>
-               <a href="/profile/<%= result.seller %>"><button class="btn-profile">See Profile</button></a>
+               <a href="/profile/<%= result.rows[0].owner %>"><button class="btn-profile">See Profile</button></a>
                
                </div>
              </div>
