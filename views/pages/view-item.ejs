@@ -139,7 +139,7 @@ crossorigin=""></script>
               console.log(dateRanges)
                 
             return dateRanges.reduce(function(bool, range) {
-                return bool || (date >= range.start && date <= range.end);
+                return bool || (date >= range.start._d && date <= range.end._d);
             }, false);
         }
     },
