@@ -86,7 +86,7 @@ crossorigin=""></script>
                       <h4>Choose dates</h4>
                       <input type="text" id="daterange" name="daterange"/>
                                           
-                      <button type="submit" class="btn-availability">Check Availability</button>
+                      <button type="button" class="btna btna-info btna-lg" data-toggle="modal" data-target="#myModal">Check Availability</button>
                     </form>                    
                  	</div>
 			  
@@ -176,8 +176,6 @@ crossorigin=""></script>
                 dateRanges.push({ 'start': moment('<%= reserved.start_date %>'), 'end': moment('<%= reserved.end_date %>')})
               <% }) %>
 
-              console.log(dateRanges)
-                
             return dateRanges.reduce(function(bool, range) {
                 return bool || (date >= range.start._d && date <= range.end._d);
             }, false);
