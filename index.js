@@ -301,7 +301,7 @@ app.post('/items/view/:id/reserve', (req, res)=>{
 
     client.query(invIdQuery, (error, result) =>{
         if(error){
-            console.log('error1')
+            console.log(error)
             res.send(error)
         }
         else if(!error){
