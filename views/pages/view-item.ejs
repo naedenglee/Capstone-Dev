@@ -54,7 +54,7 @@ crossorigin=""></script>
                       <div class="p-container"></div>
                   </div>
 
-                  <h4 style="font-weight: bold;">Description:</h4>
+                  <h4 style="font-weight: bold;">Description: /items/view/<%= result.rows[0].item_id %>/reserve</h4>
              
                   <div class="desc" style="font: weight 1px; color: darkslategrey;"><%= result.rows[0].item_description %></div>
                       <!-- line separator -->
@@ -82,7 +82,7 @@ crossorigin=""></script>
                            min="2022-01-01" max="2024-12-31"> -->
 			  
 			            <div class='col-md-5'>
-                    <form id="check_avail" method="post" action="/items/view/<% result.rows[0].item_id %>/reserve">
+                    <form id="check_avail" method="post" action="/items/view/<%= result.rows[0].item_id %>/reserve">
                       <h4>Choose dates</h4>
                       <input type="text" id="daterange" name="daterange"/>                                    
                       <button type="button" class="btna btna-info btna-lg" data-toggle="modal" data-target="#myModal">Check Availability</button>
