@@ -180,6 +180,7 @@ crossorigin=""></script>
                 dateRanges.push({ 'start': moment('<%= reserved.start_date %>'), 'end': moment('<%= reserved.end_date %>')})
               <% }) %>
 
+              console.log(dateRanges)
             return dateRanges.reduce(function(bool, range) {
                 return bool || (date >= range.start._d && date <= range.end._d);
             }, false);
