@@ -301,16 +301,20 @@ app.post('/items/view/:id/reserve', (req, res)=>{
 
     client.query(invIdQuery, (error, result) =>{
         if(error){
+            console.log('error1')
             res.send(error)
         }
         else if(!error){
+            console.log('good reservation query1')
             let {inventory_id} = result.rows[0]
 
             client.query(sqlQuery, (error, result) => {
                 if(error){
+                    console.log('error2')
                     res.send(error)
                 }
                 else if(!error){
+                    console.log('good reservation query1')
                     let {vinventory_id} = result.rows[0]
         
                     if(vinventory_id == null){ // DATABASE RETURNS vinventory_id NULL 
