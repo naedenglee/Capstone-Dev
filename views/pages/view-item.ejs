@@ -82,7 +82,7 @@ crossorigin=""></script>
                            min="2022-01-01" max="2024-12-31"> -->
 			  
 			            <div class='col-md-5'>
-                    <form id="check_avail" method="post" action="/reservation">
+                    <form id="check_avail" method="post" action="/items/view/:id/reserve">
                       <h4>Choose dates</h4>
                       <input type="text" id="daterange" name="daterange"/>                                    
                       <button type="button" class="btna btna-info btna-lg" data-toggle="modal" data-target="#myModal">Check Availability</button>
