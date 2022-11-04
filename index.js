@@ -290,12 +290,8 @@ app.post('/items/view/:id/reserve', (req, res)=>{
 
     var invIdQuery = {
         text: `SELECT inventory_id FROM inventory WHERE item_id = ${item_id}`
-    }
-     
-    var sqlQuery = {
-        text: `CALL check_reservation($1, $2, $3, $4)`, // <-- INSERT STATEMENT STORED PROC
-        values: [inventory_id, req.session.user_id, req.body.start_date, req.body.end_date]
-    }
+    }  
+    
 
     client.query(`SET SCHEMA 'public'`)
 
@@ -307,6 +303,11 @@ app.post('/items/view/:id/reserve', (req, res)=>{
         else if(!error){
             console.log('good reservation query1')
             let {inventory_id} = result.rows[0]
+            
+            var sqlQuery = {
+                text: `CALL check_reservation($1, $2, $3, $4)`, // <-- INSERT STATEMENT STORED PROC
+                values: [inventory_id, req.session.user_id, req.body.start_date, req.body.end_date]
+            }
 
             client.query(sqlQuery, (error, result) => {
                 if(error){
