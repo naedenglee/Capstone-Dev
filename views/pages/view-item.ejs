@@ -182,8 +182,8 @@ crossorigin=""></script>
 
               // console.log(dateRanges[4].end._d)
             return dateRanges.reduce(function(bool, range) {
-                console.log(range.start._d)
-                console.log(range.end._d)
+                console.log(range.start)
+                console.log(range.end)
                 return bool || (date >= range.start._d && date <= range.end._d);
             }, false);
         }
