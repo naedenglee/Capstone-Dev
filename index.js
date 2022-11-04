@@ -303,11 +303,16 @@ app.post('/items/view/:id/reserve', (req, res)=>{
         else if(!error){
             console.log('good reservation query1')
             let {inventory_id} = result.rows[0]
-            
+
             var sqlQuery = {
                 text: `CALL check_reservation($1, $2, $3, $4)`, // <-- INSERT STATEMENT STORED PROC
                 values: [inventory_id, req.session.user_id, req.body.start_date, req.body.end_date]
             }
+            console.log(inventory_id)
+            console.log(req.session.user_id)
+            console.log(req.body.start_date)
+            console.log(req.body.end_date)
+
 
             client.query(sqlQuery, (error, result) => {
                 if(error){
@@ -315,7 +320,7 @@ app.post('/items/view/:id/reserve', (req, res)=>{
                     res.send(error)
                 }
                 else if(!error){
-                    console.log('good reservation query1')
+                    console.log('good reservation query2')
                     let {vinventory_id} = result.rows[0]
         
                     if(vinventory_id == null){ // DATABASE RETURNS vinventory_id NULL 
