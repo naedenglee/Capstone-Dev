@@ -297,7 +297,7 @@ app.post('/items/view/:id/reserve', (req, res)=>{
         values: [inventory_id, req.session.user_id, req.body.start_date, req.body.end_date]
     }
 
-    client.query(`SET SCHEMA 'test'`)
+    client.query(`SET SCHEMA 'public'`)
 
     client.query(invIdQuery, (error, result) =>{
         if(error){
