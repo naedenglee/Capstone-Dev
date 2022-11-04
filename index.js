@@ -114,6 +114,7 @@ app.post('/login', (req, res)=>{
                             console.log(result.rows[0].user_currency)
                             req.session.currency = result.rows[0].user_currency
                             currency = req.session.currency
+                            req.session.user_id = vid
                             res.redirect('/')
                         }
                     })
@@ -293,7 +294,7 @@ app.post('/items/view/:id/reserve', (req, res)=>{
      
     var sqlQuery = {
         text: `CALL check_reservation($1, $2, $3, $4)`, // <-- INSERT STATEMENT STORED PROC
-        values: [inventory_id, req.session.id, req.body.start, req.body.end]
+        values: [inventory_id, req.session.user_id, req.body.start_date, req.body.end_date]
     }
 
     client.query(`SET SCHEMA 'test'`)

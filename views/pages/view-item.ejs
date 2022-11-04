@@ -108,7 +108,8 @@ crossorigin=""></script>
                                   </div>
                                   <div class="column">
                                     <p style="font-weight: bold;">
-                                      Reserved Dates:<br>
+                                      Reservation Start: <input type="text" id="start_date" name="start_date" value="" readonly><br>
+                                      Reservation End: <input type="text" id="end_date" name="send_date" value="" readonly><br>
                                       Rental fee:<br>
                                       Deposit fee:<br>
                                       Size:<br>
@@ -185,6 +186,11 @@ crossorigin=""></script>
         }
     },
         function(start, end, label) {
+          startTxtField = document.getElementById("start_date");
+          endTxtField = document.getElementById("end_date");
+
+          startTxtField.setAttribute("value", start.format('YYYY-MM-DD'));
+          endTxtField.setAttribute("value", end.format('YYYY-MM-DD'));
           console.log("date: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
           
           });
