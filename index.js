@@ -283,29 +283,44 @@ app.post("/items/view/:id", (req,res) =>{
     console.log(`${startDate}-${endDate}`)
 });
 
-app.post('/reservation', (req, res)=>{
-    req.session.id = 1 
+app.post('/items/view/:id/reserve', (req, res)=>{
+    var item_id = req.params.id
+    var inventory_id
+
+    var invIdQuery = {
+        text: `SELECT inventory_id FROM inventory WHERE item_id = ${item_id}`
+    }
      
     var sqlQuery = {
         text: `CALL check_reservation($1, $2, $3, $4)`, // <-- INSERT STATEMENT STORED PROC
-        values: [req.body.item_id, req.session.id, req.body.start, req.body.end]
+        values: [inventory_id, req.session.id, req.body.start, req.body.end]
     }
 
     client.query(`SET SCHEMA 'test'`)
-    client.query(sqlQuery, (error, result) => {
+
+    client.query(invIdQuery, (error, result) =>{
         if(error){
             res.send(error)
         }
         else if(!error){
-            let {vinventory_id} = result.rows[0]
+            let {inventory_id} = result.rows[0]
 
-            if(vinventory_id == null){ // DATABASE RETURNS vinventory_id NULL 
-                return res.send('Item is already reserved!')
-            }
-
-            else if(vinventory_id != null){ // IF ACCOUNT DOES EXIST
-                return res.redirect(`/items`)
-            }
+            client.query(sqlQuery, (error, result) => {
+                if(error){
+                    res.send(error)
+                }
+                else if(!error){
+                    let {vinventory_id} = result.rows[0]
+        
+                    if(vinventory_id == null){ // DATABASE RETURNS vinventory_id NULL 
+                        return res.send('Item is already reserved!')
+                    }
+        
+                    else if(vinventory_id != null){ // IF ACCOUNT DOES EXIST
+                        return res.redirect(`/items`)
+                    }
+                }
+            })
         }
     })
 })

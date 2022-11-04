@@ -82,11 +82,53 @@ crossorigin=""></script>
                            min="2022-01-01" max="2024-12-31"> -->
 			  
 			            <div class='col-md-5'>
-                    <form id="check_avail" method="post" action="/items/view/1">
+                    <form id="check_avail" method="post" action="/reservation">
                       <h4>Choose dates</h4>
-                      <input type="text" id="daterange" name="daterange"/>
-                                          
+                      <input type="text" id="daterange" name="daterange"/>                                    
                       <button type="button" class="btna btna-info btna-lg" data-toggle="modal" data-target="#myModal">Check Availability</button>
+
+                      <!-- MODAL -->
+                      <!-- Modal -->
+                      <div class="modal fade" id="myModal" role="dialog">
+                        <div class="modal-dialog">
+                          
+                    <!-- Modal content-->
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Blue Gown</h4>
+                              </div>
+                              <div class="modal-body">
+                                <div class="row">
+                                  <div class="column">
+                                    <div class="polaroid">
+                                      <img src="<%= result.rows[0].image_path %>" alt="" style="width:100%">
+                                        <div class="p-container"></div>
+                                    </div>
+                                  </div>
+                                  <div class="column">
+                                    <p style="font-weight: bold;">
+                                      Reserved Dates:<br>
+                                      Rental fee:<br>
+                                      Deposit fee:<br>
+                                      Size:<br>
+                                      Owner:
+                                      
+                                  </p>
+                                  </div>
+                                </div>
+                
+                              </div>
+                              <div class="modal-footer">
+                                
+                                <button type="button" class="btn btn-default"><i class="fa-solid fa-tag"></i> Reserve</button>
+                                <button type="button" class="btn btn-default"><i class="fa-solid fa-heart"></i> Add to Watchlist</button>
+                              <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+                              </div>
+                            </div>
+                            
+                          </div>
+                        </div>
                     </form>                    
                  	</div>
 			  
@@ -119,47 +161,7 @@ crossorigin=""></script>
              </div>
              </div>
          </div>
-         <!-- Modal -->
-        <div class="modal fade" id="myModal" role="dialog">
-          <div class="modal-dialog">
-            
-      <!-- Modal content-->
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  <h4 class="modal-title">Blue Gown</h4>
-                </div>
-                <div class="modal-body">
-                  <div class="row">
-                    <div class="column">
-                      <div class="polaroid">
-                        <img src="<%= result.rows[0].image_path %>" alt="" style="width:100%">
-                          <div class="p-container"></div>
-                      </div>
-                    </div>
-                    <div class="column">
-                      <p style="font-weight: bold;">
-                        Dates Available:<br>
-                        Rental fee:<br>
-                        Deposit fee:<br>
-                        Size:<br>
-                        Owner:
-                        
-                     </p>
-                    </div>
-                  </div>
-  
-                </div>
-                <div class="modal-footer">
-                  
-                  <button type="button" class="btn btn-default"><i class="fa-solid fa-tag"></i> Reserve</button>
-                  <button type="button" class="btn btn-default"><i class="fa-solid fa-heart"></i> Add to Watchlist</button>
-                 <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-                </div>
-              </div>
-              
-            </div>
-          </div>
+         
    </body>
 
    <script>
