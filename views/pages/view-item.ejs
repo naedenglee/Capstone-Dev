@@ -133,7 +133,7 @@ crossorigin=""></script>
                   <div class="row">
                     <div class="column">
                       <div class="polaroid">
-                        <img src="img/image.png" alt="" style="width:100%">
+                        <img src="<%= result.rows[0].image_path %>" alt="" style="width:100%">
                           <div class="p-container"></div>
                       </div>
                     </div>
@@ -151,6 +151,7 @@ crossorigin=""></script>
   
                 </div>
                 <div class="modal-footer">
+                  
                   <button type="button" class="btn btn-default"><i class="fa-solid fa-tag"></i> Reserve</button>
                   <button type="button" class="btn btn-default"><i class="fa-solid fa-heart"></i> Add to Watchlist</button>
                  <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->

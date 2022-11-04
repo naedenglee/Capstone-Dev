@@ -227,37 +227,6 @@ app.post("/items", (req,res) =>{
 
 //VIEWING of a specific item
 app.get("/items/view/:id", (req,res) =>{
-    var itemId = req.params.id
-    var user = req.session.username
-    var cart_count = req.session.cart_count
-
-    client.query(`SELECT * FROM "public".item WHERE item_id = ${itemId}`, (error, rows) => {
-        if(error){
-            console.log('error1')
-        }
-        else if(!error){
-            //click model
-            // client.query(`UPDATE item SET clicks = clicks + 1 WHERE item_id = ${itemId}`, (error) => {
-            //     if(error){
-            //         console.log('error')
-            //     }                
-            // });
-            // client.query(`SELECT rental_date, reservation_end, customer_id FROM "public".reservation WHERE item_id = ${itemId}`, (error, dates) => {
-            client.query(`SELECT rental_date, reservation_end, customer_id FROM "public".reservation WHERE inventory_id = ${itemId}`, (error, dates) => {
-                if(error){
-                    console.log('error')
-                }
-                else if(!error){                    
-                    res.render('pages/view-item', { result:rows.rows, user, result_date:dates.rows, cart_count })
-                    // { 'start': moment('<%= date.start_date %>'), 'end': moment('<%= date.start_date %>') }
-                }
-                
-            });
-        }
-    });
-});
-
-app.get("/items2/view/:id", (req,res) =>{
 
     var sqlQuery = {
         text: `SELECT * FROM view_item($1)`, //item id ang hinahanap
@@ -313,6 +282,33 @@ app.post("/items/view/:id", (req,res) =>{
     [startDate, endDate] = daterange.split(' - ');
     console.log(`${startDate}-${endDate}`)
 });
+
+app.post('/reservation', (req, res)=>{
+    req.session.id = 1 
+     
+    var sqlQuery = {
+        text: `CALL check_reservation($1, $2, $3, $4)`, // <-- INSERT STATEMENT STORED PROC
+        values: [req.body.item_id, req.session.id, req.body.start, req.body.end]
+    }
+
+    client.query(`SET SCHEMA 'test'`)
+    client.query(sqlQuery, (error, result) => {
+        if(error){
+            res.send(error)
+        }
+        else if(!error){
+            let {vinventory_id} = result.rows[0]
+
+            if(vinventory_id == null){ // DATABASE RETURNS vinventory_id NULL 
+                return res.send('Item is already reserved!')
+            }
+
+            else if(vinventory_id != null){ // IF ACCOUNT DOES EXIST
+                return res.redirect(`/items`)
+            }
+        }
+    })
+})
 
 //VIEW profile
 app.get("/profile/:username", (req,res) =>{
