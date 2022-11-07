@@ -461,6 +461,7 @@ app.get("/cart/remove/:cart_id", (req,res) =>{
             res.send(error)
         }
         else if(!error){
+            req.session.cart_count = req.session.cart_count - 1
             res.redirect('/cart')
         }
     })
