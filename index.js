@@ -434,7 +434,7 @@ app.get("/cart", (req,res) =>{
     var user = req.session.username
 
     var sqlQuery = {
-        text: `SELECT a.cart_id, a.item_id, a.qty,b.item_name, b.rental_rate 
+        text: `SELECT a.cart_id, a.item_id, a.qty,b.item_name, b.rental_rate, b.image_path, b.item_description 
                 FROM "public".cart a LEFT JOIN "public".item b ON a.item_id = b.item_id WHERE account_id = $1`,
         values: [user_id]
     }
