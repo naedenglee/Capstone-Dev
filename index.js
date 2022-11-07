@@ -449,6 +449,25 @@ app.get("/cart", (req,res) =>{
     })
 });
 
+app.get("/cart/remove/:cart_id", (req,res) =>{
+
+    var sqlQuery = {
+        text: `DELETE FROM "public".cart WHERE cart_id = $1`,
+        values: [req.params.cart_id]
+    }
+
+    client.query(sqlQuery, (error, result) =>{
+        if(error){
+            res.send(error)
+        }
+        else if(!error){
+            res.redirect('/cart')
+        }
+    })
+});
+
+
+
 //logout
 app.get('/logout',function(req,res){
     req.session = null
