@@ -449,7 +449,7 @@ app.get("/cart", (req,res) =>{
     })
 });
 
-app.get("/cart/remove/:cart_id", (req,res) =>{
+app.post("/cart/remove/:cart_id", (req,res) =>{
 
     var sqlQuery = {
         text: `DELETE FROM "public".cart WHERE cart_id = $1`,
