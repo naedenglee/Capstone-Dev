@@ -431,11 +431,12 @@ app.post("/validate_email", (req,res) => {
 
 app.get("/cart", (req,res) =>{
     var user_id = req.session.user_id
+    var user = req.session.username
 
     var sqlQuery = {
         text: `SELECT a.cart_id, a.item_id, a.qty,b.item_name, b.rental_rate 
-                FROM "public".cart a LEFT JOIN "public".item b ON a.item_id = b.item_id WHERE account_id = ${user_id}`, // <-- INSERT STATEMENT STORED PROC
-        values: [user]
+                FROM "public".cart a LEFT JOIN "public".item b ON a.item_id = b.item_id WHERE account_id = $1`, // <-- INSERT STATEMENT STORED PROC
+        values: [user_id]
     }
 
     client.query(sqlQuery, (error, res) =>{
