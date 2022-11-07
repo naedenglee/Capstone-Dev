@@ -444,7 +444,7 @@ app.get("/cart", (req,res) =>{
             res.send(error)
         }
         else if(!error){
-            res.render('pages/cart', { user, result:result.rows })
+            res.render('pages/cart', { user, result:result.rows, cart_count:req.session.cart_count, currency:req.session.currency })
         }
     })
 });
