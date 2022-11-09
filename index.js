@@ -30,7 +30,7 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: false}))
 app.set('trust proxy', 1)
 
-pg.types.setTypeParser(1114, function(stringValue) {
+client.types.setTypeParser(1114, function(stringValue) {
     return stringValue;  //1114 for time without timezone type
   });
 
