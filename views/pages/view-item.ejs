@@ -182,7 +182,7 @@ crossorigin=""></script>
                 var endDate = '<%= reserved.end_date %>' 
                 console.log(startDate.toString())
                 console.log(startDate2.toString())             
-                dateRanges.push({ 'start': moment('<%= reserved.start_date %>'), 'end': moment('<%= reserved.end_date %>')})
+                dateRanges.push({ 'start': moment.tz('<%= reserved.start_date %>', 'Asia/Manila'), 'end': moment.tz('<%= reserved.end_date %>', 'Asia/Manila')})
               <% }) %>
 
               // console.log(dateRanges[4].end._d)

@@ -30,9 +30,6 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: false}))
 app.set('trust proxy', 1)
 
-client.types.setTypeParser(1114, function(stringValue) {
-    return stringValue;  //1114 for time without timezone type
-  });
 
 let port = process.env.PORT || 4200
 app.listen(port, () => {
