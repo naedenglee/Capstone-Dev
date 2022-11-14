@@ -177,9 +177,13 @@ crossorigin=""></script>
             var dateRanges = [];                                 
 
               <% result_date.forEach(function(reserved){ %>
-                dateRanges.push({ 'start': moment.tz('<%= reserved.start_date %>', 'Asia/Manila'), 'end': moment.tz('<%= reserved.end_date %>', 'Asia/Manila') })
+                var startDate = '<%= reserved.start_date %>'
+                var startDate2 = '2022-12-31'
+                var endDate = '<%= reserved.end_date %>' 
+                console.log(startDate.toString())
+                console.log(startDate2.toString())             
+                dateRanges.push({ 'start': moment.tz('<%= reserved.start_date %>', 'Asia/Manila'), 'end': moment.tz('<%= reserved.end_date %>', 'Asia/Manila')})
               <% }) %>
-              console.log(dateRanges)
 
               // console.log(dateRanges[4].end._d)
             return dateRanges.reduce(function(bool, range) {

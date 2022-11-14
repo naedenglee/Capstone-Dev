@@ -118,8 +118,7 @@ app.post('/login', (req, res)=>{
                             req.session.user_id = vid
                             res.redirect('/')
                         }
-                    })
-            
+                    })            
             
                 };
             }
