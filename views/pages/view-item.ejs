@@ -177,9 +177,9 @@ crossorigin=""></script>
             var dateRanges = [];                                 
 
               <% result_date.forEach(function(reserved){ %>
-                console.log('<%= reserved.start_date %>')
-                console.log('<%= reserved.start_date %>')
-                dateRanges.push({ 'start': moment('<%= reserved.start_date %>'), 'end': moment('<%= reserved.end_date %>')})
+                startDate = '2022-11-16'
+                endDate = '2022-11-18'
+                dateRanges.push({ 'start': moment(startDate), 'end': moment(endDate)})
               <% }) %>
 
               // console.log(dateRanges[4].end._d)
