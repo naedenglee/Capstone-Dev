@@ -177,6 +177,7 @@ crossorigin=""></script>
             var dateRanges = [];                                 
 
               <% result_date.forEach(function(reserved){ %>
+                console.log(moment('<%= reserved.start_date %>'))
                 dateRanges.push({ 'start': moment('<%= reserved.start_date %>'), 'end': moment('<%= reserved.end_date %>')})
               <% }) %>
 
@@ -187,11 +188,6 @@ crossorigin=""></script>
         }
     },
         function(start, end, label) {
-          startTxtField = document.getElementById("start_date");
-          endTxtField = document.getElementById("end_date");
-
-          startTxtField.setAttribute("value", start.format('YYYY-MM-DD'));
-          endTxtField.setAttribute("value", end.format('YYYY-MM-DD'));
           console.log("date: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
           
           });
