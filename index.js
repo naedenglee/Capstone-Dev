@@ -352,8 +352,8 @@ app.get("/sendmail", (req,res) => {
             host: "smtp.sendgrid.net",
             port: 465,
             auth: {
-                user: "apikey",
-                pass: "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"
+                user: process.env.NM_USERNAME,
+                pass: process.env.NM_PASSWORD
           },
         });
       
@@ -393,8 +393,8 @@ app.post("/emailform", (req,res) => {
             host: "smtp.sendgrid.net",
             port: 465,
             auth: {
-                user: "apikey",
-                pass: "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"
+                user: process.env.NM_USERNAME,
+                pass: process.env.NM_PASSWORD
           },
         });
       
