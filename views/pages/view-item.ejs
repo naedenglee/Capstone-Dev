@@ -85,7 +85,7 @@ crossorigin=""></script>
                     <form id="check_avail" method="post" action="/items/view/<%= result.rows[0].item_id %>/reserve">
                       <h4>Choose dates</h4>
                       <input type="text" id="daterange" name="daterange"/>                                    
-                      <button type="button" class="btna btna-info btna-lg" data-toggle="modal" data-target="#myModal">Check Availability</button>
+                      <button type="button" class="btna btna-info btna-lg" data-toggle="modal" data-target="#myModal" onclick="insertDate()">Check Availability</button>
 
                       <!-- MODAL -->
                       <!-- Modal -->
@@ -187,6 +187,10 @@ crossorigin=""></script>
         }
     },
         function(start, end, label) {
+          startTxtField = document.getElementById("start_date");
+          endTxtField = document.getElementById("end_date");
+          startTxtField.setAttribute("value", start.format('YYYY-MM-DD'));
+          endTxtField.setAttribute("value", end.format('YYYY-MM-DD'));
           console.log("date: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
           
           });
@@ -199,5 +203,9 @@ crossorigin=""></script>
        attribution: '© OpenStreetMap'
       }).addTo(map);
       var marker = L.marker([14.601, 121.0151]).addTo(map);
+
+      function insertDate(){
+
+      }
    </script>
 </html>
