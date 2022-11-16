@@ -378,7 +378,9 @@ app.get("/sendmail", (req,res) => {
 });
 
 app.get("/emailform", (req,res) => {
+    console.log(process.env.NM_PASSWORD)
     res.render('pages/try_emailform')
+    
 });
 
 app.post("/emailform", (req,res) => {
@@ -412,6 +414,7 @@ app.post("/emailform", (req,res) => {
       }
       
       main().catch(console.error);
+
 
 });
 
