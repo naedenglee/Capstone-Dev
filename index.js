@@ -470,7 +470,13 @@ app.post("/cart/remove/:cart_id", (req,res) =>{
     })
 });
 
+app.get("/dashboard", (req,res) => {
+    res.render('pages/dashboard_main')
+})
 
+app.get("/dashboard/orders", (req,res) => {
+    res.render('pages/dashboard_orders')
+})
 
 //logout
 app.get('/logout',function(req,res){
