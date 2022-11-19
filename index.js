@@ -474,7 +474,7 @@ app.get("/dashboard", (req,res) => {
     res.render('pages/dashboard_main')
 })
 
-app.get("/dashboard/orders", (req,res) => {
+app.get("/dashboard/rentals/ongoing", (req,res) => {
     res.render('pages/dashboard_orders')
 })
 
