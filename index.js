@@ -478,6 +478,18 @@ app.get("/dashboard/rentals/ongoing", (req,res) => {
     res.render('pages/dashboard_orders')
 })
 
+app.get("/dashboard/requests", (req,res) => {
+    res.render('pages/dashboard_requests')
+})
+
+app.get("/dashboard/requests/approved", (req,res) => {
+    res.render('pages/dashboard_requests_approved')
+})
+
+app.get("/dashboard/requests/denied", (req,res) => {
+    res.render('pages/dashboard_requests_denied')
+})
+
 //logout
 app.get('/logout',function(req,res){
     req.session = null
