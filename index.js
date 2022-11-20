@@ -417,19 +417,19 @@ app.post("/emailform", (req,res) => {
                       <tr>
                         <td style="padding: 40px 0px 0px;">
                           <div style="text-align: left;">
-                            <div style="padding-bottom: 20px;"><img src="https://i.ibb.co/Qbnj4mz/logo.png" alt="Company" style="width: 56px;"></div>
+                            <div style="padding-bottom: 20px;"><img src="/images/logo1.png" alt="Company" style="width: 56px;"></div>
                           </div>
                           <div style="padding: 20px; background-color: rgb(255, 255, 255);">
                             <div style="color: rgb(0, 0, 0); text-align: left;">
-                              <h1 style="margin: 1rem 0">Verification code</h1>
-                              <p style="padding-bottom: 16px">Please use the verification code below to sign in.</p>
+                              <h1 style="margin: 1rem 0">One-Time Password(OTP)</h1>
+                              <p style="padding-bottom: 16px">Please use the OTP code below to verify your account.</p>
                               <p style="padding-bottom: 16px"><strong style="font-size: 130%">${req.session.emailotp}</strong></p>
                               <p style="padding-bottom: 16px">If you didn’t request this, you can ignore this email.</p>
-                              <p style="padding-bottom: 16px">Thanks,<br>The Orbit team</p>
+                              <p style="padding-bottom: 16px">Thanks,<br>Mang-Hiram</p>
                             </div>
                           </div>
                           <div style="padding-top: 20px; color: rgb(153, 153, 153); text-align: center;">
-                            <p style="padding-bottom: 16px">Made with ♥ in Paris</p>
+                            <p style="padding-bottom: 16px">This is an automated message. Please do not reply.</p>
                           </div>
                         </td>
                       </tr>
