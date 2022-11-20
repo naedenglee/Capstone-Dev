@@ -424,7 +424,7 @@ app.post("/emailform", (req,res) => {
                               <h1 style="margin: 1rem 0">One-Time Password(OTP)</h1>
                               <p style="padding-bottom: 16px">Please use the OTP code below to verify your account.</p>
                               <p style="padding-bottom: 16px"><strong style="font-size: 130%">${req.session.emailotp}</strong></p>
-                              <p style="padding-bottom: 16px">If you didn’t request this, you can ignore this email.</p>
+                              <p style="padding-bottom: 16px">If you did not request this, you can ignore this email.</p>
                               <p style="padding-bottom: 16px">Thanks,<br>Mang-Hiram</p>
                             </div>
                           </div>
@@ -508,7 +508,7 @@ app.get("/dashboard", (req,res) => {
 })
 
 app.get("/dashboard/rentals/ongoing", (req,res) => {
-    res.render('pages/dashboard_orders')
+    res.render('pages/dashboard_rentals_ongoing')
 })
 
 app.get("/dashboard/requests", (req,res) => {
