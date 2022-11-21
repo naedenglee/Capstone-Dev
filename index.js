@@ -540,6 +540,26 @@ app.get("/dashboard/seller/requests/denied", (req,res) => {
 })
 
 app.get("/item/listing", (req,res) => {
+    var sqlQuery = { 
+        text: `SELECT is_verified FROM "public".profile WHERE account_id = $1`,
+        values: [            
+            req.session.user_id
+        ]
+    }
+
+    client.query(sqlQuery, (error, result) => {
+        if(error){
+            
+            console.log(error)
+            res.send(error)
+        }
+        else if(!error){
+            if(result.)
+        }
+    })
+
+
+
     res.render('pages/item_list')
 })
 
@@ -564,10 +584,9 @@ app.post("/item/listing", upload.single("imageFile"), async(req,res) => {
             console.log(error)
             res.send(error)
         }
-        else if(!error){
-            let {vitem_id} = result.rows[0]
+        else if(!error){            
 
-            if(vitem_id == null){ // DATABASE RETURNS vinventory_id NULL 
+            if(result.rows[0].is_verified == 0){ // DATABASE RETURNS vinventory_id NULL 
                 return res.send('Conflict Query')
             }
 
