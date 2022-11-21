@@ -524,7 +524,7 @@ app.get("/dashboard/seller/requests/denied", (req,res) => {
 })
 
 app.get("/item/listing", (req,res) => {
-    res.render('pages/item_list', { user:req.session.username, cart_count: req.session.cart_count, curency:req.session.currency })
+    res.render('pages/item_list', { user:req.session.username, cart_count: req.session.cart_count, currency:req.session.currency })
 })
 
 //logout
