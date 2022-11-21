@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+   <!-- favicon -->
+<link rel="shortcut icon" href="img/favlogo.ico" type="image/x-icon">
+<link rel="icon" href="img/favlogo.ico" type="image/x-icon">
+
+    <title>Mang Hiram</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="/assets/itemlist-forms.css">
+
+</head>
+<body>
+    <%- include ('navbar') -%>
+    <div class="container d-flex justify-content-center mt-50 mb-50 ms-10">
+        <h2 style="text-align: center; margin-bottom: 50px;"> New Listing</h2>
+        <form action="/tryUpload" method="post" enctype="multipart/form-data">
+        <h4 style="text-align: left;">Add photos</h4>
+        <div class="container-box">
+            <div class="wrapper">
+               <div class="image">
+                  <img src="" alt="">
+               </div>
+               <div class="content">
+                  <div class="icon" style="text-align: center;">
+                     <i class="fas fa-cloud-upload-alt"></i>
+                  </div>
+                  <div class="text">
+                     No file chosen, yet!
+                  </div>
+               </div>
+               <div id="cancel-btn">
+                  <i class="fas fa-times"></i>
+               </div>
+               <div class="file-name">
+                  File name here
+               </div>
+            </div>
+            <button type="button" onclick="defaultBtnActive()" id="custom-btn">Choose a file</button>
+            <input id="default-btn" id="imageFile" name="imageFile" type="file" hidden><br><br>
+            <!-- <button type="submit">Submit</button> -->
+            <h4 style="text-align: left;">Listing Title</h4>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Item Name" required>	
+            <h4 style="text-align: left;">Description</h4>
+            <input type="text" class="form-control" id="title" name="Description" placeholder="Description" required>	
+            <h4 style="text-align: left;">Category</h4>
+            <select class="form-select form-select-lg">
+                <option>Gowns & Suits</option>
+                <option>Musical Instrument</option>
+                <option>Tools</option>
+                <option>Books</option>
+                <option>Entertainment</option>
+                <option>Film/Photography</option>
+                <option>Drones</option>
+                <option>Projectors</option>
+                <option>Costumes</option>
+                <option>Camping Tents</option>
+                <option>Furnitures</option>
+            </select>
+            <h4 style="text-align: left; margin-top: 18px;">Rental Price (₱)</h4>
+            <input type="text" class="form-control" id="rentalprice" name="rentalprice" placeholder="Rental Price" required>	
+            <h4 style="text-align: left; margin-top: 18px;">Item Value (₱)</h4>
+            <input type="text" class="form-control" id="itemvalue" name="itemvalue" placeholder="Item Value" required>	
+            <h4 style="text-align: left; margin-top: 18px;">Quantity</h4>
+            <input type="text" class="form-control" id="Quantity" name="Quantity" placeholder="Quantity" required>	
+            <h4 style="text-align: left; margin-top: 18px;">Minimum rental days</h4>
+            <input type="text" class="form-control" id="min" name="min"  required>	
+            </div>
+        </form>
+    </div>
+    <div class="footer">
+
+    </div>
+    <script src="/assets/scripts/itemlist-forms.js"></script>
+</body>
+</html>

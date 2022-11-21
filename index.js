@@ -507,20 +507,24 @@ app.get("/dashboard", (req,res) => {
     res.render('pages/dashboard_main')
 })
 
-app.get("/dashboard/rentals/ongoing", (req,res) => {
+app.get("/dashboard/user/rentals/ongoing", (req,res) => {
     res.render('pages/dashboard_rentals_ongoing')
 })
 
-app.get("/dashboard/requests", (req,res) => {
+app.get("/dashboard/seller/requests", (req,res) => {
     res.render('pages/dashboard_requests')
 })
 
-app.get("/dashboard/requests/approved", (req,res) => {
+app.get("/dashboard/seller/requests/approved", (req,res) => {
     res.render('pages/dashboard_requests_approved')
 })
 
-app.get("/dashboard/requests/denied", (req,res) => {
+app.get("/dashboard/seller/requests/denied", (req,res) => {
     res.render('pages/dashboard_requests_denied')
+})
+
+app.get("/item/listing", (req,res) => {
+    res.render('pages/item_list')
 })
 
 //logout
