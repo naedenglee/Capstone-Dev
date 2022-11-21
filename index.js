@@ -5,11 +5,27 @@ const bcrypt = require('bcryptjs')
 const bodyParser = require('body-parser')
 const nodemailer = require('nodemailer')
 const otpGenerator = require('otp-generator')
+const multer = require('multer')
 var session = require('cookie-session')
 
 //for postgres
 const { Client } = require('pg')
 
+//for multer(image upload)
+const path = require('path')
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './views/images')
+    },
+    filename: (req, file, cb) => {
+        console.log(file)
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+const upload = multer({storage: storage})
+
+//
 const client = new Client({
     connectionString: process.env.DATABASE_URL,
     ssl: {
