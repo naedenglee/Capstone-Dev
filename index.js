@@ -524,7 +524,42 @@ app.get("/dashboard/seller/requests/denied", (req,res) => {
 })
 
 app.get("/item/listing", (req,res) => {
-    res.render('pages/item_list', { user:req.session.username, cart_count: req.session.cart_count, currency:req.session.currency })
+    res.render('pages/item_list')
+})
+
+app.post("/item/listing", upload.single("imageFile"), async(req,res) => {    
+    var sqlQuery = { 
+        text: `CALL item_insert($1, $2, $3, $4, $5, $6, $7, $8, NULL)`,
+        values: [
+            req.body.item_name, //HTML
+            req.body.category,
+            req.body.description, 
+            req.body.rental_rate, 
+            req.body.replacement_cost,
+            `/image/${req.file.filename}`,
+            req.body.quantity,
+            req.session.user_id
+        ]
+    }
+
+    client.query(`SET SCHEMA 'public'`)
+    client.query(sqlQuery, (error, result) => {
+        if(error){
+            console.log(error)
+            res.send(error)
+        }
+        else if(!error){
+            let {vitem_id} = result.rows[0]
+
+            if(vitem_id == null){ // DATABASE RETURNS vinventory_id NULL 
+                return res.send('Conflict Query')
+            }
+
+            else if(vitem_id != null){ // IF ACCOUNT DOES EXIST
+                return res.send('Success!')
+            }
+        }
+    })
 })
 
 //logout

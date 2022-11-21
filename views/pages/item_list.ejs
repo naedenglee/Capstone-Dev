@@ -16,10 +16,9 @@
 
 </head>
 <body>
-    <%- include ('navbar') -%>
     <div class="container d-flex justify-content-center mt-50 mb-50 ms-10">
         <h2 style="text-align: center; margin-bottom: 50px;"> New Listing</h2>
-        <form action="/tryUpload" method="post" enctype="multipart/form-data">
+        <form action="/item/listing" method="post" enctype="multipart/form-data">
         <h4 style="text-align: left;">Add photos</h4>
         <div class="container-box">
             <div class="wrapper">
@@ -45,11 +44,11 @@
             <input id="default-btn" id="imageFile" name="imageFile" type="file" hidden><br><br>
             <!-- <button type="submit">Submit</button> -->
             <h4 style="text-align: left;">Listing Title</h4>
-            <input type="text" class="form-control" id="title" name="title" placeholder="Item Name" required>	
+            <input type="text" class="form-control" id="title" name="item_name" placeholder="Item Name" required>	
             <h4 style="text-align: left;">Description</h4>
-            <input type="text" class="form-control" id="title" name="Description" placeholder="Description" required>	
+            <input type="text" class="form-control" id="title" name="description" placeholder="Description" required>	
             <h4 style="text-align: left;">Category</h4>
-            <select class="form-select form-select-lg">
+            <select class="form-select form-select-lg" name="category">
                 <option>Gowns & Suits</option>
                 <option>Musical Instrument</option>
                 <option>Tools</option>
@@ -62,15 +61,19 @@
                 <option>Camping Tents</option>
                 <option>Furnitures</option>
             </select>
-            <h4 style="text-align: left; margin-top: 18px;">Rental Price (₱)</h4>
-            <input type="text" class="form-control" id="rentalprice" name="rentalprice" placeholder="Rental Price" required>	
-            <h4 style="text-align: left; margin-top: 18px;">Item Value (₱)</h4>
-            <input type="text" class="form-control" id="itemvalue" name="itemvalue" placeholder="Item Value" required>	
+            <h4 style="text-align: left; margin-top: 18px;">Rental Price (per day) (₱)</h4>
+            <input type="text" class="form-control" id="rentalprice" name="rental_rate" placeholder="Rental Price" required>	
+            <!-- <h4 style="text-align: left; margin-top: 18px;">Item Value (₱)</h4>
+            <input type="text" class="form-control" id="itemvalue" name="itemvalue" placeholder="Item Value" required>	 -->
+            <h4 style="text-align: left; margin-top: 18px;">Replacement Cost (if item is damaged) (₱)</h4>
+            <input type="text" class="form-control" id="replacement_cost" name="replacement_cost" placeholder="Replacement Cost" required>	
             <h4 style="text-align: left; margin-top: 18px;">Quantity</h4>
-            <input type="text" class="form-control" id="Quantity" name="Quantity" placeholder="Quantity" required>	
+            <input type="number" class="form-control" id="Quantity" name="quantity" placeholder="Quantity" min="1" required>	
             <h4 style="text-align: left; margin-top: 18px;">Minimum rental days</h4>
-            <input type="text" class="form-control" id="min" name="min"  required>	
+            <input type="number" class="form-control" id="min" name="min" min="1" required>	
             </div>
+            <button type="submit" id="custom-btn">Post</button> 
+            <a style="text-decoration:none;" href="/"><button type="button" id="custom-btn">Cancel</button></a>
         </form>
     </div>
     <div class="footer">
