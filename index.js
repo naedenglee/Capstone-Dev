@@ -7,13 +7,13 @@ const nodemailer = require('nodemailer')
 const otpGenerator = require('otp-generator')
 const multer = require('multer')
 var session = require('cookie-session')
+const cloudinary = require('cloudinary').v2
 
 //for postgres
 const { Client } = require('pg')
 
 //for multer(image upload)
 const path = require('path')
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, '/views/images')
@@ -24,6 +24,14 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({storage: storage})
+
+// CLOUDINARY (UPLOAD)
+cloudinary.config({ 
+    cloud_name: 'ddk9lffn7', 
+    api_key: '646917413963653', 
+    api_secret: 'ptjD8QM9epsZPnkBPX_mRC7JF-Y',
+    secure: true 
+  });
 
 //
 const client = new Client({
@@ -640,7 +648,34 @@ app.get("/item/listing", (req,res) => {
     
 })
 
-app.post("/item/listing", upload.single("imageFile"), async(req,res) => {    
+app.post("/item/listing", upload.single("imageFile"), async(req,res) => {   
+    //cloudinary upload function 
+    const uploadImage = async (imagePath) => {
+
+        // Use the uploaded file's name as the asset's public ID and 
+        // allow overwriting the asset with new versions
+        const options = {
+          use_filename: true,
+          unique_filename: false,
+          overwrite: true,
+        };
+    
+        try {
+          // Upload the image
+          const result = await cloudinary.uploader.upload(imagePath, options);
+          console.log(result);
+          return result.secure_url;
+        } catch (error) {
+          console.error(error);
+        }
+    };
+
+    const imagePath = req.file.path;
+
+    // Upload the image
+    const imageUrl = await uploadImage(imagePath);
+    console.log(imageUrl)
+
     var sqlQuery = { 
         text: `CALL item_insert($1, $2, $3, $4, $5, $6, $7, $8, NULL)`,
         values: [
@@ -649,7 +684,7 @@ app.post("/item/listing", upload.single("imageFile"), async(req,res) => {
             req.body.description, 
             req.body.rental_rate, 
             req.body.replacement_cost,
-            `/image/${req.file.filename}`,
+            imageUrl,
             req.body.quantity,
             req.session.user_id
         ]
