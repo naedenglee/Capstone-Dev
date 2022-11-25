@@ -646,6 +646,7 @@ app.get("/item/listing", (req,res) => {
 
 app.post("/item/listing", async(req,res) => {   
     //cloudinary upload function 
+    console.log(req.body.imageFileb64)
     const uploadImage = async (imagePath) => {
 
         // Use the uploaded file's name as the asset's public ID and 
