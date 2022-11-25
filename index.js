@@ -47,7 +47,7 @@ app.use(session({
     keys: ['key1', 'key2']
 }))
 
-app.use(bodyParser.urlencoded({ extended: false}))
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb'}))
 app.set('trust proxy', 1)
 
 
