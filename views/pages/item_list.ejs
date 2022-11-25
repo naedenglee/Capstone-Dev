@@ -18,7 +18,7 @@
 <body>
     <div class="container d-flex justify-content-center mt-50 mb-50 ms-10">
         <h2 style="text-align: center; margin-bottom: 50px;"> New Listing</h2>
-        <form action="/item/listing" method="post" enctype="multipart/form-data">
+        <form action="/item/listing" method="post">
         <h4 style="text-align: left;">Add photos</h4>
         <div class="container-box">
             <div class="wrapper">
@@ -41,7 +41,8 @@
                </div>
             </div>
             <button type="button" onclick="defaultBtnActive()" id="custom-btn">Choose a file</button>
-            <input id="default-btn" id="imageFile" name="imageFile" type="file" hidden><br><br>
+            <input id="imageFile" name="imageFile" type="file" hidden><br><br>
+            <input type="hidden" id="imageFileb64" name="imageFileb64">
             <!-- <button type="submit">Submit</button> -->
             <h4 style="text-align: left;">Listing Title</h4>
             <input type="text" class="form-control" id="title" name="item_name" placeholder="Item Name" required>	
@@ -82,4 +83,20 @@
     </div>
     <script src="/assets/scripts/itemlist-forms.js"></script>
 </body>
+
+<script>
+   function readFile() { 
+      if (!this.files || !this.files[0]) return;         
+      const FR = new FileReader();
+         
+      FR.addEventListener("load", function(evt) {
+         document.querySelector("#imageFileb64").value = evt.target.result;
+      });          
+      FR.readAsDataURL(this.files[0]);      
+      }
+
+      document.querySelector("#imageFile").addEventListener("change", readFile);
+</script>
+
+
 </html>
