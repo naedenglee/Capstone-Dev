@@ -1,4 +1,4 @@
-const pool = require('../model/database.js')
+const {pool} = require('../model/database.js')
 
 var getProfile = async (req,res, next)=>{
     try{
