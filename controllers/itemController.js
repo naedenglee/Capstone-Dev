@@ -7,7 +7,11 @@ var allItemView = async (req, res, next)=> {
         var user = req.session.username
         var cart_count = req.session.cart_count
         var currency = req.session.currency
+<<<<<<< HEAD
         await pool.query(`SET SCHEMA 'public'`)
+=======
+        await pool.query(`SET SCHEMA 'test'`)
+>>>>>>> 8de1b8c (lee-test try)
         const rows = await pool.query('SELECT * FROM item')
         res.render('pages/item-page', { result:rows.rows, user, cart_count, currency })
     }
