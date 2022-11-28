@@ -2,7 +2,7 @@ const client = require('../model/database.js')
 
 var getProfile = async (req,res, next)=>{
     try{
-        await pool.query(`SET SCHEMA 'test'`)
+        await pool.query(`SET SCHEMA 'public'`)
         await pool.query(`SELECT * FROM seller_info WHERE seller_user = $(1)`, [req.params.username])
     }
     catch(ex){

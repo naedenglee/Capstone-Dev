@@ -19,7 +19,7 @@ var login = async (req, res, next) =>{
             values: [req.body.user, req.body.pass]
         }
 
-        await pool.query(`SET SCHEMA 'test'`)
+        await pool.query(`SET SCHEMA 'public'`)
         const result = await pool.query(sqlQuery)
         let {vid} = result.rows[0]
 
@@ -95,7 +95,7 @@ var signup = async(req, res, next) =>{
                         req.body.lName, req.body.bday, 
                         req.body.phone_num]
             }
-            await pool.query(`SET SCHEMA 'test'`)
+            await pool.query(`SET SCHEMA 'public'`)
             const result = await pool.query(sqlQuery)
             let {vaccount_id} = result.rows[0]
             if(vaccount_id != null){ // IF NOT NULL THEN SUCCESS

@@ -7,7 +7,7 @@ var allItemView = async (req, res, next)=> {
         var user = req.session.username
         var cart_count = req.session.cart_count
         var currency = req.session.currency
-        await pool.query(`SET SCHEMA 'test'`)
+        await pool.query(`SET SCHEMA 'public'`)
         const rows = await pool.query('SELECT * FROM item')
         res.render('pages/item-page', { result:rows.rows, user, cart_count, currency })
     }
@@ -29,7 +29,7 @@ var addCart = async (req, res, next)=> {
             res.redirect('/')
         }
         if(user){
-            await pool.query(`SET SCHEMA 'test'`)
+            await pool.query(`SET SCHEMA 'public'`)
             const rows = await pool.query(`SELECT item_id FROM cart WHERE username = ($1) AND item_id = ($2)`,[user, item_id])
             if(rows.length){
                 console.log('Item is already in the cart!')
@@ -65,7 +65,7 @@ var viewItem = async  (req, res, next)=>{
             values: [req.params.id]
         }
 
-        await pool.query(`SET SCHEMA 'test'`)
+        await pool.query(`SET SCHEMA 'public'`)
         const result = await pool.query(sqlQuery)
 
         let {item_id, account_id, item_quantity, 
@@ -94,7 +94,7 @@ var viewItem = async  (req, res, next)=>{
 var itemReservation = async (req, res, send) =>{
 
     try{
-        pool.query(`SET SCHEMA 'test'`)
+        pool.query(`SET SCHEMA 'public'`)
         const result = await pool.query(`SELECT inventory_id FROM inventory WHERE item_id = ($1)`, [req.params.id])
         let {inventory_id} = result.rows[0]
         var sqlQuery = {

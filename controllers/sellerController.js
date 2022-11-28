@@ -18,7 +18,7 @@ var sellerInsert = async (req, res, next)=>{
             ]
         }
 
-        await pool.query(`SET SCHEMA 'test'`)
+        await pool.query(`SET SCHEMA 'public'`)
         const result = await pool.query(sqlQuery)
         let {vitem_id} = result.rows[0]
 
