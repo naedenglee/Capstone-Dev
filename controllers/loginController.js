@@ -1,4 +1,4 @@
-const client = require('../model/database.js')
+const pool = require('../model/database.js')
 const bcrypt = require('bcryptjs')
 
 var home = (req, res, next) =>{
