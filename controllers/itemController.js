@@ -38,16 +38,16 @@ var addCart = async (req, res, next)=> {
             else if(rows.length == 0){
                 const rows = await pool.query(`INSERT INTO cart VALUES(($1),($2), 1)`,[user, item_id])
                 req.session.cart_count += 1
-                res.redirect('/items')
             }
         }
     }
     catch(ex){
-        console.log(`addCart Select query error ${error}`)
+        console.log(`addCart Select query error ${ex}`)
     }
     finally{
-        next()
         pool.release
+        res.redirect('/items')
+        next()
     }
 }
 
