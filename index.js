@@ -10,6 +10,7 @@ const cartRoute = require('./routes/cart.js')
 const emailRoute = require('./routes/email.js')
 var session = require('cookie-session')
 const app = express()
+var test = "TESTING GIT"
 
 let port = process.env.PORT || 4200
 app.listen(port, () => {
