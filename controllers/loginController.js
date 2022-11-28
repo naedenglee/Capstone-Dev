@@ -59,8 +59,6 @@ var login = async (req, res, next) =>{
                         currency = req.session.currency
                         req.session.currency = result3.rows[0].user_currency
                         req.session.user_id = vid
-                        res.redirect('/')
-                        next()
             }
         }
     }
@@ -69,6 +67,8 @@ var login = async (req, res, next) =>{
     }
     finally{
         pool.release
+        res.redirect('/')
+        next()
     }
 }
 
