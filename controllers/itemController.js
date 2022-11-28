@@ -22,7 +22,7 @@ var allItemView = async (req, res, next)=> {
 
 var addCart = async (req, res, next)=> {
     try{
-        let user = req.session.username
+        let user = req.session.user_id
         let item_id= req.body.addtocart
         message = 0
         if(!user){
@@ -30,7 +30,7 @@ var addCart = async (req, res, next)=> {
         }
         if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const rows = await pool.query(`SELECT item_id FROM cart WHERE username = ($1) AND item_id = ($2)`,[user, item_id])
+            const rows = await pool.query(`SELECT item_id FROM cart WHERE account_id = ($1) AND item_id = ($2)`,[user, item_id])
             if(rows.length){
                 console.log('Item is already in the cart!')
                 res.redirect('/items')
