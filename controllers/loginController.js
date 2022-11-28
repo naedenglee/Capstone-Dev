@@ -1,4 +1,4 @@
-const pool = require('../model/database.js')
+const {pool} = require('../model/database.js')
 const bcrypt = require('bcryptjs')
 
 var home = (req, res, next) =>{
@@ -60,6 +60,7 @@ var login = async (req, res, next) =>{
                         req.session.currency = result3.rows[0].user_currency
                         req.session.user_id = vid
                         res.redirect('/')
+                        next()
             }
         }
     }
