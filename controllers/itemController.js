@@ -22,7 +22,7 @@ var allItemView = async (req, res, next)=> {
 
 var addCart = async (req, res, next)=> {
     try{
-        let user = req.session.user_id
+        let user = req.session.username
         let item_id= req.body.addtocart
         message = 0
         if(!user){
