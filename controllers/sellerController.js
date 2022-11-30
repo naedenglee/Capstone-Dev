@@ -1,6 +1,41 @@
 const {pool} = require('../model/database.js')
+const cloudinary = require('cloudinary').v2
+
+cloudinary.config({ 
+    cloud_name: 'ddk9lffn7', 
+    api_key: '646917413963653', 
+    api_secret: 'ptjD8QM9epsZPnkBPX_mRC7JF-Y',
+    secure: true 
+  });
 
 var sellerInsert = async (req, res, next)=>{
+
+    const uploadImage = async (imagePath) => {
+
+        // Use the uploaded file's name as the asset's public ID and 
+        // allow overwriting the asset with new versions
+        const options = {
+            use_filename: true,
+            unique_filename: false,
+            overwrite: true,
+            folder:'mang-hiram-seller-pictures'
+        };
+    
+        try {
+            // Upload the image
+            const result = await cloudinary.uploader.upload(imagePath, options);
+            console.log(result);
+            return result.secure_url;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const imagePath = req.body.imageFileb64;
+
+    // Upload the image
+    const imageUrl = await uploadImage(imagePath);
+    console.log(imageUrl)
 
     try{
         req.session.user = 1
@@ -12,7 +47,7 @@ var sellerInsert = async (req, res, next)=>{
                 req.body.description, 
                 req.body.rental_rate, 
                 req.body.replacement_cost,
-                req.body.image_path,
+                imageUrl,
                 req.body.quantity,
                 req.session.user
             ]
@@ -26,17 +61,20 @@ var sellerInsert = async (req, res, next)=>{
             return res.send('Conflict Query')
         }
         else if(vitem_id != null){ // IF ACCOUNT DOES EXIST
-            return res.send('Success!')
+            res.redirect('/')
         }
     }
     catch(ex){
         console.log(`SellerInsert Error ${ex}`)
     }
     finally{
-        pool.releae
+        pool.release
         next()
     }
 }
+
+
+
 
 module.exports = {
     sellerInsert
