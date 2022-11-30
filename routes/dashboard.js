@@ -5,7 +5,7 @@ router.get("/", (req,res) => {
     res.render('pages/dashboard_main')
 })
 
-router.get("/rentals/ongoing", (req,res) => {
+router.get("/seller/rentals/ongoing", (req,res) => {
     res.render('pages/dashboard_rentals_ongoing')
 })
 

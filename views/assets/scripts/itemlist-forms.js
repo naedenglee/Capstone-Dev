@@ -1,6 +1,6 @@
 const wrapper = document.querySelector(".wrapper");
             const fileName = document.querySelector(".file-name");
-            const defaultBtn = document.querySelector("#default-btn");
+            const defaultBtn = document.querySelector("#imageFile");
             const customBtn = document.querySelector("#custom-btn");
             const cancelBtn = document.querySelector("#cancel-btn i");
             const img = document.querySelector("img");
