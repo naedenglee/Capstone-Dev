@@ -28,7 +28,7 @@ var getCart = async (req, res, next) =>{
 }
 
 
-var removeCart = async (req, res, send) =>{
+var removeCart = async (req, res, next) =>{
     try{
         var sqlQuery = {
             text: `DELETE FROM "public".cart WHERE cart_id = $1`,

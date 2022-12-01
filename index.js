@@ -1,4 +1,5 @@
 const express = require('express')
+const app = express()
 const axios = require('axios')
 const bodyParser = require('body-parser')
 const userRoute = require('./routes/user.js')
@@ -9,7 +10,6 @@ const profileRoute = require('./routes/profile.js')
 const cartRoute = require('./routes/cart.js')
 const emailRoute = require('./routes/email.js')
 var session = require('cookie-session')
-const app = express()
 
 let port = process.env.PORT || 4200
 app.listen(port, () => {
@@ -24,7 +24,7 @@ app.use(express.static('views'))
 app.use(bodyParser.json());
 app.use(session({
     name: 'session',
-    keys: ['key1', 'key2']
+    keys: ['key1', 'key2', 'key3']
 }))
 
 app.use('/', userRoute)

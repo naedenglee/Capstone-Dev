@@ -34,7 +34,7 @@
 		<div class="dash-content">
             <div class="overview">
                 <div class="title">
-			<h1 class="title">Your Ongoing Rentals</h1>
+			<h1 class="title">Ongoing Rentals (For Lessors)</h1>
 			</div>
 		<div class="boxes"  style="overflow-x:auto;">
             <table class="table table-bordered">
@@ -66,13 +66,16 @@
                     <td class="startdate">November 4, 2022 12:00:00AM</td>
                     <td class="enddate">November 7, 2022 12:00:00PM</td>
                     <td class="action"><div class="p-1">
-                    <% if(status == 1){ %>
-                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="1" data-id="1" onclick="updateBtnFunc(12)">Item Received</button><br>
-                    <% } else if(status == 2) { %>
-                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="2" data-id="1" onclick="updateBtnFunc(12)">Item Delivered Back to Lessor</button><br>
-                    <% } else { %>
-                        <span>No Available Action</span>
-                    <% } %>
+                        <% if(status == null){ %>
+                            <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="0" data-id="1" onclick="updateBtnFunc(12)">Item Delivered to Client</button><br>
+                        <% } else if(status == 3) { %>
+                            <button class="btn btn-primary button-1"data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="3" data-id="2" onclick="updateBtnFunc(12)">Item Returned</button><br>
+                        <% } else if(status == 4){ %>
+                          <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#finishTransactionModal" id="buttonVal" value="4" data-id="2" onclick="updateBtnFunc(12)" data-id="1">Release Funds(Security Deposit)</button><br>
+                            <button class="btn btn-primary button-1" data-id="1">Damaged Item</button><br>
+                        <% } else { %>
+                            <span>No Available Action</span>
+                        <% } %>
                       <p id="status" class="py-1"></p>
                     </div></td>
                   </tr>
@@ -88,10 +91,13 @@
                     <td class="startdate">November 8, 2022 12:00:00AM</td>
                     <td class="enddate">November 10, 2022 12:00:00PM</td>
                     <td class="action"><div class="p-1">
-                      <% if(status == 1){ %>
-                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="1" data-id="1" onclick="updateBtnFunc(13)">Item Received</button><br>
-                      <% } else if(status == 2) { %>
-                          <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="2"data-id="1" onclick="updateBtnFunc(13)">Item Delivered Back to Lessor</button><br>
+                      <% if(status == null){ %>
+                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="0" data-id="1" onclick="updateBtnFunc(13)">Item Delivered to Client</button><br>
+                    <% } else if(status == 3) { %>
+                        <button class="btn btn-primary button-1"data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="3" data-id="2" onclick="updateBtnFunc(13)">Item Returned</button><br>
+                      <% } else if(status == 4){ %>
+                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#finishTransactionModal" id="buttonVal" value="4" data-id="2" onclick="updateBtnFunc(13)" data-id="1">Release Funds(Security Deposit)</button><br>
+                        <button class="btn btn-primary button-1" data-id="1">Damaged Item</button><br>
                       <% } else { %>
                           <span>No Available Action</span>
                       <% } %>
@@ -110,10 +116,13 @@
                     <td class="startdate">November 20, 2022 12:00:00AM</td>
                     <td class="enddate">November 28, 2022 12:00:00PM</td>
                     <td class="action"><div class="p-1">
-                      <% if(status == 1){ %>
-                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" data-id="1" onclick="updateBtnFunc(14)" value="1">Item Received</button><br>
-                      <% } else if(status == 2) { %>
-                          <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" data-id="1" onclick="updateBtnFunc(14)" value="2">Item Delivered Back to Lessor</button><br>
+                      <% if(status == null){ %>
+                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="0" data-id="1" onclick="updateBtnFunc(13)">Item Delivered to Client</button><br>
+                    <% } else if(status == 3) { %>
+                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="3" data-id="2" onclick="updateBtnFunc(13)">Item Returned</button><br>
+                      <% } else if(status == 4){ %>
+                          <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#finishTransactionModal" id="buttonVal" value="4" data-id="2" onclick="updateBtnFunc(13)" data-id="1">Release Funds(Security Deposit)</button><br>
+                          <button class="btn btn-primary button-1" data-id="1">Damaged Item</button><br>
                       <% } else { %>
                           <span>No Available Action</span>
                       <% } %>
@@ -124,7 +133,7 @@
 		</div>
 	</section>
 
-  <!-- MODAL -->
+  <!-- UPDATE MODAL -->
   <form action="/tryTable" method="post">
     <div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-labelledby="updateConfirmModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -147,6 +156,30 @@
     </div>      
   </form>
 
+  <!-- FINISHING OF TRANSACTION MODAL -->
+  <form action="/tryTable" method="post">
+    <div class="modal fade" id="finishTransactionModal" tabindex="-1" aria-labelledby="finishTransactionModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateConfirmModalLabel">Rental End</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            The item for rental ID number <span id="orderNum" value=""></span> has been returned successfully. Release the security deposit now?
+            <input type="hidden" name="buttonVal" id="buttonValModal" value="">
+            <input type="hidden" name="orderId" id="reservationIdHidden" value="">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-primary">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>      
+  </form>
+
+
 	<script src="/assets/scripts/dashboard_orders.js"></script>
 </body>
 
@@ -165,4 +198,5 @@
         reservationId.setAttribute("value", num);
     }
 </script>
+
 </html>

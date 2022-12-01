@@ -5,19 +5,31 @@ router.get("/", (req,res) => {
     res.render('pages/dashboard_main')
 })
 
-router.get("/rentals/ongoing", (req,res) => {
-    res.render('pages/dashboard_rentals_ongoing')
+router.get("/user/rentals/ongoing", (req,res) => {
+    res.render('pages/dashboard_user_rentals_ongoing')
 })
 
-router.get("/requests", (req,res) => {
+router.get("/user/rentals/finished", (req,res) => {
+    res.render('pages/dashboard_user_rentals_finished')
+})
+
+router.get("/lessor/rentals/ongoing", (req,res) => {
+    res.render('pages/dashboard_lessor_rentals_ongoing')
+})
+
+router.get("/lessor/rentals/finished", (req,res) => {
+    res.render('pages/dashboard_lessor_rentals_finished')
+})
+
+router.get("/lessor/requests", (req,res) => {
     res.render('pages/dashboard_requests')
 })
 
-router.get("/requests/approved", (req,res) => {
+router.get("/lessor/requests/approved", (req,res) => {
     res.render('pages/dashboard_requests_approved')
 })
 
-router.get("/requests/denied", (req,res) => {
+router.get("/lessor/requests/denied", (req,res) => {
     res.render('pages/dashboard_requests_denied')
 })
 

@@ -1,4 +1,4 @@
-const pool = require('../model/database.js')
+const {pool} = require('../model/database.js')
 
 var getProfile = async (req,res, next)=>{
     try{
@@ -15,6 +15,23 @@ var getProfile = async (req,res, next)=>{
     }
 }
 
+var setRating = async(req, res, next) => {
+    try{
+        await pool.query(`SET SCHEMA 'public'`)
+        await pool.query(`INSERT INTO <<tablename>>(item_id, rating, comment)`, [req.body.comment, req.body.rating, req.body.item_id])
+    }
+    catch(ex){
+        console.log(`setRate Error ${ex}`)
+    }
+    finally{
+        pool.release
+        res.redirect('/dashboard')
+        next()
+    }
+}
+
+
 module.exports = {
-    getProfile
+    getProfile,
+    setRating
 }

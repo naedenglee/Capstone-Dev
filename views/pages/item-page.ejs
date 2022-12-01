@@ -87,6 +87,7 @@
             <p class="Item-Description" style="white-space: pre-wrap;" >Description: <%= item.item_description %><br> Rate: <%= item.rental_rate %><br> Owner: </p>
             </a>
             <form method="post" action="/items">
+              <input type="hidden" name="itemId" value="<%= item.item_id %>">
               <button name="addtocart" type="submit" value="<%= item.item_id %>">Add To Cart</button>
             </form>
           </div>

@@ -1,13 +1,15 @@
-const pool = require('../model/database.js')
+const {pool} = require('../model/database.js')
 const bcrypt = require('bcryptjs')
 
 var home = (req, res, next) =>{
-    var user = req.session.username;
-    var cart_count = req.session.cart_count
     var user_id = req.session.userid
-    var currency = req.session.currency
 
-    res.render('pages/homepage', { user, cart_count, currency })
+    res.render('pages/homepage', 
+    { 
+        user:req.session.username, 
+        cart_count:req.session.cart_count, 
+        currency:req.session.currency 
+    })
 }
 
 
@@ -51,7 +53,6 @@ var login = async (req, res, next) =>{
 
                 const result2 = await pool.query(cartQuery)
                 req.session.cart_count = result2.rows.length
-                console.log(vid)
 
                 const result3 = await pool.query(currencyQuery)
                         console.log('GOOD WALLET QUERY')                
