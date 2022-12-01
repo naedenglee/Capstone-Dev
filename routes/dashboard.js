@@ -14,11 +14,11 @@ router.get("/user/rentals/finished", (req,res) => {
 })
 
 router.get("/lessor/rentals/ongoing", (req,res) => {
-    res.render('pages/dashboard_lessor_rentals_ongoing')
+    res.render('pages/dashboard_owner_rentals_ongoing')
 })
 
 router.get("/lessor/rentals/finished", (req,res) => {
-    res.render('pages/dashboard_lessor_rentals_finished')
+    res.render('pages/dashboard_owner_rentals_finished')
 })
 
 router.get("/lessor/requests", (req,res) => {
