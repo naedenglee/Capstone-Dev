@@ -18,7 +18,12 @@ app.listen(port, () => {
 
 
 app.set('trust proxy', 1)
-app.set('view engine', 'ejs') //view engine (EJS)
+// app.set('view engine', 'ejs') //view engine (EJS)
+app.set('views', path.join(__dirname, 'views'));
+
+// Set view engine as EJS
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
 app.use(express.static('views'))
 app.use(bodyParser.json());
