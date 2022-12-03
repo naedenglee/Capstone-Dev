@@ -20,7 +20,7 @@ app.listen(port, () => {
 
 app.set('trust proxy', 1)
 // app.set('view engine', 'ejs') //view engine (EJS)
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join('./', 'views'));
 
 // Set view engine as EJS
 app.engine('html', require('ejs').renderFile);
