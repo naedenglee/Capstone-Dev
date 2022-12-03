@@ -20,10 +20,6 @@ app.listen(port, () => {
 app.set('trust proxy', 1)
 app.set('view engine', 'ejs') //view engine (EJS)
 
-
-// Set view engine as EJS
-app.set('view engine', 'html');
-
 app.use(express.static('views'))
 app.use(bodyParser.json());
 app.use(session({
@@ -40,5 +36,5 @@ app.use('/cart', cartRoute)
 app.use('/email', emailRoute)
 
 process.on('unhandledRejection', function(reason, promise) {
-    console.log(promise)
+    console.log(promise);
 });
