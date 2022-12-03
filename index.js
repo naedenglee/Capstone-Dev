@@ -36,5 +36,5 @@ app.use('/cart', cartRoute)
 app.use('/email', emailRoute)
 
 process.on('unhandledRejection', function(reason, promise) {
-    console.log(promise);
+    console.log(promise)
 });
