@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 var home = (req, res, next) =>{
     var user_id = req.session.userid
 
-    res.render('pages/homepage.ejs', 
+    res.render('pages/homepage', 
     { 
         user:req.session.username, 
         cart_count:req.session.cart_count, 
