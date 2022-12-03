@@ -9,7 +9,6 @@ const dashboardRoute = require('./routes/dashboard.js')
 const profileRoute = require('./routes/profile.js')
 const cartRoute = require('./routes/cart.js')
 const emailRoute = require('./routes/email.js')
-const path = require('path')
 var session = require('cookie-session')
 
 let port = process.env.PORT || 4200
@@ -19,16 +18,13 @@ app.listen(port, () => {
 
 
 app.set('trust proxy', 1)
-// app.set('view engine', 'ejs') //view engine (EJS)
-app.set('views', path.join(__dirname, './views'));
+app.set('view engine', 'ejs') //view engine (EJS)
 
-app.set('view engine', 'html');
 
 // Set view engine as EJS
-app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
-
-// app.use(express.static('views'))
+app.use(express.static('views'))
 app.use(bodyParser.json());
 app.use(session({
     name: 'session',
