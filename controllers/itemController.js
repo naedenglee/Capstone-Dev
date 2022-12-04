@@ -113,7 +113,6 @@ var viewItem = async  (req, res, next)=>{
 }
 
 var itemReservation = async (req, res, next) =>{
-
     try{
         pool.query(`SET SCHEMA 'public'`)
         const result = await pool.query(`SELECT inventory_id FROM inventory WHERE item_id = ($1)`, [req.params.id])
