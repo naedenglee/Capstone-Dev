@@ -1,14 +1,22 @@
 
-const {pool} = require('../model/database.js')
+const {pool, redisClient, getOrSetCache} = require('../model/database.js')
+
 
 //availability(reservation calendar)
 var allItemView = async (req, res, next)=> {
     try{
+        const item_id = req.query.item_id
         await pool.query(`SET SCHEMA 'public'`)
-        const rows = await pool.query('SELECT * FROM item')
+        const rows = await getOrSetCache(`data`, async () =>{
+            const data = await pool.query('SELECT * FROM item')
+            console.log(data)
+            return data
+        })
+        const results = rows.rows
+        //console.log(results)
         res.render('pages/item-page', 
         { 
-            result:rows.rows, 
+            result:results, 
             user:req.session.username, 
             cart_count:req.session.cart_count, 
             currency:req.session.currency
@@ -23,7 +31,48 @@ var allItemView = async (req, res, next)=> {
     }
 }
 
-var addCart = async (req, res, next)=> {
+var viewItem = async  (req, res, next)=>{ // Product Detail View
+   
+    try{
+        var sqlQuery = {
+            text: `SELECT * FROM view_item($1)`, //item id ang hinahanap
+            values:[req.params.id] 
+        }
+
+        var sqlQuery2 = {
+            text: `SELECT * FROM check_available($1)`, //item id ang hanap
+            values: [req.params.id]
+        }
+
+        await pool.query(`SET SCHEMA 'public'`)
+
+        const result = await getOrSetCache(`view`, async () =>{
+            const view = await pool.query(sqlQuery)
+            return view
+        })
+
+        const dates = await getOrSetCache(`date`, async () =>{
+            const date = await pool.query(sqlQuery2)
+            return date
+        })
+
+        res.render('pages/view-item',
+        {   result, user:req.session.username, 
+            result_date:dates.rows, 
+            cart_count:req.session.cart_count, 
+            currency:req.session.currency
+        })
+    }
+    catch(ex){
+        console.log(`viewItem error ${ex}`)
+    }
+    finally{
+        pool.release
+        next()
+    }
+}
+
+var addCart = async (req, res, next)=> { //Product Adds to Basket
     try{
         let user = req.session.user_id
         let item_id= req.body.itemId
@@ -57,46 +106,7 @@ var addCart = async (req, res, next)=> {
 }
 
 
-var viewItem = async  (req, res, next)=>{
-   
-    try{
-        var sqlQuery = {
-            text: `SELECT * FROM view_item($1)`, //item id ang hinahanap
-            values:[req.params.id] 
-        }
-
-        var sqlQuery2 = {
-            text: `SELECT * FROM check_available($1)`, //item id ang hanap
-            values: [req.params.id]
-        }
-
-        await pool.query(`SET SCHEMA 'public'`)
-        const result = await pool.query(sqlQuery)
-
-        let {
-                item_id, account_id, item_quantity, 
-                item_name, item_category, item_description, 
-                rental_rate, replacement, cost, date_posted, image_path
-            } = result.rows[0]
-
-        const dates = await pool.query(sqlQuery2)
-        res.render('pages/view-item',
-        {   result, user:req.session.username, 
-            result_date:dates.rows, 
-            cart_count:req.session.cart_count, 
-            currency:req.session.currency
-        })
-    }
-    catch(ex){
-        console.log(`viewItem error ${ex}`)
-    }
-    finally{
-        pool.release
-        next()
-    }
-}
-
-var itemReservation = async (req, res, next) =>{
+var itemReservation = async (req, res, next) =>{ // Product Reservation
 
     try{
         pool.query(`SET SCHEMA 'public'`)
