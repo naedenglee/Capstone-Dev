@@ -9,6 +9,7 @@ const dashboardRoute = require('./routes/dashboard.js')
 const profileRoute = require('./routes/profile.js')
 const cartRoute = require('./routes/cart.js')
 const emailRoute = require('./routes/email.js')
+const errorRoute = require('./routes/errorRoute.js')
 var session = require('cookie-session')
 
 let port = process.env.PORT || 4200
@@ -34,6 +35,7 @@ app.use('/dashboard', dashboardRoute)
 app.use('/profile', profileRoute)
 app.use('/cart', cartRoute)
 app.use('/email', emailRoute)
+app.use('*', errorRoute)
 
 process.on('unhandledRejection', function(reason, promise) {
     console.log(promise);
