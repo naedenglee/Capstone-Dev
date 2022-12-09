@@ -3,7 +3,7 @@ const {pool} = require('../model/database.js')
 var viewMainDashboard = async(req, res, next) => {
     try{
         if(!user){
-            res.render('/pages/error401')
+            res.render('pages/error401')
         }    
         else if(user){
             res.render('pages/dashboard/dashboard_main')
