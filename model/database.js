@@ -3,7 +3,9 @@
 //const { Client } = require('pg')
 const { Pool } = require('pg')
 const Redis = require('ioredis')
-const redisClient = Redis.createClient()
+const redisClient = Redis.createClient({
+    url: process.env.REDIS_DB,
+})
 require('dotenv').config()
 
 //const pool = new Pool({
