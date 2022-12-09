@@ -6,13 +6,18 @@ var allItemView = async (req, res, next)=> {
     try{
         await pool.query(`SET SCHEMA 'public'`)
         const rows = await pool.query('SELECT * FROM item')
-        res.render('pages/item-page', 
-        { 
-            result:rows.rows, 
-            user:req.session.username, 
-            cart_count:req.session.cart_count, 
-            currency:req.session.currency
-        })
+        if(rows.length == 0){
+            res.status(404).render('pages/error404')
+        }
+        else if(rows){
+            res.render('pages/item-page', 
+            { 
+                result:rows.rows, 
+                user:req.session.username, 
+                cart_count:req.session.cart_count, 
+                currency:req.session.currency
+            })
+        }        
     }
     catch(ex){
         console.log(`allItemView Error ${ex}`)
@@ -114,22 +119,45 @@ var viewItem = async  (req, res, next)=>{
 
 var itemReservation = async (req, res, next) =>{
     try{
-        pool.query(`SET SCHEMA 'public'`)
-        const result = await pool.query(`SELECT inventory_id FROM inventory WHERE item_id = ($1)`, [req.params.id])
-        let {inventory_id} = result.rows[0]
-        var sqlQuery = {
-            text: `CALL check_reservation($1, $2, $3, $4)`, // <-- INSERT STATEMENT STORED PROC
-            values: [inventory_id, req.session.user_id, req.body.start_date, req.body.end_date]
-        }
-        const result2 = await pool.query(sqlQuery)
-        let {vinventory_id} = result2.rows[0]
+        if(req.body.submitButton == "addToCart"){
+            var user = req.session.username
+            var itemId = req.params.id
+            if(!user){
+                res.redirect('/')
+            }
+            else if(user){
+                pool.query(`SET SCHEMA 'public'`)
+                const result = await pool.query(`SELECT item_id FROM cart WHERE user_name = '($1)' AND item_id = ($2)`, [user, itemId])
 
-        if(vinventory_id == null){ // DATABASE RETURNS vinventory_id NULL 
-            return res.send('Item is already reserved!')
-        }
+                let{ item_id } = result.rows[0]
+                if(item_id){
+                    res.redirect(`/items/view/${itemId}?addToCart=failed`)
+                }
+                else if(item_id == null){
+                    const result2 = await pool.query(`INSERT INTO cart VALUES('($1)', '($2)') `, [user, itemId])
+                    req.session.cart_count += 1
+                    res.redirect(`/items/view/${itemId}?addToCart=success`)
+                }
+            }
+        }   
+        else if(req.body.submitButton == "reserve"){
+            pool.query(`SET SCHEMA 'public'`)
+            const result = await pool.query(`SELECT inventory_id FROM inventory WHERE item_id = ($1)`, [req.params.id])
+            let {inventory_id} = result.rows[0]
+            var sqlQuery = {
+                text: `CALL check_reservation($1, $2, $3, $4)`, // <-- INSERT STATEMENT STORED PROC
+                values: [inventory_id, req.session.user_id, req.body.start_date, req.body.end_date]
+            }
+            const result2 = await pool.query(sqlQuery)
+            let {vinventory_id} = result2.rows[0]
 
-        else if(vinventory_id != null){ // IF ACCOUNT DOES EXIST
-            return res.redirect(`/items`)
+            if(vinventory_id == null){ // DATABASE RETURNS vinventory_id NULL 
+                return res.send('Item is already reserved!')
+            }
+
+            else if(vinventory_id != null){ // IF ACCOUNT DOES EXIST
+                return res.redirect(`/items`)
+            }
         }
     }
 
