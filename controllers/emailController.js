@@ -30,10 +30,8 @@ var checkVerified = async (req, res, next) =>{
                     host: "smtp.sendgrid.net",
                     port: 465,
                     auth: {
-                        //user: process.env.NM_USERNAME,
-                        //pass: process.env.NM_PASSWORD
-                        user: "apikey",
-                        pass: "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"
+                        user: process.env.NM_USERNAME,
+                        pass: process.env.NM_PASSWORD
                     },
                 });
 
