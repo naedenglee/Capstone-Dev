@@ -28,7 +28,7 @@ END $$;
 
 -- PROCEDURE FOR LOG IN
 -- HOW TO CALL:CALL check_login('username', 'password', NULL); 
-DROP PROCEDURE IF EXISTS check_login (IN CHARACTER VARYING, OUT vpassword CHARACTER VARYING, OUT vid INT);
+--DROP PROCEDURE IF EXISTS check_login (IN CHARACTER VARYING, OUT vpassword CHARACTER VARYING, OUT vid INT);
 CREATE OR REPLACE PROCEDURE check_login (IN CHARACTER VARYING, OUT vpassword CHARACTER VARYING, OUT vid INT)
 LANGUAGE 'plpgsql'
 AS $$
@@ -102,7 +102,7 @@ BEGIN
 	last_update)
 	VALUES (vaccount_id, vitem_id, $7, NULL, CURRENT_DATE);
     INSERT INTO item_performance (item_id) -- FOR PRODUCT PERFORMANCE
-    VALUES(vitem_id)
+    VALUES(vitem_id);
 	END IF;
 	COMMIT;
 END $$;

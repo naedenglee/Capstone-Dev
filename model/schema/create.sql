@@ -1,10 +1,9 @@
-SET SCHEMA 'public';
 CREATE TABLE account(
     account_id INT NOT NULL,  -- PRIMARY KEY
     username VARCHAR(48) NOT NULL UNIQUE, 
     password VARCHAR(80) NOT NULL,
     email VARCHAR(80)
-);
+)
 
 CREATE TABLE profile(
     profile_id INT NOT NULL, -- PRIMARY KEY
@@ -15,7 +14,7 @@ CREATE TABLE profile(
     birthdate DATE,
     phone_num VARCHAR(13),
     is_verified INT 
-);
+)
 
 CREATE TABLE address(
     address_id INT NOT NULL, -- PRIMARY KEY
@@ -24,7 +23,7 @@ CREATE TABLE address(
     full_name VARCHAR(150),
     phone_num VARCHAR(13),
     address_type CHAR(1)
-);
+)
 
 
 CREATE TABLE address_info(
@@ -34,7 +33,7 @@ CREATE TABLE address_info(
     postal_code VARCHAR(5),
     street_name VARCHAR(50),
     house_number VARCHAR(50)
-);
+)
 
 
 CREATE TABLE top_up (
@@ -43,14 +42,14 @@ CREATE TABLE top_up (
     amount FLOAT,
     status CHAR(1),
     last_update DATE
-);
+)
 
 
 CREATE TABLE account_currency(
     currency_id INT NOT NULL, -- PRIMARY KEY
     account_id INT NOT NULL, -- FOREIGN KEY
     user_currency FLOAT
-);
+)
 
 
 CREATE TABLE user_rating(
@@ -58,7 +57,7 @@ CREATE TABLE user_rating(
     rating_to INT NOT NULL, -- FOREIGN KEY
     rating_by INT NOT NULL, -- FOREIGN KEY
     rating FLOAT NOT NULL 
-);
+)
 
 
 CREATE TABLE item(
@@ -71,7 +70,7 @@ CREATE TABLE item(
     date_posted DATE,
     last_update DATE,
     image_path VARCHAR(45)
-);
+)
 
 CREATE TABLE inventory(
     inventory_id INT NOT NULL, -- PRIMARY KEY
@@ -80,7 +79,7 @@ CREATE TABLE inventory(
     item_quantity INT, 
     item_status CHAR(1) DEFAULT '1',
     last_update DATE
-);
+)
 
 -- USE EXCLUSION CONSTRAINTS FOR DATES!
 
@@ -94,7 +93,7 @@ CREATE TABLE rental(
     return_date DATE NOT NULL,
     rental_status CHAR(1),
     last_update DATE
-);
+)
 
 CREATE EXTENSION btree_gist;
 CREATE TABLE reservation(
@@ -112,7 +111,7 @@ CREATE TABLE reservation(
 		inventory_id WITH =,
 		reservation_date WITH &&
 	)
-);      
+)
 
 
 CREATE TABLE payment(
@@ -124,13 +123,13 @@ CREATE TABLE payment(
     payment_date DATE NOT NULL,
     payment_type CHAR(1) NOT NULL,
     payment_status CHAR(1)
-);
+)
 
 
 CREATE TABLE category(
     category_id INT NOT NULL,
     category VARCHAR(50) NOT NULL
-);
+)
 
 CREATE TABLE cart(
     cart_id INT NOT NULL,
@@ -139,10 +138,6 @@ CREATE TABLE cart(
     qty INT 
 )
 
-CREATE TABLE test_table(
-    test VARCHAR(50),
-    id INT
-)
 
 CREATE TABLE item_performance(
     item_id INT PRIMARY KEY,

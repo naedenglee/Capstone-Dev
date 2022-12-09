@@ -14,7 +14,7 @@ require('dotenv').config()
 // });
 //const connectionString = process.env.DB_CONNSTRING 
 const pool = new Pool({
-    host: "ec2-44-209-186-51.compute-1.amazonaws.com",
+    host: process.env.DB_HOST,
     user: process.env.DB_USER,
     port: process.env.PORT || 5432,
     password: process.env.DB_PW,
