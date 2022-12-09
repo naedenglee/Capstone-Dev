@@ -22,7 +22,7 @@ app.set('trust proxy', 1)
 app.set('view engine', 'ejs') //view engine (EJS)
 
 app.use(express.static('views'))
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb'}))
 app.use(session({
     name: 'session',
     keys: ['key1', 'key2', 'key3']
