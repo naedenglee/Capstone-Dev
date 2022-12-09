@@ -101,6 +101,8 @@ BEGIN
 	item_quantity, item_status,
 	last_update)
 	VALUES (vaccount_id, vitem_id, $7, NULL, CURRENT_DATE);
+    INSERT INTO item_performance (item_id) -- FOR PRODUCT PERFORMANCE
+    VALUES(vitem_id)
 	END IF;
 	COMMIT;
 END $$;

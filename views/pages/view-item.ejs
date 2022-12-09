@@ -50,18 +50,18 @@ crossorigin=""></script>
         <div class="row">
             <div class="column">
                 <div class="polaroid">
-                  <img src="<%= result.rows[0].image_path %>" alt="" style="width:100%">
+                  <img src="<%= result[0].image_path %>" alt="" style="width:100%">
                       <div class="p-container"></div>
                   </div>
 
                   <h4 style="font-weight: bold;">Description:</h4>
              
-                  <div class="desc" style="font: weight 1px; color: darkslategrey;"><%= result.rows[0].item_description %></div>
+                  <div class="desc" style="font: weight 1px; color: darkslategrey;"><%= result[0].item_description %></div>
                       <!-- line separator -->
                     <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                       
                        <!-- di ko sure kung i-div ko to o ok lang na naka <p> -->
-                    <p style="font-weight: bold;">Rental fee: <%= result.rows[0].rental_rate %><br>
+                    <p style="font-weight: bold;">Rental fee: <%= result[0].rental_rate %><br>
                         Deposit fee:<br>
                         Size:<br>
                          Branch:
@@ -70,7 +70,7 @@ crossorigin=""></script>
                 </div>
                 <!----- 2nd column ------>
                   <div class="column">
-                    <h3 style="text-align: center;"><%= result.rows[0].item_name %></h3>
+                    <h3 style="text-align: center;"><%= result[0].item_name %></h3>
                   <div class="box1">
                    <!-- <label for="start">Start date:</label>
                      <input type="date" id="start" name="date-start"
@@ -82,7 +82,7 @@ crossorigin=""></script>
                            min="2022-01-01" max="2024-12-31"> -->
 			  
 			            <div class='col-md-5'>
-                    <form id="check_avail" method="post" action="/items/view/<%= result.rows[0].item_id %>/reserve">
+                    <form id="check_avail" method="post" action="/items/view/<%= result[0].item_id %>/reserve">
                       <h4>Choose dates</h4>
                       <input type="text" id="daterange" name="daterange"/>                                    
                       <button type="button" class="btna btna-info btna-lg" data-toggle="modal" data-target="#myModal" onclick="insertDate()">Check Availability</button>
@@ -96,13 +96,13 @@ crossorigin=""></script>
                             <div class="modal-content">
                               <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h4 class="modal-title"><%= result.rows[0].item_name %></h4>
+                                <h4 class="modal-title"><%= result[0].item_name %></h4>
                               </div>
                               <div class="modal-body">
                                 <div class="row">
                                   <div class="column">
                                     <div class="polaroid">
-                                      <img src="<%= result.rows[0].image_path %>" alt="" style="width:100%">
+                                      <img src="<%= result[0].image_path %>" alt="" style="width:100%">
                                         <div class="p-container"></div>
                                     </div>
                                   </div>
@@ -143,8 +143,8 @@ crossorigin=""></script>
               </div>
 
               <br>
-              <h4>Item owned by <%= result.rows[0].seller %></h4>
-              <a target="_blank" href="/profile/<%= result.rows[0].seller %>">
+              <h4>Item owned by <%= result[0].seller %></h4>
+              <a target="_blank" href="/profile/<%= result[0].seller %>">
                <img class="img2" src="/images/profile.png" alt="profile" style="width:100px"> </a>
                <!-- CSS STAR RATING -->
                    <span class="fa fa-star checked"></span>
@@ -156,7 +156,7 @@ crossorigin=""></script>
                    <br>
                    <br>
                <button class="btn-message">Message</button>
-               <a href="/profile/<%= result.rows[0].owner %>"><button class="btn-profile">See Profile</button></a>
+               <a href="/profile/<%= result[0].owner %>"><button class="btn-profile">See Profile</button></a>
                
                </div>
              </div>

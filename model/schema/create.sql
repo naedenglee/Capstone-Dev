@@ -105,6 +105,7 @@ CREATE TABLE reservation(
     reservation_start DATE NOT NULL,
     reservation_end DATE NOT NULL,
     reserve_status CHAR(1),
+    mode_of_payment INT,
     last_update DATE,
 
   	EXCLUDE USING gist (
@@ -141,4 +142,15 @@ CREATE TABLE cart(
 CREATE TABLE test_table(
     test VARCHAR(50),
     id INT
+)
+
+CREATE TABLE item_performance(
+    item_id INT PRIMARY KEY,
+    detail_rate INT DEFAULT 0,
+    add_cart INT DEFAULT 0, 
+    rm_cart INT DEFAULT 0,
+    reservations INT DEFAULT 0,
+    unique_rental INT DEFAULT 0,
+    cart_to_detail_rate FLOAT DEFAULT 0,
+    rsv_to_detail_rate FLOAT DEFAULT 0
 )

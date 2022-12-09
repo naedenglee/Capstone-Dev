@@ -1,16 +1,23 @@
 
-const {pool, redisClient, getOrSetCache, getOrSetHashCache} = require('../model/database.js')
+const {pool, redisClient, getOrSetCache, getOrSetCache2, getOrSetHashCache} = require('../model/database.js')
 
 //availability(reservation calendar)
 var allItemView = async (req, res, next)=> {
     try{
         const item_id = req.query.item_id
         await pool.query(`SET SCHEMA 'public'`)
-        const rows = await getOrSetCache(`data`, async () =>{
-            const data = await pool.query('SELECT * FROM item')
-            //console.log(data)
-            return data
-        })
+
+
+        const {rows} = await pool.query('SELECT * FROM item')
+        const res = await redisClient.call("JSON.SET", "item", "$", rows)
+        console.log(res)
+
+
+        //const item_perf = await getOrSetCache2(`item_perf:${req.params.id} .item_perf '`, async () =>{
+        //    const perf = await pool.query(`SELECT * FROM item_performance WHERE item_id = ($1)`, [req.params.id])
+        //    return perf
+        //})
+
         //const results = rows.rows
         res.render('pages/item-page', 
         { 
@@ -58,19 +65,7 @@ var viewItem = async  (req, res, next)=>{ // Product Detail View
             const perf = await pool.query(`SELECT * FROM item_performance WHERE item_id = ($1)`, [req.params.id])
             return perf
         })
-
-
-        //        redisClient.hincrby(`item_perf:${req.params.id}`, 'detail_rate', "1")
-
-        //const {rows} = await pool.query(`SELECT * FROM item_performance WHERE item_id = ($1)`, [req.params.id])
-        //rows.forEach((item, index) =>{
-        //    redisClient.hmset(`item_perf:${req.params.id}`, item) 
-        //})
-            await redisClient.hincrby(`item_perf:${req.params.id}`, 'detail_rate',1)
-
-
-
-        //redisClient.hincrby(`item_perf:${req.params.id}`, 'detail_rate',1)
+        redisClient.hincrby(`item_perf:${req.params.id}`, 'detail_rate',1)
 
         res.render('pages/view-item',
         {   result:results, user:req.session.username, 

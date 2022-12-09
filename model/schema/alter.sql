@@ -106,3 +106,8 @@ ALTER TABLE cart
     ADD PRIMARY KEY (cart_id),
     ALTER COLUMN cart_id
         ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE item_performance
+    ADD FOREIGN KEY (item_id)
+        REFERENCES item (item_id);
+
