@@ -13,14 +13,21 @@ const Redis = require('ioredis');
 //    port: 5432,
 //})
 
-const pool = new Pool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    port: process.env.PORT || 5432,
-    password: process.env.DB_PW,
-    database: process.env.DB_DATABASE
-})
+pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    }
+});
 
+//const pool = new Pool({
+//    host: process.env.DB_HOST,
+//    user: process.env.DB_USER,
+//    port: process.env.PORT || 5432,
+//    password: process.env.DB_PW,
+//    database: process.env.DB_DATABASE
+//})
+//
 const fs = require('fs');
 const redisClient = Redis.createClient({
     host: 'redis-14177.c241.us-east-1-4.ec2.cloud.redislabs.com',
