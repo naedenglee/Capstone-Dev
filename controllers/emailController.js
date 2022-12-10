@@ -31,7 +31,7 @@ var checkVerified = async (req, res, next) =>{
                     port: 465,
                     auth: {
                         user: process.env.NM_USERNAME,
-                        pass: process.env.NM_PASSWORD
+                        pass: process.env.NM_PASSWORD                        
                     },
                 });
 

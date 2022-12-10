@@ -47,7 +47,9 @@ ALTER TABLE user_rating
     ADD FOREIGN KEY (rating_to)
         REFERENCES account(account_id),
     ADD FOREIGN KEY (rating_by)
-        REFERENCES account(account_id);
+        REFERENCES account(account_id),
+    ADD FOREIGN KEY (item_id)
+        REFERENCES item(item_id);
 
 ALTER TABLE item
     ADD PRIMARY KEY (item_id),

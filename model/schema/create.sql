@@ -54,8 +54,10 @@ CREATE TABLE account_currency(
 
 CREATE TABLE user_rating(
     rating_id INT NOT NULL, -- PRIMARY KEY
+    item_id INT NOT NULL,
     rating_to INT NOT NULL, -- FOREIGN KEY
     rating_by INT NOT NULL, -- FOREIGN KEY
+    comment_rating TEXT,
     rating FLOAT NOT NULL 
 )
 
@@ -149,3 +151,4 @@ CREATE TABLE item_performance(
     cart_to_detail_rate FLOAT DEFAULT 0,
     rsv_to_detail_rate FLOAT DEFAULT 0
 )
+

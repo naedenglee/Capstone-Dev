@@ -109,21 +109,21 @@ crossorigin=""></script>
                                   <div class="column">
                                     <p style="font-weight: bold;">
                                       Reservation Start: <input type="text" id="start_date" name="start_date" value="" readonly><br>
-                                      Reservation End: <input type="text" id="end_date" name="end_date" value="" readonly><br>
+                                      Reservation End: <input type="text" id="end_date" name="send_date" value="" readonly><br>
                                       Rental fee:<br>
                                       Deposit fee:<br>
+                                      Quantity: <input type="number" name="modalQty" id="modalQty" value="1" min="1" max="2" required> <br>
                                       Size:<br>
-                                      Owner:
-                                      
-                                  </p>
+                                      Owner:                                      
+                                   </p>
                                   </div>
                                 </div>
                 
                               </div>
                               <div class="modal-footer">
                                 
-                                <button type="submit" class="btn btn-default"><i class="fa-solid fa-tag"></i> Reserve</button>
-                                <button type="button" class="btn btn-default"><i class="fa-solid fa-heart"></i> Add to Watchlist</button>
+                                <button type="submit" class="btn btn-default" value="reserve" name="submitButton"><i class="fa-solid fa-tag"></i> Reserve</button>
+                                <button type="submit" class="btn btn-default" value="addToCart" name="submitButton"><i class="fa-solid fa-heart"></i> Add to Watchlist</button>
                               <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
                               </div>
                             </div>
