@@ -24,7 +24,7 @@ const userOngoingRentals = async(req, res, next) => {
         var user_id = req.session.userId
 
         if(!user){
-            res.status(401).render('/pages/error401')
+            res.status(401).render('pages/error401')
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
