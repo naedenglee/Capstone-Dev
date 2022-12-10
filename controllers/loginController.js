@@ -102,6 +102,7 @@ var signup = async(req, res, next) =>{
             if(vaccount_id != null){ // IF NOT NULL THEN SUCCESS
                 console.log(vaccount_id)
                 console.log('SUCCESS!') 
+                return res.redirect('/?login=success')
             }
             else{
                 console.log('ACCOUNT EXISTS') // IF NULL THEN EXISTING
@@ -122,11 +123,9 @@ var signup = async(req, res, next) =>{
     }
     finally{
         pool.release
-        return res.redirect('/')
+        next()
     }
 }
-
-
 
 module.exports = {
     login,
