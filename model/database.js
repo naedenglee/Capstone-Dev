@@ -3,7 +3,7 @@
 //const { Client } = require('pg')
 const { Pool } = require('pg')
 const Redis = require('ioredis');
-const redisClient = Redis.createClient()
+//const redisClient = Redis.createClient()
 
 //pool = new Pool({
 //    user: 'postgres',
