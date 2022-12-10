@@ -92,7 +92,7 @@ const emailValidate = async (req, res, next) =>{
     try{
         var otp = req.body.otp
         var sqlQuery = { text:`CALL update_verify_profile($1, null)`,
-            values:[req.session.user]
+            values:[req.session.user_id]
         }
 
         if(otp == req.session.emailotp){
