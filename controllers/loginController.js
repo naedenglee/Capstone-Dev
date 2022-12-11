@@ -11,6 +11,7 @@ var home = (req, res, next) =>{
         currency:req.session.currency, 
         status:req.query.loginStatus
     })
+    console.log(req.query.loginStatus)
 }
 
 
