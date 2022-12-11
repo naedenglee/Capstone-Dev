@@ -8,7 +8,8 @@ var home = (req, res, next) =>{
     { 
         user:req.session.username, 
         cart_count:req.session.cart_count, 
-        currency:req.session.currency 
+        currency:req.session.currency, 
+        status:req.query.loginStatus
     })
 }
 
@@ -33,7 +34,7 @@ var login = async (req, res, next) =>{
             let {vpassword} = result.rows[0]
             validPass = bcrypt.compareSync(req.body.pass, vpassword) 
             if(!validPass){
-                res.send('WRONG PASSWORD ENTER YOUR PASSWORD AGAIN!')
+                res.redirect('/?loginStatus=authenticationError')
                 //refresh password forms
             }
             else{
@@ -102,6 +103,7 @@ var signup = async(req, res, next) =>{
             if(vaccount_id != null){ // IF NOT NULL THEN SUCCESS
                 console.log(vaccount_id)
                 console.log('SUCCESS!') 
+                return res.redirect('/?login=success')
             }
             else{
                 console.log('ACCOUNT EXISTS') // IF NULL THEN EXISTING
@@ -122,11 +124,9 @@ var signup = async(req, res, next) =>{
     }
     finally{
         pool.release
-        return res.redirect('/')
+        next()
     }
 }
-
-
 
 module.exports = {
     login,

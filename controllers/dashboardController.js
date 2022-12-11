@@ -2,8 +2,11 @@ const {pool} = require('../model/database.js')
 
 var viewMainDashboard = async(req, res, next) => {
     try{
+        var user = req.session.username
+        var user_id = req.session.userId
+        
         if(!user){
-            res.render('pages/error401')
+            res.status(401).render('pages/error401')
         }    
         else if(user){
             res.render('pages/dashboard/dashboard_main')
@@ -18,13 +21,13 @@ var viewMainDashboard = async(req, res, next) => {
     }
 }
 
-var userOngoingRentals = async(req, res, next) => {
+const userOngoingRentals = async(req, res, next) => {
     try{    
         var user = req.session.username
         var user_id = req.session.userId
 
         if(!user){
-            res.status(401).render('/pages/error401')
+            res.status(401).render('pages/error401')
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)

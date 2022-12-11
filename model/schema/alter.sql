@@ -47,7 +47,9 @@ ALTER TABLE user_rating
     ADD FOREIGN KEY (rating_to)
         REFERENCES account(account_id),
     ADD FOREIGN KEY (rating_by)
-        REFERENCES account(account_id);
+        REFERENCES account(account_id),
+    ADD FOREIGN KEY (item_id)
+        REFERENCES item(item_id);
 
 ALTER TABLE item
     ADD PRIMARY KEY (item_id),
@@ -106,3 +108,8 @@ ALTER TABLE cart
     ADD PRIMARY KEY (cart_id),
     ALTER COLUMN cart_id
         ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE item_performance
+    ADD FOREIGN KEY (item_id)
+        REFERENCES item (item_id);
+
