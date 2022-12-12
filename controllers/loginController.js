@@ -104,7 +104,7 @@ var signup = async(req, res, next) =>{
             if(vaccount_id != null){ // IF NOT NULL THEN SUCCESS
                 console.log(vaccount_id)
                 console.log('SUCCESS!') 
-                return res.redirect('/?login=success')
+                return res.redirect('/?loginStatus=signupSuccess')
             }
             else{
                 console.log('ACCOUNT EXISTS') // IF NULL THEN EXISTING

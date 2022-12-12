@@ -44,69 +44,37 @@
             <table class="table table-bordered">
                 <thead>
                   <tr>
-                    <th scope="col"><input type="button" onclick='selects()' value="✓"/><input type="button" onclick='deSelect()' value="✕"/>   </th>
                     <th scope="col">ID</th>
-                    <th scope="col">Item ID</th>
-                    <th scope="col">Item</th>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Rental Date</th>
+                    <th scope="col">Return Date</th>
                     <th scope="col">Quantity</th>
-                    <th scope="col">Rental Start</th>
-                    <th scope="col">Rental End</th>
-                    <th scope="col">Client</th>
+                    <th scope="col">Client ID</th>
                     <th scope="col">Action</th>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row"><input type="checkbox" name="chk" value="1"></th>
-                    <td class="id">000012</td>
-                    <td class="itemId">04</td>
-                    <td class="itemName">Gown</td>
-                    <td class="itemQty">1</td>
-                    <td class="startDate">November 4, 2022 12:00:00AM</td>
-                    <td class="endDate">November 7, 2022 12:00:00PM</td>
-                    <td class="userName">archieloo</td>
-                    <td class="action"><div class="p-1">
+                  <% result.forEach(function(rental){ %>
+                    <tr>
+                    <td id="id"><%= rental.rental_id %></td>
+                    <td id="itemName"><%= rental.item_name %> </td>                    
+                    <td id="startDate"><%= rental.rental_date %> </td>
+                    <td id="endDate"><%= rental.return_date %> </td>
+                    <td id="itemQty"><%= rental.rental_quantity %> </td>
+                    <td id="clientId"><%= rental.customer_id %> </td>
+                    <td id="action"><div class="p-1">
                       <button class="btn btn-success button-1" data-bs-toggle="modal" data-bs-target="#requestApproveModal" data-id="1" onclick="requestApproveDeny(12)">Approve</button><br>
                       <button class="btn btn-danger button-2" data-bs-toggle="modal" data-bs-target="#requestDenyModal" data-id="2" onclick="requestApproveDeny(13)">Deny</button><br>
                       <p id="status" class="py-1"></p>
                     </div></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"><input type="checkbox" name="chk" value="1"></th>
-                    <td class="id">000013</td>
-                    <td class="itemId">06</td>
-                    <td class="itemName">Tuxedo</td>
-                    <td class="itemQty">1</td>
-                    <td class="startDate">November 12, 2022 12:00:00AM</td>
-                    <td class="endDate">November 16, 2022 12:00:00PM</td>
-                    <td class="userName">delimrobert</td>
-                    <td class="action"><div class="p-1">
-                      <button class="btn btn-success button-1" data-bs-toggle="modal" data-bs-target="#requestApproveModal" data-id="1" onclick="requestApproveDeny(13)">Approve</button><br>
-                      <button class="btn btn-danger button-2" data-bs-toggle="modal" data-bs-target="#requestDenyModal" data-id="2" onclick="requestApproveDeny(13)">Deny</button><br>
-                      <p id="status" class="py-1"></p>
-                    </div></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"><input type="checkbox" name="chk" value="1"></th>
-                    <td class="id">000014</td>
-                    <td class="address">010</td>
-                    <td class="Pdate">Tables</td>
-                    <td class="btName">10</td>
-                    <td class="startdate">November 11, 2022 12:00:00AM</td>
-                    <td class="enddate">November 13, 2022 12:00:00PM</td>
-                    <td class="stName">andengot</td>
-                    <td class="action"><div class="p-1">
-                      <button class="btn btn-success button-1" data-id="1">Approve</button><br>
-                      <button class="btn btn-danger button-2" data-id="2">Deny</button><br>
-                      <p id="status" class="py-1"></p>
-                    </div></td>
-                  </tr>
+                  <% }) %>               
+                  
                 </tbody>
               </table>
 		</div>
 	</section>
 
     <!-- MODAL FOR APPROVE-->
-    <form action="/dashboard/requests/approve" method="post">
+    <form action="/dashboard/lessor/requests/approve" method="post">
         <div class="modal fade" id="requestApproveModal" tabindex="-1" aria-labelledby="requestApproveModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -128,7 +96,7 @@
       </form>
 
       <!-- MODAL FOR DENY-->
-    <form action="/dashboard/requests/deny" method="post">
+    <form action="/dashboard/lessor/requests/deny" method="post">
       <div class="modal fade" id="requestDenyModal" tabindex="-1" aria-labelledby="requestDenyModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
