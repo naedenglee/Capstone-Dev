@@ -1,24 +1,10 @@
 
-const {pool, redisClient, getOrSetCache, getOrSetHashCache, getOrSetHashCache1, rjson} = require('../model/database.js')
+const {pool, redisClient} = require('../model/database.js')
+const {getOrSetCache, getOrSetHashCache, Jsets, Jgets} = require('../model/redis.js')
 
 //availability(reservation calendar)
 var allItemView = async (req, res, next)=> {
-    //try{
-    //    await pool.query(`SET SCHEMA 'public'`)
-    //    const rows = await pool.query('SELECT * FROM item')
-    //    if(rows.length == 0){
-    //        res.status(404).render('pages/error404')
-    //    }
-    //    else if(rows){
-    //        res.render('pages/item-page', 
-    //        { 
-    //            result:rows.rows, 
-    //            user:req.session.username, 
-    //            cart_count:req.session.cart_count, 
-    //            currency:req.session.currency
-    //        })
-    //    }        
-    //}
+
     try{
         const item_id = req.query.item_id
         await pool.query(`SET SCHEMA 'public'`)
@@ -31,6 +17,7 @@ var allItemView = async (req, res, next)=> {
                 return data
             }
         })
+        //console.log(rows)
         res.render('pages/item-page', 
         { 
             result:rows, 
@@ -69,7 +56,7 @@ var addCart = async (req, res, next)=> {
                 req.session.cart_count += 1
             }
 
-            redisClient.hincrby(`item_perf:${req.params.id}`, 'add_cart',1)
+            //Rejson.hincrby(`item_perf:${req.params.id}`, 'add_cart',1)
             res.redirect('/items')
         }
     }
@@ -130,6 +117,10 @@ var viewItem = async  (req, res, next)=>{
             const date = await pool.query(sqlQuery2)
             return date
         })
+        const testing = await Jsets('testing', '.', {manghiram: "5"})
+        const testget = await Jgets("testing", "manghiram")
+        console.log(testget)
+        
 
         res.render('pages/view-item',
         {   result:results, 
@@ -144,7 +135,7 @@ var viewItem = async  (req, res, next)=>{
     }
     finally{
         pool.release
-        next()
+        //next()
     }
 }
 
@@ -158,7 +149,7 @@ var itemReservation = async (req, res, next) =>{
             }
             else if(user){
                 pool.query(`SET SCHEMA 'public'`)
-                const result = await pool.query(`SELECT item_id FROM cart WHERE user_name = '($1)' AND item_id = ($2)`, [user, itemId])
+                var result = await pool.query(`SELECT item_id FROM cart WHERE user_name = '($1)' AND item_id = ($2)`, [user, itemId])
 
                 let{ item_id } = result.rows[0]
                 if(item_id){
@@ -172,12 +163,14 @@ var itemReservation = async (req, res, next) =>{
             }
         }   
         else if(req.body.submitButton == "reserve"){
-            pool.query(`SET SCHEMA 'public'`)
-            const result = await pool.query(`SELECT inventory_id FROM inventory WHERE item_id = ($1)`, [req.params.id])
-            let {inventory_id} = result.rows[0]
+            await pool.query(`SET SCHEMA 'public'`)
+            const foo = await pool.query(`SELECT inventory_id, account_id FROM inventory WHERE item_id = ($1)`, [req.params.id])
+            console.log(foo.rows)
+            let {inventory_id, account_id} = foo.rows[0]
+            console.log(inventory_id, req.session.user_id, req.body.start_date, req.body.end_date)
             var sqlQuery = {
-                text: `CALL check_reservation($1, $2, $3, $4)`, // <-- INSERT STATEMENT STORED PROC
-                values: [inventory_id, req.session.user_id, req.body.start_date, req.body.end_date]
+                text: `CALL check_reservation($1, $2, $3, $4, $5, $6)`, // <-- INSERT STATEMENT STORED PROC
+                values: [inventory_id, account_id, req.body.modalQty, req.session.user_id, req.body.start_date, req.body.end_date]
             }
             const result2 = await pool.query(sqlQuery)
             let {vinventory_id} = result2.rows[0]

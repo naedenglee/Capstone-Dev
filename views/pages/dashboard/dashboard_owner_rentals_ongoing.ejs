@@ -36,98 +36,61 @@
                 <div class="title">
 			<h1 class="title">Ongoing Rentals (For Lessors)</h1>
 			</div>
+      <% if(result.length == 0) { %>
+        <h2 style="text-align:center">You have no ongoing rentals/transactions as a lessor</h2>
+      <% }else if(result) { %>
 		<div class="boxes"  style="overflow-x:auto;">
             <table class="table table-bordered">
                 <thead>
                   <tr>
                     <th scope="col"><input type="button" onclick='selects()' value="✓"/><input type="button" onclick='deSelect()' value="✕"/>   </th>
                     <th scope="col">ID</th>
-                    <th scope="col">Purchase Point</th>
-                    <th scope="col">Purchase Date</th>
-                    <th scope="col">Bill-to Name</th>
-                    <th scope="col">Ship-to Name</th>
-                    <th scope="col">Grand Total</th>
+                    <th scope="col">Client</th>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Rental Date</th>
+                    <th scope="col">Return Date</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total Amount</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Start Date</th>
-                    <th scope="col">End Date</th>
+                    <th scope="col">Last Update</th>
                     <th scope="col">Action (buttons to update status)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <th scope="row"><input type="checkbox" name="chk" value="1"></th>
-                    <td class="id">000012</td>
-                    <td class="address">San Mateo, Rizal</td>
-                    <td class="Pdate">October 3, 2022</td>
-                    <td class="btName">Ivan Kyle</td>
-                    <td class="stName">Ivan Kyle</td>
-                    <td class="gtotal">₱ 1,099.00</td>
-                    <td class="status">Pending</td>
-                    <td class="startdate">November 4, 2022 12:00:00AM</td>
-                    <td class="enddate">November 7, 2022 12:00:00PM</td>
-                    <td class="action"><div class="p-1">
-                        <% if(status == null){ %>
+                    <% result.forEach(function(rental){ %>
+                      <tr>
+                        <th scope="row"><input type="checkbox" name="chk" value="1"></th>
+                        <td id="id"><%= rental.rental_id %> </td>
+                        <td id="client"><%= rental.customer_id %></td>
+                        <td id="itemName"><%= rental.item_name %></td>
+                        <td id="rentalDate"><%= rental.rental_date %></td>
+                        <td id="returnDate"><%= rental.return_date %></td>
+                        <td id="qty"><%= rental.rental_quantity %></td>
+                        <td id="totalAmount"><%= rental.total_amount %></td>
+                        <td id="status"><%= rental.rental_status %></td>
+                        <td id="lastUpdate">November 7, 2022 12:00:00PM</td>
+                        <td id="action"><div class="p-1">
+                          <% if(rental.rental_status == null){ %>
                             <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="0" data-id="1" onclick="updateBtnFunc(12)">Item Delivered to Client</button><br>
-                        <% } else if(status == 3) { %>
-                            <button class="btn btn-primary button-1"data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="3" data-id="2" onclick="updateBtnFunc(12)">Item Returned</button><br>
-                        <% } else if(status == 4){ %>
-                          <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#finishTransactionModal" id="buttonVal" value="4" data-id="2" onclick="updateBtnFunc(12)" data-id="1">Release Funds(Security Deposit)</button><br>
-                            <button class="btn btn-primary button-1" data-id="1">Damaged Item</button><br>
-                        <% } else { %>
-                            <span>No Available Action</span>
-                        <% } %>
-                      <p id="status" class="py-1"></p>
-                    </div></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"><input type="checkbox" name="chk" value="2"></th>
-                    <td class="id">000013</td>
-                    <td class="address">Marikina City</td>
-                    <td class="Pdate">October 10, 2022</td>
-                    <td class="btName">Richelieu T</td>
-                    <td class="stName">Richelieu T</td>
-                    <td class="gtotal">₱ 879.00</td>
-                    <td class="status">Pending</td>
-                    <td class="startdate">November 8, 2022 12:00:00AM</td>
-                    <td class="enddate">November 10, 2022 12:00:00PM</td>
-                    <td class="action"><div class="p-1">
-                      <% if(status == null){ %>
-                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="0" data-id="1" onclick="updateBtnFunc(13)">Item Delivered to Client</button><br>
-                    <% } else if(status == 3) { %>
-                        <button class="btn btn-primary button-1"data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="3" data-id="2" onclick="updateBtnFunc(13)">Item Returned</button><br>
-                      <% } else if(status == 4){ %>
-                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#finishTransactionModal" id="buttonVal" value="4" data-id="2" onclick="updateBtnFunc(13)" data-id="1">Release Funds(Security Deposit)</button><br>
-                        <button class="btn btn-primary button-1" data-id="1">Damaged Item</button><br>
-                      <% } else { %>
-                          <span>No Available Action</span>
-                      <% } %>
-                      <p id="status" class="py-1"></p>
-                    </div></td>
-                  </tr>
-                  <tr>
-                    <th scope="row"><input type="checkbox" name="chk" value="3"></th>
-                    <td class="id">000014</td>
-                    <td class="address">Manila, City</td>
-                    <td class="Pdate">October 20, 2022</td>
-                    <td class="btName">Yanna Mari</td>
-                    <td class="stName">Robert Delim</td>
-                    <td class="gtotal">₱ 2,979.00</td>
-                    <td class="status">Pending</td>
-                    <td class="startdate">November 20, 2022 12:00:00AM</td>
-                    <td class="enddate">November 28, 2022 12:00:00PM</td>
-                    <td class="action"><div class="p-1">
-                      <% if(status == null){ %>
-                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="0" data-id="1" onclick="updateBtnFunc(13)">Item Delivered to Client</button><br>
-                    <% } else if(status == 3) { %>
-                        <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="3" data-id="2" onclick="updateBtnFunc(13)">Item Returned</button><br>
-                      <% } else if(status == 4){ %>
-                          <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#finishTransactionModal" id="buttonVal" value="4" data-id="2" onclick="updateBtnFunc(13)" data-id="1">Release Funds(Security Deposit)</button><br>
-                          <button class="btn btn-primary button-1" data-id="1">Damaged Item</button><br>
-                      <% } else { %>
-                          <span>No Available Action</span>
-                      <% } %>
-                    </div></td>
-                  </tr>
+                          <% } else if(rental.rental_statu == 3) { %>
+                              <button class="btn btn-primary button-1"data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="3" data-id="2" onclick="updateBtnFunc(12)">Item Returned</button><br>
+                          <% } else if(rental.rental_statu == 4){ %>
+                            <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#finishTransactionModal" id="buttonVal" value="4" data-id="2" onclick="updateBtnFunc(12)" data-id="1">Release Funds(Security Deposit)</button><br>
+                              <button class="btn btn-primary button-1" data-id="1">Damaged Item</button><br>
+                          <% } else { %>
+                              <span>No Available Action</span>
+                          <% } %>
+                          <p id="status" class="py-1"></p>
+                        </div></td>
+                        <td id="action"><div class="p-1">
+                          <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#applyExtensionModal" id="extensionButtonVal" onclick="applyExtensionFunc(<%= rental.rental_id %>, <%= rental.inventory_id %>)">Apply for Extension</button>
+                        <p id="status" class="py-1"></p>
+                      </div></td>
+                      </tr>
+                    <% }) %>     
+                    
+                    <% } %>
                 </tbody>
               </table>
 		</div>

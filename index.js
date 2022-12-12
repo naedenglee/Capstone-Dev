@@ -12,7 +12,7 @@ const emailRoute = require('./routes/email.js')
 const errorRoute = require('./routes/errorRoute.js')
 var session = require('cookie-session')
 
-let port = process.env.PORT || 4200
+let port = process.env.PORT || 9000
 app.listen(port, () => {
     console.log(`app is listening on http://localhost:${port}` );
 });

@@ -109,7 +109,7 @@ crossorigin=""></script>
                                   <div class="column">
                                     <p style="font-weight: bold;">
                                       Reservation Start: <input type="text" id="start_date" name="start_date" value="" readonly><br>
-                                      Reservation End: <input type="text" id="end_date" name="send_date" value="" readonly><br>
+                                      Reservation End: <input type="text" id="end_date" name="end_date" value="" readonly><br>
                                       Rental fee:<br>
                                       Deposit fee:<br>
                                       Quantity: <input type="number" name="modalQty" id="modalQty" value="1" min="1" max="2" required> <br>
@@ -143,8 +143,8 @@ crossorigin=""></script>
               </div>
 
               <br>
-              <h4>Item owned by <%= result[0].seller %></h4>
-              <a target="_blank" href="/profile/<%= result[0].seller %>">
+              <h4>Item owned by <%= result[0].account_id %></h4>
+              <a target="_blank" href="/profile/<%= result[0].account_id %>">
                <img class="img2" src="/images/profile.png" alt="profile" style="width:100px"> </a>
                <!-- CSS STAR RATING -->
                    <span class="fa fa-star checked"></span>

@@ -13,28 +13,22 @@ router.get("/user/rentals/finished", (req,res) => {
     res.render('pages/dashboard/dashboard_user_rentals_finished')
 })
 
-router.get("/lessor/rentals/ongoing", (req,res) => {
-    res.render('pages/dashboard/dashboard_owner_rentals_ongoing')
-})
+router.get("/lessor/rentals/ongoing", dashboardController.lessorOngoingRentals)
 
 router.get("/lessor/rentals/finished", (req,res) => {
     res.render('pages/dashboard/dashboard_owner_rentals_finished')
 })
 
-router.get("/lessor/requests", (req,res) => {
-    res.render('pages/dashboard/dashboard_requests')
-})
+router.get("/lessor/requests", dashboardController.getRentalRequests)
 
-router.get("/lessor/requests/approved", (req,res) => {
-    res.render('pages/dashboard/dashboard_requests_approved')
-})
+router.get("/lessor/requests/denied", dashboardController.getDeniedRentalRequests)
 
-router.get("/lessor/requests/denied", (req,res) => {
-    res.render('pages/dashboard/dashboard_requests_denied')
-})
 
 //POST requests
 router.post("/user/rentals/ongoing/extension", dashboardController.userOngoingRentalsExtension)
 
-module.exports = router
+router.post('/lessor/requests/approve', dashboardController.approveRentalRequest)
 
+router.post('/lessor/requests/deny', dashboardController.denyRentalRequest)
+
+module.exports = router

@@ -38,6 +38,11 @@
 			</div>
 		<div class="boxes"  style="overflow-x:auto;">
       <table class="table table-bordered">
+
+        <% if(result.length == 0) { %>
+          <h2 style="text-align:center">You have no ongoing rentals</h2>
+        <% }else if(result) { %>
+
         <thead>
           <tr>
             <th scope="col"><input type="button" onclick='selects()' value="✓"/><input type="button" onclick='deSelect()' value="✕"/>   </th>
@@ -46,7 +51,6 @@
             <th scope="col">Item Name</th>
             <th scope="col">Rental Date</th>
             <th scope="col">Return Date</th>
-            <th scope="col">Days Remaining</th>
             <th scope="col">Quantity</th>
             <th scope="col">Total Amount</th>
             <th scope="col">Status</th>
@@ -64,7 +68,6 @@
               <td id="itemName"><%= rental.item_name %></td>
               <td id="rentalDate"><%= rental.rental_date %></td>
               <td id="returnDate"><%= rental.return_date %></td>
-              <td id="remainingDays"><%= rental.days_remaining %></td>
               <td id="qty"><%= rental.rental_quantity %></td>
               <td id="totalAmount"><%= rental.total_amount %></td>
               <td id="status"><%= rental.rental_status %></td>
@@ -96,6 +99,7 @@
 		</div>
 	</section>
 
+        <% } %>
   <!-- MODAL -->
   <form action="/tryTable" method="post">
     <div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-labelledby="updateConfirmModalLabel" aria-hidden="true">
