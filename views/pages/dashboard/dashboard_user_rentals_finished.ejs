@@ -37,6 +37,10 @@
 			<h1 class="title">Your Finished Rentals</h1>
 			</div>
 		<div class="boxes"  style="overflow-x:auto;">
+      <% if(result.length == 0) { %>
+        <h2 style="text-align:center">You have no finished rentals</h2>
+      <% }else if(result) { %>
+
             <table class="table table-bordered">
                 <thead>
                   <tr>
@@ -105,6 +109,8 @@
               </table>
 		</div>
 	</section>
+
+  <% } %>
 
   <!-- MODAL -->
   <form action="/tryTable" method="post">

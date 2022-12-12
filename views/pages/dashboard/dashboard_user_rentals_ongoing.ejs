@@ -38,6 +38,11 @@
 			</div>
 		<div class="boxes"  style="overflow-x:auto;">
       <table class="table table-bordered">
+
+        <% if(result.length == 0) { %>
+          <h2 style="text-align:center">You have no ongoing rentals</h2>
+        <% }else if(result) { %>
+
         <thead>
           <tr>
             <th scope="col"><input type="button" onclick='selects()' value="✓"/><input type="button" onclick='deSelect()' value="✕"/>   </th>
@@ -96,6 +101,7 @@
 		</div>
 	</section>
 
+        <% } %>
   <!-- MODAL -->
   <form action="/tryTable" method="post">
     <div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-labelledby="updateConfirmModalLabel" aria-hidden="true">

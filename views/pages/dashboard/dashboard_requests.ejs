@@ -41,6 +41,10 @@
 			<h1 class="title">Rental Requests</h1>
 			</div>
 		<div class="boxes"  style="overflow-x:auto;">
+      <% if(result.length == 0) { %>
+        <h2 style="text-align:center">You have no rental requests at the moment</h2>
+      <% }else if(result) { %>
+
             <table class="table table-bordered">
                 <thead>
                   <tr>
@@ -72,6 +76,7 @@
               </table>
 		</div>
 	</section>
+  <% } %>
 
     <!-- MODAL FOR APPROVE-->
     <form action="/dashboard/lessor/requests/approve" method="post">

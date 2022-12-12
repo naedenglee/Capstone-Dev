@@ -41,6 +41,11 @@
 			<h1 class="title">Denied Rental Requests</h1>
 			</div>
 		<div class="boxes"  style="overflow-x:auto;">
+
+      <% if(result.length == 0) { %>
+        <h2 style="text-align:center">You have no denied requests</h2>
+      <% }else if(result) { %>
+
       <table class="table table-bordered">
         <thead>
           <tr>
@@ -66,6 +71,8 @@
       </table>
 		</div>
 	</section>
+
+  <% } %>
 
     <!-- MODAL FOR UNDO-->
     <form action="/dashboard/requests/approve" method="post">
