@@ -35,6 +35,7 @@ const userOngoingRentals = async(req, res, next) => {
             const rows = await pool.query(`SELECT a.rental_id, owner_id, a.inventory_id, b.item_name, rental_date, return_date, DATEDIFF(return_date, rental_date) as days_remaining, rental_quantity, total_amount, rental_status 
             FROM reservation a JOIN item b ON a.inventory_id = b.item_id WHERE customer_id = ($1);`, [user_id])
 
+            console.log(rows)
             res.render('pages/dashboard/dashboard_user_rentals_ongoing', { result:rows })            
         }        
     }
