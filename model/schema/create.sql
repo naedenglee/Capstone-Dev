@@ -108,7 +108,7 @@ CREATE TABLE reservation(
     reservation_date DATERANGE,
     reservation_start DATE NOT NULL,
     reservation_end DATE NOT NULL,
-    reserve_status CHAR(1),
+    reserve_status INT,
     mode_of_payment INT,
     last_update DATE,
 

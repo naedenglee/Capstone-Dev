@@ -31,4 +31,7 @@ router.post('/lessor/requests/approve', dashboardController.approveRentalRequest
 
 router.post('/lessor/requests/deny', dashboardController.denyRentalRequest)
 
+// BAGO 
+router.post('/user/rentals/ongoing', dashboardController.update_reservation)
+
 module.exports = router

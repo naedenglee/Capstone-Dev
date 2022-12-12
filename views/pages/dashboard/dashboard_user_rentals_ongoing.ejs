@@ -63,7 +63,7 @@
           <% result.forEach(function(rental){ %>
             <tr>
               <th scope="row"><input type="checkbox" name="chk" value="1"></th>
-              <td id="id"><%= rental.rental_id %> </td>
+              <td id="id"><%= rental.reservation_id %> </td>
               <td id="owner"><%= rental.owner_id %></td>
               <td id="itemName"><%= rental.item_name %></td>
               <td id="rentalDate"><%= rental.rental_date %></td>
@@ -73,20 +73,16 @@
               <td id="status"><%= rental.rental_status %></td>
               <td id="lastUpdate">November 7, 2022 12:00:00PM</td>
               <td id="action"><div class="p-1">
-                  <% if(rental.rental_status == null){ %>
-                      <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="0" data-id="1" onclick="updateBtnFunc(<%= rental.rental_id %>)">Item Delivered to Client</button><br>
-                  <% } else if(rental.rental_status == 3) { %>
-                      <button class="btn btn-primary button-1"data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="3" data-id="2" onclick="updateBtnFunc(<%= rental.rental_id %>)">Item Returned</button><br>
-                  <% } else if(rental.rental_status == 4){ %>
-                    <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#finishTransactionModal" id="buttonVal" value="4" data-id="2" onclick="updateBtnFunc(<%= rental.rental_id %>)" data-id="1">Release Funds(Security Deposit)</button><br>
-                      <button class="btn btn-primary button-1" data-id="1">Damaged Item</button><br>
-                  <% } else { %>
-                      <span>No Available Action</span>
-                  <% } %>
-                <p id="status" class="py-1"></p>
+                <% if(rental.reserve_status == 1){ %>
+                  <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="1" data-id="1" onclick="updateBtnFunc(<%= rental.reservation_id %>)">Item Received</button><br>
+                <% } else if(rental.reserve_status == 2) { %>
+                    <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="2" data-id="1" onclick="updateBtnFunc(<%= rental.reservation_id %>)">Item Delivered Back to Lessor</button><br>
+                <% } else { %>
+                    <span>No Available Action</span>
+                <% } %><p id="status" class="py-1"></p>
               </div></td>
               <td id="action"><div class="p-1">
-                <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#applyExtensionModal" id="extensionButtonVal" onclick="applyExtensionFunc(<%= rental.rental_id %>, <%= rental.inventory_id %>)">Apply for Extension</button>
+                <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#applyExtensionModal" id="extensionButtonVal" onclick="applyExtensionFunc(<%= rental.reservation_id %>, <%= rental.inventory_id %>)">Apply for Extension</button>
               <p id="status" class="py-1"></p>
             </div></td>
             </tr>
@@ -101,7 +97,7 @@
 
         <% } %>
   <!-- MODAL -->
-  <form action="/tryTable" method="post">
+  <form action="/dashboard/user/rentals/ongoing" method="post">
     <div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-labelledby="updateConfirmModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">

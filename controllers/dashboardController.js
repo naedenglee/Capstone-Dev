@@ -88,19 +88,49 @@ const userOngoingRentalsExtension = async(req, res, next) => {
 }
 
 const lessorOngoingRentals = async(req, res, next) => {
+    //try{    
+    //    var user = req.session.username
+    //    var user_id3 = req.session.user_id
+
+    //        console.log(user_id3)
+    //    if(!user){
+    //        res.status(401).render('pages/error401')
+    //    }
+    //    else if(user){
+    //        await pool.query(`SET SCHEMA 'public'`)
+    //        //const rows = await pool.query(`SELECT a.reservation_id, customer_id, a.inventory_id, b.item_name, reservation_date, return_date, DATEDIFF(return_date, reservation_date) as days_remaining, reservation_quantity, total_amount, reservation_status 
+    //        //FROM reservation a JOIN item b ON a.inventory_id = b.item_id WHERE owner_id = ($1);`, [user_id])
+    //        const lessor = await pool.query(`SELECT a.reservation_id, a.customer_id, a.inventory_id, 
+    //                            b.item_name, reservation_start, reservation_end , 
+    //                            DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+    //                            quantity, a.reserve_status, mode_of_payment
+    //                            FROM reservation a JOIN item b ON a.inventory_id = b.item_id WHERE owner_id = ($1)`, [user_id]);
+
+    //        //console.log(lessor.rows[0])
+    //        res.render('pages/dashboard/dashboard_owner_rentals_ongoing', { result:lessor.rows })            
+    //    }        
+    //}
+    //catch(ex){
+    //    res.send(ex)
+    //}
     try{    
         var user = req.session.username
-        var user_id = req.session.userId
+        var user_id = req.session.user_id
 
         if(!user){
             res.status(401).render('pages/error401')
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const rows = await pool.query(`SELECT a.reservation_id, customer_id, a.inventory_id, b.item_name, reservation_date, return_date, DATEDIFF(return_date, reservation_date) as days_remaining, reservation_quantity, total_amount, reservation_status 
-            FROM reservation a JOIN item b ON a.inventory_id = b.item_id WHERE owner_id = ($1);`, [user_id])
+            const {rows} = await pool.query(`SELECT a.reservation_id, a.customer_id, a.inventory_id, 
+                                b.item_name, reservation_start, reservation_end , 
+                                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                                quantity, a.reserve_status, mode_of_payment
+                            FROM reservation a JOIN item b ON a.inventory_id = b.item_id WHERE owner_id = ($1)`, [user_id]);
 
-            res.render('pages/dashboard/dashboard_owner_reservations_ongoing', { result:rows })            
+            console.log(user_id)
+            console.log(rows)
+            res.render('pages/dashboard/dashboard_user_rentals_ongoing', { result:rows })            
         }        
     }
     catch(ex){
@@ -212,5 +242,32 @@ const denyRentalRequest = async(req, res, next) => {
     }
 }
 
+const update_reservation = async(req, res, next) =>{
+
+    try{
+
+        var reservation_id = req.body.orderId
+        let val = req.body.rental_button
+
+        await pool.query(`SET SCHEMA 'public'`)
+        const reservation_check = await pool.query(`SELECT reservation_id, reserve_status FROM reservation WHERE reservation_id = ($1)`, [reservation_id])
+        //console.log(reservation_check.rows)
+        if(reservation_check.rows[0].reservation_id == null){
+            res.send(`RESERVATION DOES NOT EXIST`)
+        }
+        else{
+            let res_status = reservation_check.rows[0].reserve_status
+            console.log(res_status)
+            await pool.query(`CALL update_reservation_status($1, $2)`, [reservation_id, res_status])
+            console.log(`reservation updated!`)
+            res.redirect('/dashboard/user/rentals/ongoing')
+        }
+    }
+    catch(ex){
+        res.send(`Dashboard update_reservation ERROR: ${ex}`)
+    }
+}
+
+
 module.exports = { viewMainDashboard, userOngoingRentals, userOngoingRentalsExtension, lessorOngoingRentals, 
-                    getRentalRequests, getDeniedRentalRequests, approveRentalRequest, denyRentalRequest }
+                    getRentalRequests, getDeniedRentalRequests, approveRentalRequest, denyRentalRequest, update_reservation}

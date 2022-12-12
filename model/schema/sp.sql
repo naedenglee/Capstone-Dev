@@ -124,18 +124,20 @@ BEGIN
 END $$;
 
 -- !!FOR REVISION!! --
-CREATE OR REPLACE PROCEDURE update_reservation_status (IN INT, IN INT, OUT INT)
+CREATE OR REPLACE PROCEDURE update_reservation_status (IN INT, IN OUT INT)
 LANGUAGE 'plpgsql'
 AS $$
 BEGIN 	
-	UPDATE reservation 
-	SET reserve_status = $1
-	WHERE reservation_id = $2
-
-
-
-	RETURNING reserve_status INTO $3;
-	COMMIT;
+	--UPDATE reservation 
+	--SET reserve_status = $1
+	--WHERE reservation_id = $2
+	--RETURNING reserve_status INTO $3;
+	--COMMIT;
+    UPDATE reservation 
+    SET reserve_status = reserve_status + 1 
+    WHERE reservation_id = ($1) 
+    AND reserve_status = ($2);
+    COMMIT;
 END $$;
 
 
