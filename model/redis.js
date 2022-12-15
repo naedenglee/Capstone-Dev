@@ -1,5 +1,5 @@
 const {redisClient} = require('../model/database.js')
-
+const INDEX = 'idx:inventory'
 
 const Jsets = (id, keyPaths, input) => {
   
@@ -9,6 +9,7 @@ const Jsets = (id, keyPaths, input) => {
     console.error('redis insertion error', e)
   })
 }
+
 const Jgets = (id, keyPaths, input) => {
 
     return redisClient.send_command('JSON.GET', id, keyPaths).then((res) => {
@@ -17,6 +18,15 @@ const Jgets = (id, keyPaths, input) => {
         console.error('redis Json.get error', e)
     })
 }
+
+const Jsearch = () =>{
+    return redisClient.send_command('FT.SEARCH', 'key:index', `@field_name:${field}`, 'LIMIT', 0, 100)
+}
+
+async function find(query){
+    return await redisClient.send_command('FT.SEARCH', INDEX, query, 'LIMIT', 0, 100)
+}
+
 
 function getOrSetCache (key, cb){
     return new Promise ((resolve, reject) => {
@@ -29,6 +39,7 @@ function getOrSetCache (key, cb){
         })
     })
 }
+
 function getOrSetHashCache (key, cb){
     return new Promise ((resolve, reject) => {
         redisClient.hgetall(key, async (error, data)=>{
@@ -45,5 +56,6 @@ module.exports = {
     getOrSetCache,
     getOrSetHashCache,
     Jsets,
-    Jgets
+    Jgets,
+    find
 }

@@ -83,6 +83,14 @@ var viewItem = async  (req, res, next)=>{
             values: [req.params.id]
         }
 
+        var sqlQuery5 = {
+            text: `SELECT LOWER(reservation_date) AS start_date, UPPER(reservation_date) AS end_date, item_quantity, (SELECT SUM(quantity)FROM reservation a
+            LEFT JOIN inventory b ON a.inventory_id = b.inventory_id WHERE b.item_id = ($1)) as sum_quantity FROM reservation a
+            LEFT JOIN inventory b ON a.inventory_id = b.inventory_id WHERE b.item_id = ($1);`,
+            values: [req.params.id]
+        }
+            
+
         //var sqlQuery3 = {
         //    text: `SELECT rating, comment FROM <<tablename>> WHERE item_id = $(1)`, //item id ang hanap
         //    values: [req.params.id]
@@ -119,7 +127,14 @@ var viewItem = async  (req, res, next)=>{
         })
         const testing = await Jsets('testing', '.', {manghiram: "5"})
         const testget = await Jgets("testing", "manghiram")
-        console.log(testget)
+
+        const result_quantity = await pool.query(sqlQuery5)
+        if(result_quantity.length == 0){
+            var sum_quantity = 0
+        }
+        else if(result_quantity.rows[0]){
+            var sum_quantity = result_quantity.rows[0].sum_quantity             
+        }
         
 
         res.render('pages/view-item',
@@ -127,7 +142,8 @@ var viewItem = async  (req, res, next)=>{
             user:req.session.username, 
             result_date:dates, 
             cart_count:req.session.cart_count, 
-            currency:req.session.currency
+            currency:req.session.currency,
+            sum_quantity
         })
     }
     catch(ex){

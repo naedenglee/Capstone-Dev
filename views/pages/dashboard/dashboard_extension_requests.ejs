@@ -34,7 +34,7 @@
 		<div class="dash-content">
             <div class="overview">
                 <div class="title">
-			<h1 class="title">Your Ongoing Rentals</h1>
+			<h1 class="title">Client Extension Requests</h1>
 			</div>
 		<div class="boxes"  style="overflow-x:auto;">
       <table class="table table-bordered">
@@ -46,15 +46,10 @@
         <thead>
           <tr>
             <th scope="col">ID</th>
-            <th scope="col">Owner</th>
+            <th scope="col">Client</th>
             <th scope="col">Item Name</th>
-            <th scope="col">Rental Date</th>
-            <th scope="col">Return Date</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Total Amount</th>
-            <th scope="col">Status</th>
+            <th scope="col">Extension Date</th>
             <th scope="col">Action (buttons to update status)</th>
-            <th scope="col">Extension (request extensions)</th>
           </tr>
         </thead>
         <tbody>
@@ -63,11 +58,12 @@
               <td id="id"><%= rental.reservation_id %> <br> <a href="/rental/view/<%= rental.reservation_id %>">View Rental Details</a> </td>
               <td id="owner"><%= rental.owner_id %></td>
               <td id="itemName"> <a href="/items/view/<%= rental.item_id%>"><%= rental.item_name %></a></td>
-              <td id="rentalDate"><%= rental.reservation_start.toDateString() %></td>
-              <td id="returnDate"><%= rental.reservation_end.toDateString() %></td>
-              <td id="qty"><%= rental.quantity %></td>
+              <td id="rentalDate"><%= rental.rental_date %></td>
+              <td id="returnDate"><%= rental.return_date %></td>
+              <td id="qty"><%= rental.rental_quantity %></td>
               <td id="totalAmount"><%= rental.total_amount %></td>
-              <td id="status"><%= rental.reserve_status %></td>
+              <td id="status"><%= rental.rental_status %></td>
+              <td id="lastUpdate">November 7, 2022 12:00:00PM</td>
               <td id="action"><div class="p-1">
                 <% if(rental.reserve_status == 1){ %>
                   <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="1" data-id="1" onclick="updateBtnFunc(<%= rental.reservation_id %>)">Item Received</button><br>
@@ -83,6 +79,9 @@
             </div></td>
             </tr>
           <% }) %>  
+          
+          
+          
         </tbody>
       </table>
 		</div>

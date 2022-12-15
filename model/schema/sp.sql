@@ -109,18 +109,48 @@ END $$;
 
 -- PROCEDURE FOR RESERVATION 
 -- HOW TO CALL: CALL check_reservation(inventory id, customer_id, 'start date', 'end date');
-CREATE OR REPLACE PROCEDURE check_reservation (IN OUT vinventory_id  INT, INT, DATE, DATE)
+   
+--CREATE OR REPLACE PROCEDURE check_reservation (IN OUT vinventory_id  INT, INT, DATE, DATE)
+--LANGUAGE 'plpgsql'
+--AS $$
+--BEGIN
+--	INSERT INTO reservation (inventory_id, customer_id, 
+--                            reservation_date, reservation_start, 
+--                            reservation_end, reserve_status, last_update)
+--	VALUES ($1, $2, daterange($3::DATE, $4::DATE), $3, $4, NULL, CURRENT_DATE)
+--	ON CONFLICT (inventory_id, reservation_date)
+--	DO NOTHING
+--	--RETURNING inventory_id INTO vinventory_id
+--    vinventory_id = NULL
+--	COMMIT;
+--END $$;
+
+CREATE OR REPLACE PROCEDURE check_reservation(
+    IN OUT vinventory_id  INT, 
+    INT, vquantity INT, 
+    INT, DATE, DATE)
 LANGUAGE 'plpgsql'
 AS $$
 BEGIN
-	INSERT INTO reservation (inventory_id, customer_id, 
-                            reservation_date, reservation_start, 
-                            reservation_end, reserve_status, last_update)
-	VALUES ($1, $2, daterange($3::DATE, $4::DATE), $3, $4, NULL, CURRENT_DATE)
-	ON CONFLICT (inventory_id, reservation_date)
-	DO NOTHING
-	RETURNING inventory_id INTO vinventory_id
-	COMMIT;
+	IF EXISTS(
+        SELECT inventory_id
+        FROM inventory 
+        WHERE inventory_id = $1
+        AND $3 <= item_quantity
+    )
+    THEN
+        INSERT INTO reservation (inventory_id, owner_id, quantity, customer_id, 
+                                reservation_date, reservation_start, 
+                                reservation_end, reserve_status, last_update)
+        VALUES ($1, $2, $3, $4, daterange($5::DATE, $6::DATE), $5, $6, NULL, CURRENT_DATE)
+        ON CONFLICT (inventory_id, reservation_date)
+        DO NOTHING
+        RETURNING inventory_id INTO vinventory_id;
+        COMMIT;
+    ELSE
+        vinventory_id:= NULL
+        ROLLBACK;
+    END IF;
 END $$;
 
 -- !!FOR REVISION!! --
