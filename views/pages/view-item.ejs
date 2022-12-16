@@ -116,110 +116,86 @@ crossorigin=""></script>
           
         </div>
   </div>
-
+t
   <div class="container" style="margin-top: -100px;">
     <hr>
+    <% if(ratingsTotal == 0){ %>
+
+      <% } else if(ratingsTotal){ %>
+    <div class="row" style="margin-bottom: 40px;">
+      <div class="col-sm-3">
+          <div class="rating-block">
+              <h4>Average user rating</h4>
+    <p class="mb-4"><span class="text-primary font-italic me-1"><%=ratingsTotal[0].total %> Reviews</span><strong><%=ratingsTotal[0].average %></strong> <i class="fa-solid fa-star" style="color: orange;"></i>
+    </p>
+
+          </div>
+      </div>
+      
+  
+    <div class="col-sm-3">
+      <h4>Rating breakdown</h4>
+      <p class="mb-1" style="font-size: .77rem;">5.0 = <%=ratingsTotal[0].rating5 %></p>
+    <div class="progress rounded" style="height: 8px;">
+      <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85"
+        aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <p class="mt-4 mb-1" style="font-size: .77rem;">4.0 = <%=ratingsTotal[0].rating4 %> </p>
+    <div class="progress rounded" style="height: 8px;">
+      <div class="progress-bar" role="progressbar" style="width: 43%" aria-valuenow="43"
+        aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <p class="mt-4 mb-1" style="font-size: .77rem;">3.0 = <%=ratingsTotal[0].rating3 %></p>
+    <div class="progress rounded" style="height: 8px;">
+      <div class="progress-bar" role="progressbar" style="width: 19" aria-valuenow="19"
+        aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <p class="mt-4 mb-1" style="font-size: .77rem;">2.0 = <%=ratingsTotal[0].rating2 %> </p>
+    <div class="progress rounded" style="height: 8px;">
+      <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+        aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <p class="mt-4 mb-1" style="font-size: .77rem;">1.0 = <%=ratingsTotal[0].rating1 %> </p>
+    <div class="progress rounded mb-1" style="height: 8px;">
+      <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+        aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
+  <% } %>
+  
     <h4 style="margin-bottom: 30px;">Reviews / Comments</h4>
+
     <section id="reviews">
       
           <div class="review-container">
-              <div class="review-box">
+            <% if(ratings == 0){ %>
+              <h6>This item has no reviews yet</h6>
+            <% }else if(ratings){ %>
+              <% ratings.forEach(function(rating){ %>
+                <div class="review-box">
                   <div class="box-top">
                       <div class="profile"> 
                           <div class="profile-img">
-                              <img src="img/profile.png"/>
+                              <img src="/images/profile.png"/>
                           </div>
                           <div class="username">
-                              <strong>Ashley Gael</strong>
-                              <span>@ashgael</span>
+                              <strong><%=rating.rating.username %></strong>
+                              <span>@<%=rating.rating.username %></span>
                           </div>
                       </div>
                       
                       <div class="reviews">
                           <i class="fas fa-star"></i>
-                          <span>4.0</span>
+                          <span><%=rating.rating %></span>
                       </div>
                   </div>
                    <!-- comments ----------------->
                    <div class="comments">
-                      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum, veritatis consequuntur velit ullam expedita dolorem dignissimos explicabo earum accusamus officiis vero. Amet sapiente tenetur unde doloribus natus minima at pariatur!</p>
+                      <p><%=rating.comment %></p>
                    </div>
               </div>
-              <div class="review-box">
-                <div class="box-top">
-                    <div class="profile"> 
-                        <div class="profile-img">
-                            <img src="img/profile.png"/>
-                        </div>
-                        <div class="username">
-                            <strong>Ashley Gael</strong>
-                            <span>@ashgael</span>
-                        </div>
-                    </div>
-                    
-                    <div class="reviews">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="far fa-star"></i>
-                    </div>
-                </div>
-                 <!-- comments ----------------->
-                 <div class="comments">
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum, veritatis consequuntur velit ullam expedita dolorem dignissimos explicabo earum accusamus officiis vero. Amet sapiente tenetur unde doloribus natus minima at pariatur!</p>
-                 </div>
-            </div>
-            <div class="review-box">
-              <div class="box-top">
-                  <div class="profile"> 
-                      <div class="profile-img">
-                          <img src="img/profile.png"/>
-                      </div>
-                      <div class="username">
-                          <strong>Ashley Gael</strong>
-                          <span>@ashgael</span>
-                      </div>
-                  </div>
-                  
-                  <div class="reviews">
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="far fa-star"></i>
-                  </div>
-              </div>
-               <!-- comments ----------------->
-               <div class="comments">
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum, veritatis consequuntur velit ullam expedita dolorem dignissimos explicabo earum accusamus officiis vero. Amet sapiente tenetur unde doloribus natus minima at pariatur!</p>
-               </div>
-          </div>
-          <div class="review-box">
-            <div class="box-top">
-                <div class="profile"> 
-                    <div class="profile-img">
-                        <img src="img/profile.png"/>
-                    </div>
-                    <div class="username">
-                        <strong>Ashley Gael</strong>
-                        <span>@ashgael</span>
-                    </div>
-                </div>
-                
-                <div class="reviews">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="far fa-star"></i>
-                </div>
-            </div>
-             <!-- comments ----------------->
-             <div class="comments">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum, veritatis consequuntur velit ullam expedita dolorem dignissimos explicabo earum accusamus officiis vero. Amet sapiente tenetur unde doloribus natus minima at pariatur!</p>
-             </div>
-        </div>
+              <% }) %>              
+            <% } %>
           </div>
       
       </section>

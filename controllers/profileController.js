@@ -8,6 +8,8 @@ var getProfile = async (req,res, next)=>{
         
         const {rows: itemRows} = await pool.query(`SELECT a.item_id, b.inventory_id, account_id, rental_rate, image_path, item_name FROM item a JOIN inventory b 
                                         ON b.item_id = a.item_id WHERE account_id = ($1)`, [req.params.user_id])
+
+
         console.log(itemRows)
         console.log(itemRows[0])
         if(itemRows.length == 0){

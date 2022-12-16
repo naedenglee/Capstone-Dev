@@ -90,7 +90,32 @@ var viewItem = async  (req, res, next)=>{
         var sqlQuery5 = {
             text: `SELECT LOWER(reservation_date) AS start_date, UPPER(reservation_date) AS end_date, item_quantity, (SELECT SUM(quantity)FROM reservation a
             LEFT JOIN inventory b ON a.inventory_id = b.inventory_id WHERE b.item_id = ($1)) as sum_quantity FROM reservation a
-            LEFT JOIN inventory b ON a.inventory_id = b.inventory_id WHERE b.item_id = ($1);`,
+            LEFT JOIN inventory b ON a.inventory_id = b.inventory_id WHERE b.item_id = ($1) AND reserve_status IN (1,2,3,4);`,
+            values: [req.params.id]
+        }
+
+        var sqlQuery6 = {
+            text: `SELECT item_id, rating_by, username, rating, comment, rating_to 
+            FROM user_rating a JOIN account b ON a.rating_by = b.account_id WHERE item_id = ($1)`,
+            values: [req.params.id]
+        }
+
+        var sqlQuery7 = {
+            text: `SELECT COUNT(rating_id) as total, 
+            (((COUNT(*) FILTER (WHERE rating = 5)*5) + (COUNT(*) FILTER (WHERE rating = 4)*4)
+            + (COUNT(*) FILTER (WHERE rating = 3)*3) + (COUNT(*) FILTER (WHERE rating = 2)*2)
+            + (COUNT(*) FILTER (WHERE rating = 1)*1))/NULLIF(COUNT(rating_id),0))::float as average,
+            COUNT(*) FILTER (WHERE rating = 5) as rating5,
+            COUNT(*) FILTER (WHERE rating = 4) as rating4,
+            COUNT(*) FILTER (WHERE rating = 3) as rating3,
+            COUNT(*) FILTER (WHERE rating = 2) as rating2,
+            COUNT(*) FILTER (WHERE rating = 1) as rating1,
+            COUNT(*) FILTER (WHERE rating = 5) / NULLIF(COUNT(rating_id),0)::float * 100 as percent5,
+            COUNT(*) FILTER (WHERE rating = 4) / NULLIF(COUNT(rating_id),0)::float * 100 as percent4,
+            COUNT(*) FILTER (WHERE rating = 3) / NULLIF(COUNT(rating_id),0)::float * 100 as percent3,
+            COUNT(*) FILTER (WHERE rating = 2) / NULLIF(COUNT(rating_id),0)::float * 100 as percent2,
+            COUNT(*) FILTER (WHERE rating = 1) / NULLIF(COUNT(rating_id),0)::float * 100 as percent1
+            FROM user_rating WHERE item_id = ($1);`,
             values: [req.params.id]
         }
 
@@ -128,11 +153,31 @@ var viewItem = async  (req, res, next)=>{
         const {rows: dates} = await pool.query(sqlQuery2)
        
         const result_quantity = await pool.query(sqlQuery5)
-        if(result_quantity.length == 0){
+        if(result_quantity.rows.length == 0){
             var sum_quantity = 0
         }
         else if(result_quantity.rows[0]){
             var sum_quantity = result_quantity.rows[0].sum_quantity             
+        }
+        //
+        const {rows: resultRates} = await pool.query(sqlQuery6)
+        if(resultRates.length == 0){
+            var ratings = 0
+            console.log(ratings)
+        }
+        else if(resultRates[0]){
+            var ratings = resultRates
+            console.log(ratings)          
+        }
+
+        const {rows: resultRateTotal} = await pool.query(sqlQuery7)
+        if(resultRateTotal.length == 0){
+            var ratingsTotal = 0
+            console.log(ratings)
+        }
+        else if(resultRateTotal[0]){
+            var ratingsTotal = resultRateTotal
+            console.log(ratings)          
         }
         
         await Jincr(`item_perf:${req.params.id}`, 'detail_rate')
@@ -143,6 +188,8 @@ var viewItem = async  (req, res, next)=>{
             cart_count:req.session.cart_count, 
             currency:req.session.currency,
             sum_quantity,
+            ratings,
+            ratingsTotal,
             user_id:req.session.user_id
         })
     }
@@ -196,7 +243,7 @@ var itemReservation = async (req, res, next) =>{
                 let {inventory_id, account_id} = foo.rows[0]
                 console.log(inventory_id, req.session.user_id, req.body.start_date, req.body.end_date)
                 var sqlQuery = {
-                    text: `CALL check_reservation($1, $2, $3, $4, $5, $6 $7)`, // <-- INSERT STATEMENT STORED PROC
+                    text: `CALL check_reservation($1, $2, $3, $4, $5, $6, $7)`, // <-- INSERT STATEMENT STORED PROC
                     values: [inventory_id, account_id, req.body.modalQty, req.session.user_id, req.body.start_date, req.body.end_date, req.body.modeOfPayment]
                 }
                 const result2 = await pool.query(sqlQuery)
@@ -208,7 +255,7 @@ var itemReservation = async (req, res, next) =>{
                 }
 
                 else if(vinventory_id != null){ // IF ACCOUNT DOES EXIST
-                    await Jincr(`item_perf:${itemId}`, 'reservations')
+                    await Jincr(`item_perf:${req.params.id}`, 'reservations')
                     return res.redirect(`/items`)
                 }
             }            

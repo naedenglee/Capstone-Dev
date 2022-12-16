@@ -49,7 +49,7 @@ const CacheInventory = async() =>{
 
     try{
         await index()
-        await item_performance()
+        // await item_performance()
         await pool.query(`SET SCHEMA 'public'`)
         const {rows: inventory} = await pool.query(`SELECT * FROM inventory ORDER BY item_id ASC`)
         const {rows: item_perf} = await pool.query(`SELECT item_id, detail_rate, add_cart, 

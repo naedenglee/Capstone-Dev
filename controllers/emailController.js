@@ -112,7 +112,7 @@ const emailValidate = async (req, res, next) =>{
 
             else if(vis_verified != null){ // IF ACCOUNT DOES EXIST
                 req.session.otp = null
-                res.redirect('/seller/insert')
+                res.redirect('/email/check-verified')
                 res.send('Success!')
             }
         }

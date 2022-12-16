@@ -288,6 +288,34 @@ const denyRentalRequest = async(req, res, next) => {
     }
 }
 
+// const update_reservation = async(req, res, next) =>{
+//     try{
+
+//         var reservation_id = req.body.orderId
+//         let val = req.body.rental_button
+
+//         await pool.query(`SET SCHEMA 'public'`)
+//         const reservation_check = await pool.query(`SELECT reservation_id, reserve_status FROM reservation WHERE reservation_id = ($1)`, [reservation_id])
+//         //console.log(reservation_check.rows)
+//         if(reservation_check.rows[0].reservation_id == null){
+//             res.send(`RESERVATION DOES NOT EXIST`)
+//         }
+//         else{
+//             let res_status = reservation_check.rows[0].reserve_status
+//             console.log(res_status)
+//             const result = await pool.query(`CALL update_reservation_status($1, $2)`, [reservation_id, res_status])
+//             if(res_status = 5){
+//                 Jincr(`item_perf:${item_id}`, 'unique_rental')
+//             }
+//             console.log(`reservation updated!`)
+//             res.redirect('/dashboard')
+//         }
+//     }
+//     catch(ex){
+//         res.send(`Dashboard update_reservation ERROR: ${ex}`)
+//     }
+// }
+
 const update_reservation = async(req, res, next) =>{
     try{
 
@@ -295,18 +323,25 @@ const update_reservation = async(req, res, next) =>{
         let val = req.body.rental_button
 
         await pool.query(`SET SCHEMA 'public'`)
-        const reservation_check = await pool.query(`SELECT reservation_id, reserve_status FROM reservation WHERE reservation_id = ($1)`, [reservation_id])
+        const reservation_check = await pool.query(`SELECT reservation_id, reserve_status, quantity, inventory_id FROM reservation WHERE reservation_id = ($1)`, [reservation_id])
         //console.log(reservation_check.rows)
         if(reservation_check.rows[0].reservation_id == null){
             res.send(`RESERVATION DOES NOT EXIST`)
         }
         else{
             let res_status = reservation_check.rows[0].reserve_status
+            let res_quantity = reservation_check.rows[0].quantity
+            let res_id = reservation_check.rows[0].inventory_id
             console.log(res_status)
-            const result = await pool.query(`CALL update_reservation_status($1, $2)`, [reservation_id, res_status])
-            if(res_status = 5){
-                Jincr(`item_perf:${item_id}`, 'unique_rental')
+            if(res_status == 1){
+                await pool.query(`UPDATE inventory SET item_quantity = item_quantity - ($1) WHERE inventory_id = ($2)`, [res_quantity, res_id])
+
             }
+            if(res_status == 5){
+                Jincr(`item_perf:${item_id}`, 'unique_rental')
+                await pool.query(`UPDATE inventory SET item_quantity = item_quantity + ($1) WHERE inventory_id = ($2)`, [res_quantity, res_id])
+            }
+            const result = await pool.query(`CALL update_reservation_status($1, $2)`, [reservation_id, res_status])
             console.log(`reservation updated!`)
             res.redirect('/dashboard')
         }
