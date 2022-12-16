@@ -61,10 +61,10 @@
                         <td id="id"><%= rental.reservation_id %> <br> <a href="/rental/view/<%= rental.reservation_id %>">View Rental Details</a> </td>
                         <td id="client"><%= rental.customer_id %></td>
                         <td id="itemName"> <a href="/items/view/<%= rental.item_id%>"><%= rental.item_name %></a></td>
-                        <td id="rentalDate"><%= rental.reservation_start %></td>
-                        <td id="returnDate"><%= rental.reservation_end %></td>
+                        <td id="rentalDate"><%= rental.reservation_start.toDateString() %></td>
+                        <td id="returnDate"><%= rental.reservation_end.toDateString() %></td>
                         <td id="qty"><%= rental.quantity %></td>
-                        <td id="totalAmount"><%= rental.total_amount %></td>
+                        <td id="totalAmount"><%= rental.total_amount.toFixed(2) %></td>
                         <td id="status"><%= rental.reserve_status %></td>
                         <td id="action"><div class="p-1">
                           <% if(rental.reserve_status == null){ %>

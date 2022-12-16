@@ -10,6 +10,15 @@ const Jsets = (id, keyPaths, input) => {
   })
 }
 
+
+const Jincr = (id, keyPaths) => {
+  
+  return redisClient.send_command('JSON.NUMINCRBY', id, keyPaths, 1).then((res) => {
+    return res
+  }).catch((e) => {
+    console.error('redis increment error', e)
+  })
+}
 const Jgets = (id, keyPaths, input) => {
 
     return redisClient.send_command('JSON.GET', id, keyPaths).then((res) => {
@@ -52,10 +61,13 @@ function getOrSetHashCache (key, cb){
     })
 }
 
+
+
 module.exports = {
     getOrSetCache,
     getOrSetHashCache,
     Jsets,
     Jgets,
-    find
+    Jincr,
+    find,
 }

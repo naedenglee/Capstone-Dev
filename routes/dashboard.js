@@ -11,11 +11,15 @@ router.get("/user/rentals/ongoing", dashboardController.userOngoingRentals)
 
 router.get("/user/rentals/finished", dashboardController.userFinishedRentals)
 
+router.get('/user/requests', dashboardController.getUserRentalRequests)
+
 router.get("/lessor/rentals/ongoing", dashboardController.lessorOngoingRentals)
 
 router.get("/lessor/rentals/finished", (req,res) => {
     res.render('pages/dashboard/dashboard_owner_rentals_finished')
 })
+
+router.get("/reports", dashboardController.getReport)
 
 router.get("/lessor/requests", dashboardController.getRentalRequests)
 

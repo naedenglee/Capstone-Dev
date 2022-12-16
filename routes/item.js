@@ -6,6 +6,7 @@ router.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 router.use(bodyParser.json());
 //availability(reservation calendar)
 router.get("/", itemController.allItemView) //All Item Page
+router.get("/:category", itemController.categoryItemView) //All Item Page
 router.get("/view/:id", itemController.viewItem) //View Specific item
 router.post("/view/:id", itemController.itemCalendar) //View Specific item Calendar
 router.post('/view/:id/reserve', itemController.itemReservation) //Add to cart and Reservations

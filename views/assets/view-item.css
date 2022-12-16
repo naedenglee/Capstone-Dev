@@ -1,136 +1,205 @@
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 
-.navbar-brand{
-  margin-left: 3px;
-}
-
+  .navbar-brand{
+    margin-left: 3px;
+  } 
+  
+  
 .main {
-  box-sizing: border-box;
-}
+    margin-top: 110px;
+    box-sizing: border-box;
+    height: 800px;
 
-/* Create two equal columns that floats next to each other */
-.column {
-  float: left;
-  width: 50%;
-  padding: 10px;
-  /* height: 300px; Should be removed. Only for demonstration */
-}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-  .column {
-    width: 100%;
   }
-}
-
-/* ITEM PAGE (LEFT SIDE) PHOTO BOX */
+  
+  
+  
+  /* ITEM PAGE (LEFT SIDE) PHOTO BOX */
 
 div.polaroid {
-width: 75%;
-background-color: #20dbc2;
-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-margin-bottom: 25px;
+  width: 50%;
+  background-color: #20dbc2;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin-bottom: 25px;
 }
 
 div.p-container {
-text-align: center;
-padding: 15px 20px;
+  text-align: center;
+  padding: 15px 20px;
 }
 
-.main2
-{
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: small;
-  color: rgb(27, 27, 27);
- 
-
+input[type=text]{
+    padding: 8px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
 }
+
 h3{
-  font-weight: bold;
-  color: rgb(27, 27, 27);
-  text-shadow: 2px 1px gray;
+    font-weight: bold;
+    color: rgb(27, 27, 27);
+    text-shadow: 2px 1px gray;
 }
 
 /* ITEM PAGE (RIGHT SIDE) */
 
 div.box1{
-  border-radius: 15px;
-  background: #EBECF0;
-  padding: 20px; 
-  width: auto;
-  height: 150px;  
+    border-radius: 15px;
+    background: #EBECF0;
+    padding: 20px; 
+    width: 570px;
+    height: 200px;  
 }
 
 
 #map{
-border-radius: 15px;
-background: #EBECF0;
-padding: 20px; 
-width: 570px;
-height: 150px;  
+  border-radius: 15px;
+  background: #EBECF0;
+  padding: 20px; 
+  width: 570px;
+  height: 150px;  
 }
 .img2 {
+    
+    border-radius: 4px;
+    padding: 5px;
+    width: 100px;
+    float: left;
+    padding-right: 10px;
+    
+  }
   
-  border-radius: 4px;
-  padding: 5px;
-  width: 100px;
-  float: left;
-  padding-right: 10px;
-  
+  .img2:hover {
+    box-shadow: 0 0 2px 1px grey;
+  }
+
+  .checked {
+    color: orange;
+  }
+  .btn-message, .btn-profile {
+    width: 200px;
+    height: 39px;
+    outline: none;
+    border: none;
+    border-radius: 48px;
+    background-color: #00bfa6;
+    color: white;
+    text-align: center;
+    font-weight: 300;
+    margin: 10px 0;
+    transition: all 0.5s;
 }
 
-.img2:hover {
-  box-shadow: 0 0 2px 1px grey;
-}
 
-.checked {
-  color: orange;
-}
-.btn-message, .btn-profile {
-  width: 200px;
-  height: 39px;
-  outline: none;
-  border: none;
-  border-radius: 48px;
-  background-color: #00bfa6;
-  color: white;
-  text-align: center;
-  font-weight: 300;
-  margin: 10px 0;
-  transition: all 0.5s;
-}
 .btn-message:hover,
 .btn-profile:hover,
 .btn-availability:hover {
-  background-color: #20dbc2;
+    background-color: #20dbc2;
 }
 
 .btna{  /* check availability button*/
-  
-  margin: 13px auto;
-display: block;
-  width: 400px;
-  height: 45px;
-  outline: none;
-  border: none;
-  border-radius: 20px;
-  background-color: #00bfa6;
-  color: white;
-  text-align: center;
-  font-weight: 500;
-  font-size: medium;
-  text-transform: uppercase;
-  transition: all 0.5s;
+    
+    margin: 13px auto;
+  display: block;
+    width: 400px;
+    height: 45px;
+    outline: none;
+    border: none;
+    border-radius: 20px;
+    background-color: #00bfa6;
+    color: white;
+    text-align: center;
+    font-weight: 500;
+    font-size: medium;
+    text-transform: uppercase;
+    transition: all 0.5s;
+}
+
+.modal-content{
+  width: 650px;
+}
+
+
+/* COMMENTS - REVIEWS*/
+
+*{
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+
+#reviews{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.review-container{
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.review-box{
+  width: 600px;
+  box-shadow: 2px 2px 30px rgba(0, 0, 0, 0.1);
+  background-color: #ffff;
+  padding: 20px;
+  margin: 7px;
+  cursor: pointer;
+}
+
+.profile-img{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 10px;
+}
+.profile-img img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.profile{
+  display: flex;
+  align-items: center;
+}
+
+.username{
+  display: flex;
+  flex-direction: column;
+}
+
+.username strong{
+  color: #3d3d3d;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.username span{
+  color: #979797;
+  font-size: 0.8rem;
+}
+
+.reviews{
+  color: #f9d71c;
+}
+
+.box-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.comments{
+  font-size: 0.9rem;
+  color: #4b4b4b;
 }

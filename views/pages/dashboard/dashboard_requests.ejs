@@ -53,21 +53,25 @@
                     <th scope="col">Rental Date</th>
                     <th scope="col">Return Date</th>
                     <th scope="col">Quantity</th>
+                    <th scope="col">Total Amount</th>
+                    <th scope="col">Mode Of Payment</th>
                     <th scope="col">Client ID</th>
                     <th scope="col">Action</th>
                 </thead>
                 <tbody>
                   <% result.forEach(function(rental){ %>
                     <tr>
-                    <td id="id"><%= rental.rental_id %></td>
+                    <td id="id"><%= rental.reservation_id %></td>
                     <td id="itemName"><%= rental.item_name %> </td>                    
-                    <td id="startDate"><%= rental.rental_date %> </td>
-                    <td id="endDate"><%= rental.return_date %> </td>
-                    <td id="itemQty"><%= rental.rental_quantity %> </td>
+                    <td id="startDate"><%= rental.reservation_start.toDateString() %> </td>
+                    <td id="endDate"><%= rental.reservation_end.toDateString() %> </td>
+                    <td id="itemQty"><%= rental.quantity %> </td>
+                    <td id="totalAmount"><%= rental.total_amount.toFixed(2) %></td>
+                    <td id="modeOfPayment"><%= rental.mode_of_payment %></td>
                     <td id="clientId"><%= rental.customer_id %> </td>
                     <td id="action"><div class="p-1">
-                      <button class="btn btn-success button-1" data-bs-toggle="modal" data-bs-target="#requestApproveModal" data-id="1" onclick="requestApproveDeny(12)">Approve</button><br>
-                      <button class="btn btn-danger button-2" data-bs-toggle="modal" data-bs-target="#requestDenyModal" data-id="2" onclick="requestApproveDeny(13)">Deny</button><br>
+                      <button class="btn btn-success button-1" data-bs-toggle="modal" data-bs-target="#requestApproveModal" data-id="1" onclick="requestApproveDeny(<%= rental.reservation_id %>)">Approve</button><br>
+                      <button class="btn btn-danger button-2" data-bs-toggle="modal" data-bs-target="#requestDenyModal" data-id="2" onclick="requestApproveDeny(<%= rental.reservation_id %>)">Deny</button><br>
                       <p id="status" class="py-1"></p>
                     </div></td>
                   <% }) %>               
@@ -110,8 +114,8 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              You are about to DENY the rental request for order ID number <span id="orderNum" value=""></span>. Proceed?
-              <input type="hidden" name="orderId" id="reservationIdHidden" value="">
+              You are about to DENY the rental request for order ID number <span id="orderNum2" value=""></span>. Proceed?
+              <input type="hidden" name="orderId" id="reservationIdHidden2" value="">
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
@@ -128,10 +132,14 @@
 
 function requestApproveDeny(num){
   orderNum = document.getElementById('orderNum');
+  orderNum2 = document.getElementById('orderNum2');
   orderNum.textContent = num;
+  orderNum2.textContent = num;
 
   reservationId = document.getElementById("reservationIdHidden");
   reservationId.setAttribute("value", num);
+  reservationId2 = document.getElementById("reservationIdHidden2");
+  reservationId2.setAttribute("value", num);
 }
 
 </script>

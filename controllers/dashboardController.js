@@ -1,4 +1,5 @@
 const {pool} = require('../model/database.js')
+const {Jincr} = require('../model/redis.js')
 
 var viewMainDashboard = async(req, res, next) => {
     try{
@@ -9,7 +10,7 @@ var viewMainDashboard = async(req, res, next) => {
             res.status(401).render('pages/error401')
         }    
         else if(user){
-            res.render('pages/dashboard/dashboard_main')
+            res.render('pages/dashboard/dashboard_graph')
         }
         
     }
@@ -35,8 +36,9 @@ const userOngoingRentals = async(req, res, next) => {
             const {rows} = await pool.query(`SELECT a.reservation_id, a.owner_id, a.inventory_id, c.item_id,  
                 c.item_name, image_path, reservation_start, reservation_end , 
                 DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                quantity, a.reserve_status, mode_of_payment FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                JOIN item c ON c.item_id = b.item_id WHERE customer_id = ($1)`, [user_id]);
+                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount
+                FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
+                JOIN item c ON c.item_id = b.item_id WHERE customer_id = ($1) AND reserve_status IN (1,2,3,4)`, [user_id]);
            
             res.render('pages/dashboard/dashboard_user_rentals_ongoing', { result:rows })            
         }        
@@ -66,10 +68,10 @@ const userOngoingRentalsExtension = async(req, res, next) => {
             GROUP BY reservation_id HAVING inventory_id = ${inventory_id}`)
 
             if(result.rows.length == 0){
-                var insertExtension = await pool.query(`INSERT INTO extension(account_id, inventory_id, extension_date_end) VALUES
-                                        (($1), ($2), (SELECT reservation_end + INTERVAL '1 DAY' * ${numDays} as reservation_end 
-                                        FROM reservation WHERE reservation_id = ${reservation_id}))`)
-                res.redirect('/')
+                var insertExtension = await pool.query(`UPDATE reservation SET reservation_end = (reservation_end + INTERVAL '1 DAY' * ${numDays}) 
+                                                        WHERE reservation_id = ($1);`, [reservation_id])
+                
+                res.redirect('/dashboard/user/rentals/ongoing')
             }
             else if(result.rows){
                 res.send('MAY NAKA RESERVE!')
@@ -127,8 +129,8 @@ const lessorOngoingRentals = async(req, res, next) => {
             const {rows} = await pool.query(`SELECT a.reservation_id, a.customer_id, a.inventory_id, c.item_id,  
                 c.item_name, image_path, reservation_start, reservation_end , 
                 DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                quantity, a.reserve_status, mode_of_payment FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                JOIN item c ON c.item_id = b.item_id WHERE owner_id = ($1)`, [user_id]);
+                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
+                JOIN item c ON c.item_id = b.item_id WHERE owner_id = ($1) AND reserve_status IN (1,2,3,4)`, [user_id]);
 
             console.log(user_id)
             console.log(rows)
@@ -147,17 +149,54 @@ const lessorOngoingRentals = async(req, res, next) => {
 const getRentalRequests = async(req, res, next) => {
     try{    
         var user = req.session.username
-        var user_id = req.session.userId
+        var user_id = req.session.user_id
         
         if(!user){
             res.status(401).render('pages/error401')
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const rows = await pool.query(`SELECT a.reservation_id, customer_id, a.inventory_id, b.item_name, reservation_date, return_date, reservation_quantity
-            FROM reservation a JOIN item b ON a.inventory_id = b.item_id WHERE owner_id = ($1) AND reservation_status = 'requested';`, [user_id])
+            const { rows } = await pool.query(`SELECT a.reservation_id, a.customer_id, a.inventory_id, c.item_id,  
+                c.item_name, image_path, reservation_start, reservation_end , 
+                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount 
+                FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
+                JOIN item c ON c.item_id = b.item_id WHERE owner_id = ($1) AND reserve_status is null`, [user_id])
+            
+            console.log(rows)
 
             res.render('pages/dashboard/dashboard_requests', { result:rows })            
+        }        
+    }
+    catch(ex){
+        res.send(ex)
+    }
+    finally{
+        pool.release
+        next()
+    }
+}
+
+const getUserRentalRequests = async(req, res, next) => {
+    try{    
+        var user = req.session.username
+        var user_id = req.session.user_id
+        
+        if(!user){
+            res.status(401).render('pages/error401')
+        }
+        else if(user){
+            await pool.query(`SET SCHEMA 'public'`)
+            const { rows } = await pool.query(`SELECT a.reservation_id, a.owner_id, a.inventory_id, c.item_id,  
+                c.item_name, image_path, reservation_start, reservation_end , 
+                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount 
+                FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
+                JOIN item c ON c.item_id = b.item_id WHERE customer_id = ($1) AND reserve_status is null`, [user_id])
+            
+            console.log(rows)
+
+            res.render('pages/dashboard/dashboard_user_requests', { result:rows })            
         }        
     }
     catch(ex){
@@ -172,17 +211,21 @@ const getRentalRequests = async(req, res, next) => {
 const getDeniedRentalRequests = async(req, res, next) => {
     try{    
         var user = req.session.username
-        var user_id = req.session.userId
+        var user_id = req.session.user_id
         
         if(!user){
             res.status(401).render('pages/error401')
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const rows = await pool.query(`SELECT a.reservation_id, customer_id, a.inventory_id, b.item_name, reservation_date, return_date, reservation_quantity
-            FROM reservation a JOIN item b ON a.inventory_id = b.item_id WHERE owner_id = ($1) AND reservation_status = 'denied';`, [user_id])
+            const { rows } = await pool.query(`SELECT a.reservation_id, a.customer_id, a.inventory_id, c.item_id,  
+                c.item_name, image_path, reservation_start, reservation_end , 
+                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount 
+                FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
+                JOIN item c ON c.item_id = b.item_id WHERE owner_id = ($1) AND reserve_status = 7`, [user_id])
 
-            res.render('pages/dashboard/dashboard_requests_denied', { result:rows })            
+                res.render('pages/dashboard/dashboard_requests_denied', { result:rows })            
         }        
     }
     catch(ex){
@@ -197,17 +240,18 @@ const getDeniedRentalRequests = async(req, res, next) => {
 const approveRentalRequest = async(req, res, next) => {
     try{    
         var user = req.session.username
-        var user_id = req.session.userId
+        var user_id = req.session.user_id
         var reservation_id = req.body.orderId
+        console.log(reservation_id)
         
         if(!user){
             res.status(401).render('pages/error401')
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const rows = await pool.query(`UPDATE reservation SET reservation_status = 'ongoing' WHERE reservation_id = ($1)`, [reservation_id])
+            const updateRentalStatus = await pool.query(`UPDATE reservation SET reserve_status = 1 WHERE reservation_id = ($1)`, [reservation_id])
 
-            res.redirect('/dashboard/lessor/reservations/ongoing')            
+            res.redirect('/dashboard/lessor/rentals/ongoing')            
         }        
     }
     catch(ex){
@@ -230,7 +274,7 @@ const denyRentalRequest = async(req, res, next) => {
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const rows = await pool.query(`UPDATE reservation SET reservation_status = 'denied' WHERE reservation_id = ($1)`, [reservation_id])
+            const rows = await pool.query(`UPDATE reservation SET reserve_status = 7 WHERE reservation_id = ($1)`, [reservation_id])
 
             res.redirect('/dashboard/lessor/requests/denied')            
         }        
@@ -259,7 +303,10 @@ const update_reservation = async(req, res, next) =>{
         else{
             let res_status = reservation_check.rows[0].reserve_status
             console.log(res_status)
-            await pool.query(`CALL update_reservation_status($1, $2)`, [reservation_id, res_status])
+            const result = await pool.query(`CALL update_reservation_status($1, $2)`, [reservation_id, res_status])
+            if(res_status = 5){
+                Jincr(`item_perf:${item_id}`, 'unique_rental')
+            }
             console.log(`reservation updated!`)
             res.redirect('/dashboard')
         }
@@ -296,6 +343,26 @@ const addComment = async(req, res, next) => {
     }
 }
 
+const getReport = async(req, res, next) => {
+    try{
+        var user = req.session.username
+        var user_id = req.session.user_id
+        
+        if(!user){
+            res.status(401).render('pages/error401')
+        }
+        else if(user){                     
+            res.render('pages/dashboard/dashboard_reports')
+        }     
+    }
+    catch(ex){
+        console.log(ex)
+    }
+    finally{
+
+    }
+}
+
 
 module.exports = { viewMainDashboard, userOngoingRentals, userFinishedRentals, userOngoingRentalsExtension, lessorOngoingRentals, 
-                    getRentalRequests, getDeniedRentalRequests, approveRentalRequest, denyRentalRequest, update_reservation, addComment}
+                    getRentalRequests, getUserRentalRequests, getDeniedRentalRequests, approveRentalRequest, denyRentalRequest, update_reservation, addComment, getReport}

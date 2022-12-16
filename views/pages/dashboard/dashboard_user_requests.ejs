@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<link rel="stylesheet" href="/assets/dashboard_orders.css">
+	<title>Order Page</title>
+</head>
+<body>
+	<!-- SIDEBAR -->
+    <%- include ('dashboard_sidebar') -%>
+    
+	<section id="content">
+		<nav>
+			<i class='bx bx-menu toggle-sidebar' ></i>
+			<form action="#">
+				<div class="form-group">
+				</div>
+			</form>
+			<a href="#" class="nav-link">
+				<i class='bx bxs-bell icon' ></i></a>
+			<div class="profile">
+				<img src="/images/system_images/user.png" alt="">
+				<ul class="profile-link">
+					<li><a href="#"><i class='bx bxs-user-circle icon' ></i> Account</a></li>
+					<li><a href="#"><i class='bx bxs-cog' ></i>Settings</a></li>
+					<li><a href="#"><i class='bx bxs-log-out-circle' ></i> Logout</a></li>
+			</div>
+		</nav>
+		<div class="dash-content">
+            <div class="overview">
+                <div class="title">
+			<h1 class="title">Your Pending Requests</h1>
+			</div>
+		<div class="boxes"  style="overflow-x:auto;">
+      <table class="table table-bordered">
+
+        <% if(result.length == 0) { %>
+          <h2 style="text-align:center">You have no pending rental requests.</h2>
+        <% }else if(result) { %>
+
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Owner</th>
+            <th scope="col">Item Name</th>
+            <th scope="col">Rental Date</th>
+            <th scope="col">Return Date</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total Amount</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% result.forEach(function(rental){ %>
+            <tr>
+              <td id="id"><%= rental.reservation_id %> <br> <a href="/rental/view/<%= rental.reservation_id %>">View Rental Details</a> </td>
+              <td id="owner"><%= rental.owner_id %></td>
+              <td id="itemName"> <a href="/items/view/<%= rental.item_id%>"><%= rental.item_name %></a></td>
+              <td id="rentalDate"><%= rental.reservation_start.toDateString() %></td>
+              <td id="returnDate"><%= rental.reservation_end.toDateString() %></td>
+              <td id="qty"><%= rental.quantity %></td>
+              <td id="totalAmount"><%= rental.total_amount.toFixed(2) %></td>
+              <td id="status">Your rental request is still pending. Please wait for <br> it to be accepted by the lessor.</td>              
+            </tr>
+          <% }) %>  
+        </tbody>
+      </table>
+		</div>
+	</section>
+
+        <% } %>
+  <!-- MODAL -->
+  <form action="/dashboard/user/rentals/ongoing" method="post">
+    <div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-labelledby="updateConfirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateConfirmModalLabel">UPDATE STATUS</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            You are about to update the status for order number <span id="orderNum" value=""></span>. Proceed?
+            <input type="hidden" name="buttonVal" id="buttonValModal" value="">
+            <input type="hidden" name="orderId" id="reservationIdHidden" value="">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-primary">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>      
+  </form>
+
+  <!-- EXTENSION MODAL -->
+  <form action="/dashboard/user/rentals/ongoing/extension" method="post">
+    <div class="modal fade" id="applyExtensionModal" tabindex="-1" aria-labelledby="applyExtensionModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="applyExtensionModalLabel">APPLYING FOR EXTENSION</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Rental ID Number: <span id="orderNumExtension" value=""></span><br>
+            Input the number of days to extend the rental: <input type="number" name="numDays" min="1" max="5" value="1" required> <br><br>
+            NOTE: It will only be requested if there is no existing reservation for that date.
+            <input type="hidden" name="inventoryId" id="inventoryId" value="">
+            <input type="hidden" name="orderIdExtension" id="orderIdExtension" value="">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-primary">Request</button>
+          </div>
+        </div>
+      </div>
+    </div>      
+  </form>
+
+	<script src="/assets/scripts/dashboard_orders.js"></script>
+</body>
+
+<script>
+  function updateBtnFunc(num){
+        buttonValModal = document.getElementById("buttonValModal");
+        buttonVal = document.getElementById("buttonVal");
+        status = buttonVal.value
+        buttonValModal.setAttribute("value", status);
+        console.log(status)
+
+        orderNum = document.getElementById("orderNum");
+        orderNum.textContent = num;
+
+        reservationId = document.getElementById("reservationIdHidden");
+        reservationId.setAttribute("value", num);
+    }
+
+    function applyExtensionFunc(num, invenId){
+      orderId = document.getElementById("orderIdExtension");
+      orderIdSpan = document.getElementById("orderNumExtension");
+      inventoryId = document.getElementById("inventoryId")
+
+      orderIdSpan.textContent = num;
+      orderId.setAttribute("value", num);
+      inventoryId.setAttribute("value", invenId);
+    }
+</script>
+</html>

@@ -1,0 +1,45 @@
+
+.categories h2{
+	/*text-align: center;*/
+	margin-bottom: 20px;
+}
+
+
+.categories .card{
+	height: 100%;
+}
+
+.categories{
+	margin-bottom: 90px;
+}
+
+.categories .card-img-top{
+	width: 100%;
+	height: 100%;
+	margin-top: 0;
+}
+
+.categories .card:hover{
+	transform: scale(1.01);
+}
+
+.categories .card:active {
+  box-shadow: 0 2px #666;
+  transform: translateY(1px);
+}	
+
+.ads .card{
+	height: 100%;
+}
+
+.ads .col{
+	height: 100px;
+}
+
+.card-title{
+  font-size: 18px;
+}
+
+.ads .card-img{	
+	max-height: 300px;
+}

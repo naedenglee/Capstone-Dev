@@ -146,12 +146,11 @@ CREATE TABLE cart(
 
 CREATE TABLE item_performance(
     item_id INT PRIMARY KEY,
-    detail_rate INT DEFAULT 0,
-    add_cart INT DEFAULT 0, 
-    rm_cart INT DEFAULT 0,
-    reservations INT DEFAULT 0,
-    unique_rental INT DEFAULT 0,
-    cart_to_detail_rate FLOAT DEFAULT 0,
-    rsv_to_detail_rate FLOAT DEFAULT 0
+    detail_rate INT DEFAULT 1,
+    add_cart INT DEFAULT 1, 
+    rm_cart INT DEFAULT 1,
+    reservations INT DEFAULT 1,
+    unique_rental INT DEFAULT 1,
+    cart_to_detail_rate FLOAT GENERATED ALWAYS AS ((add_cart/detail_rate)*100) STORED,
+    rsv_to_detail_rate FLOAT GENERATED ALWAYS AS ((reservations/detail_rate)*100) STORED
 );
-

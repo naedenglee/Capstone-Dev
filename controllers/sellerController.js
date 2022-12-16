@@ -35,10 +35,9 @@ var sellerInsert = async (req, res, next)=>{
 
     // Upload the image
     const imageUrl = await uploadImage(imagePath);
-    console.log(imageUrl)
 
     try{
-        req.session.user = 1
+       
         var sqlQuery = { 
             text: `CALL item_insert($1, $2, $3, $4, $5, $6, $7, $8, NULL)`,
             values: [
@@ -49,7 +48,7 @@ var sellerInsert = async (req, res, next)=>{
                 req.body.replacement_cost,
                 imageUrl,
                 req.body.quantity,
-                req.session.user
+                req.session.user_id
             ]
         }
 
