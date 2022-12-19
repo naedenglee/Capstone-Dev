@@ -15,9 +15,7 @@ router.get('/user/requests', dashboardController.getUserRentalRequests)
 
 router.get("/lessor/rentals/ongoing", dashboardController.lessorOngoingRentals)
 
-router.get("/lessor/rentals/finished", (req,res) => {
-    res.render('pages/dashboard/dashboard_owner_rentals_finished')
-})
+router.get("/lessor/rentals/finished", dashboardController.lessorFinishedRentals)
 
 router.get("/reports", dashboardController.getReport)
 
@@ -34,7 +32,7 @@ router.post('/lessor/requests/approve', dashboardController.approveRentalRequest
 router.post('/lessor/requests/deny', dashboardController.denyRentalRequest)
 
 // BAGO 
-router.post('/user/rentals/ongoing', dashboardController.update_reservation)
+router.post('/rentals/updateStatus', dashboardController.update_reservation)
 
 router.post("/user/rentals/finished/addRating", dashboardController.addComment)
 

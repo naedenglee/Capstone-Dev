@@ -9,6 +9,95 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	<link rel="stylesheet" href="/assets/dashboard_orders.css">
 	<title>Order Page</title>
+
+  <style>
+    .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 20px;
+    width: 450px;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border-radius: 6px;
+    -moz-box-shadow: 0px 0px 5px 0px rgba(212, 182, 212, 1)
+}
+
+.comment-box{
+    
+    padding:5px;
+}
+
+
+
+.comment-area textarea{
+   resize: none; 
+        border: 1px solid #ad9f9f;
+}
+
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #ffffff;
+    outline: 0;
+    box-shadow: 0 0 0 1px rgb(255, 0, 0) !important;
+}
+
+.send {
+    color: #fff;
+    background-color: #ff0000;
+    border-color: #ff0000;
+}
+
+.send:hover {
+    color: #fff;
+    background-color: #f50202;
+    border-color: #f50202;
+}
+
+
+.rating {
+ display: flex;
+        margin-top: -10px;
+    flex-direction: row-reverse;
+    margin-left: -4px;
+        float: left;
+}
+
+.rating>input {
+    display: none
+}
+
+.rating>label {
+        position: relative;
+    width: 19px;
+    font-size: 25px;
+    color: #ff0000;
+    cursor: pointer;
+}
+
+.rating>label::before {
+    content: "\2605";
+    position: absolute;
+    opacity: 0
+}
+
+.rating>label:hover:before,
+.rating>label:hover~label:before {
+    opacity: 1 !important
+}
+
+.rating>input:checked~label:before {
+    opacity: 1
+}
+
+.rating:hover>input:checked~label:before {
+    opacity: 0.4
+}
+  </style>
 </head>
 <body>
 	<!-- SIDEBAR -->
@@ -34,134 +123,107 @@
 		<div class="dash-content">
             <div class="overview">
                 <div class="title">
-			<h1 class="title">Finished Rentals (For Lessors)</h1>
+			<h1 class="title">Your Finished Rentals</h1>
 			</div>
+		<div class="boxes"  style="overflow-x:auto;">
       <% if(result.length == 0) { %>
         <h2 style="text-align:center">You have no finished rentals</h2>
-      <% }else if(result) { %> 
-		<div class="boxes"  style="overflow-x:auto;">
+      <% }else if(result) { %>
+
             <table class="table table-bordered">
                 <thead>
                   <tr>
-                    <th scope="col"><input type="button" onclick='selects()' value="✓"/><input type="button" onclick='deSelect()' value="✕"/>   </th>
                     <th scope="col">ID</th>
-                    <th scope="col">Purchase Point</th>
-                    <th scope="col">Purchase Date</th>
-                    <th scope="col">Bill-to Name</th>
-                    <th scope="col">Ship-to Name</th>
-                    <th scope="col">Grand Total</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Start Date</th>
-                    <th scope="col">End Date</th>
+                    <th scope="col">Client</th>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Rental Date</th>
+                    <th scope="col">Return Date</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total Amount</th>
+                    <th scope="col">Review</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row"><input type="checkbox" name="chk" value="1"></th>
-                    <td class="id">000012</td>
-                    <td class="address">San Mateo, Rizal</td>
-                    <td class="Pdate">October 3, 2022</td>
-                    <td class="btName">Ivan Kyle</td>
-                    <td class="stName">Ivan Kyle</td>
-                    <td class="gtotal">₱ 1,099.00</td>
-                    <td class="status">Pending</td>
-                    <td class="startdate">November 4, 2022 12:00:00AM</td>
-                    <td class="enddate">November 7, 2022 12:00:00PM</td>                    
-                  </tr>
-                  <tr>
-                    <th scope="row"><input type="checkbox" name="chk" value="2"></th>
-                    <td class="id">000013</td>
-                    <td class="address">Marikina City</td>
-                    <td class="Pdate">October 10, 2022</td>
-                    <td class="btName">Richelieu T</td>
-                    <td class="stName">Richelieu T</td>
-                    <td class="gtotal">₱ 879.00</td>
-                    <td class="status">Pending</td>
-                    <td class="startdate">November 8, 2022 12:00:00AM</td>
-                    <td class="enddate">November 10, 2022 12:00:00PM</td>
-                  </tr>
-                  <tr>
-                    <th scope="row"><input type="checkbox" name="chk" value="3"></th>
-                    <td class="id">000014</td>
-                    <td class="address">Manila, City</td>
-                    <td class="Pdate">October 20, 2022</td>
-                    <td class="btName">Yanna Mari</td>
-                    <td class="stName">Robert Delim</td>
-                    <td class="gtotal">₱ 2,979.00</td>
-                    <td class="status">Pending</td>
-                    <td class="startdate">November 20, 2022 12:00:00AM</td>
-                    <td class="enddate">November 28, 2022 12:00:00PM</td>
-                  </tr>
+                  <% result.forEach(function(rental){ %>
+                    <tr>
+                      <td id="id"><%= rental.reservation_id %> <br> <a href="/rental/view/<%= rental.reservation_id %>">View Rental Details</a> </td>
+                      <td id="owner"><%= rental.customer_id %></td>
+                      <td id="itemName"> <a href="/items/view/<%= rental.item_id%>"><%= rental.item_name %></a></td>
+                      <td id="rentalDate"><%= rental.reservation_start.toDateString() %></td>
+                      <td id="returnDate"><%= rental.reservation_end.toDateString() %></td>
+                      <td id="qty"><%= rental.quantity %></td>
+                      <td id="totalAmount"><%= rental.total_amount %></td>
+                      <td id="reviews"><div class="p-1">                        
+                        <% if(rental.rating_id == null) { %>
+                          <span>The client is yet to leave a review.</span>
+                        <% } else{ %>
+                          <span>Client Rating: <%= rental.rating %> Stars</span>
+                        <% } %>
+                      </div></td>                      
+                    </tr>
+                  <% }) %>  
                 </tbody>
               </table>
 		</div>
 	</section>
+
   <% } %>
 
-  <!-- UPDATE MODAL -->
-  <form action="/tryTable" method="post">
-    <div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-labelledby="updateConfirmModalLabel" aria-hidden="true">
+  <!-- MODAL -->
+  <form action="/dashboard/user/rentals/finished/addRating" method="post">
+    <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="updateConfirmModalLabel">UPDATE STATUS</h5>
+            <h5 class="modal-title" id="commentModalLabel">Review</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            You are about to update the status for order number <span id="orderNum" value=""></span>. Proceed?
-            <input type="hidden" name="buttonVal" id="buttonValModal" value="">
-            <input type="hidden" name="orderId" id="reservationIdHidden" value="">
+            <div class="card" style="width: 100%; padding-left: 100px;">               
+              <div class="row">        
+                  <div class="col-10">          
+                      <div class="comment-box ml-2">              
+                          <h4>Add a comment</h4>  <br>
+                          <h6>Leave a Review!</h6>            
+                          <div class="rating"> 
+                              <input type="radio" name="rating" value="5" id="5" required><label for="5" >☆</label>
+                              <input type="radio" name="rating" value="4" id="4"><label for="4" >☆</label> 
+                              <input type="radio" name="rating" value="3" id="3"><label for="3" >☆</label>
+                              <input type="radio" name="rating" value="2" id="2"><label for="2" >☆</label>
+                              <input type="radio" name="rating" value="1" id="1"><label for="1" >☆</label>
+                          </div>              
+                          <div class="comment-area">                  
+                              <textarea name="comment" class="form-control" placeholder="Leave a Comment" rows="4" required></textarea>              
+                          </div>  
+                          <input type="hidden" id="itemId" name="itemId" value="">   
+                          <input type="hidden" id="reservationId" name="reservationId" value="">
+                          <input type="hidden" id="ownerId" name="ownerId" value="">                                    
+                      </div>
+                  </div>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-            <button type="submit" class="btn btn-primary">Yes</button>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
           </div>
         </div>
       </div>
     </div>      
   </form>
-
-  <!-- FINISHING OF TRANSACTION MODAL -->
-  <form action="/tryTable" method="post">
-    <div class="modal fade" id="finishTransactionModal" tabindex="-1" aria-labelledby="finishTransactionModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="updateConfirmModalLabel">Rental End</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            The item for rental ID number <span id="orderNum" value=""></span> has been returned successfully. Release the security deposit now?
-            <input type="hidden" name="buttonVal" id="buttonValModal" value="">
-            <input type="hidden" name="orderId" id="reservationIdHidden" value="">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-            <button type="submit" class="btn btn-primary">Yes</button>
-          </div>
-        </div>
-      </div>
-    </div>      
-  </form>
-
 
 	<script src="/assets/scripts/dashboard_orders.js"></script>
 </body>
 
 <script>
-  function updateBtnFunc(num){
-        buttonValModal = document.getElementById("buttonValModal");
-        buttonVal = document.getElementById("buttonVal");
-        status = buttonVal.value
-        buttonValModal.setAttribute("value", status);
-        console.log(status)
-
-        orderNum = document.getElementById("orderNum");
-        orderNum.textContent = num;
-
-        reservationId = document.getElementById("reservationIdHidden");
-        reservationId.setAttribute("value", num);
+  function commentFunc(num1, num2, num3){
+        itemId = document.getElementById("itemId")
+        itemId.setAttribute("value", num1);     
+        
+        reservationId = document.getElementById("reservationId")
+        reservationId.setAttribute("value", num2);
+        
+        ownerId = document.getElementById("ownerId")
+        ownerId.setAttribute("value", num3);
     }
 </script>
-
 </html>

@@ -99,8 +99,9 @@ const userFinishedRentals = async(req, res, next) => {
             const {rows} = await pool.query(`SELECT a.reservation_id, a.owner_id, a.inventory_id, c.item_id,  
                 c.item_name, image_path, reservation_start, reservation_end , 
                 DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                quantity, a.reserve_status, mode_of_payment, rating_id FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                JOIN item c ON c.item_id = b.item_id LEFT JOIN user_rating d ON d.item_id = c.item_id 
+                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount, 
+                rating_id FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
+                JOIN item c ON c.item_id = b.item_id LEFT JOIN user_rating d ON d.reservation_id = a.reservation_id
                 WHERE customer_id = ($1) and reserve_status = 5`, [user_id]);
             
             res.render('pages/dashboard/dashboard_user_rentals_finished', { result:rows })            
@@ -143,6 +144,35 @@ const lessorOngoingRentals = async(req, res, next) => {
     finally{
         pool.release
         next()
+    }
+}
+
+const lessorFinishedRentals = async(req, res, next) => {
+    try{
+        var user = req.session.username
+        var user_id = req.session.user_id
+
+        if(!user){
+            res.status(401).render('pages/error401')
+        }
+        else if(user){
+            await pool.query(`SET SCHEMA 'public'`)
+            const {rows} = await pool.query(`SELECT a.reservation_id, a.customer_id, a.inventory_id, c.item_id,  
+                c.item_name, image_path, reservation_start, reservation_end , 
+                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount, 
+                rating_id, rating FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
+                JOIN item c ON c.item_id = b.item_id LEFT JOIN user_rating d ON d.reservation_id = a.reservation_id
+                WHERE owner_id = ($1) and reserve_status = 5`, [user_id]);
+            
+            res.render('pages/dashboard/dashboard_owner_rentals_finished', { result:rows })            
+        }       
+    }
+    catch(ex){
+        res.send(ex)
+    }
+    finally{
+
     }
 }
 
@@ -355,18 +385,19 @@ const addComment = async(req, res, next) => {
     try{
         var user = req.session.username
         var user_id = req.session.user_id
-        var reservation_id = req.body.orderId
+        var reservation_id = req.body.reservationId
         var item_id = req.body.itemId
         var comment = req.body.comment
         var rating = req.body.rating
+        var owner_id = req.body.ownerId
         
         if(!user){
             res.status(401).render('pages/error401')
         }
         else if(user){                     
             await pool.query(`SET SCHEMA 'public'`)
-            const setRating = await pool.query(`INSERT INTO user_rating (item_id, rating_by, rating, comment)
-                                                VALUES(($1), ($2), ($3), ($4))`, [item_id, user_id, rating, comment])
+            const setRating = await pool.query(`INSERT INTO user_rating (item_id, rating_by, rating, comment, reservation_id, rating_to)
+                                                VALUES(($1), ($2), ($3), ($4), ($5))`, [item_id, user_id, rating, comment, reservation_id, owner_id])
             res.redirect('/dashboard/user/rentals/finished')     
         }     
     }
@@ -399,5 +430,5 @@ const getReport = async(req, res, next) => {
 }
 
 
-module.exports = { viewMainDashboard, userOngoingRentals, userFinishedRentals, userOngoingRentalsExtension, lessorOngoingRentals, 
+module.exports = { viewMainDashboard, userOngoingRentals, userFinishedRentals, userOngoingRentalsExtension, lessorOngoingRentals, lessorFinishedRentals, 
                     getRentalRequests, getUserRentalRequests, getDeniedRentalRequests, approveRentalRequest, denyRentalRequest, update_reservation, addComment, getReport}

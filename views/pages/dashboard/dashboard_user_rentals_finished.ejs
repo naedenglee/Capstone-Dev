@@ -155,7 +155,7 @@
                       <td id="totalAmount"><%= rental.total_amount %></td>
                       <td id="reviews"><div class="p-1">                        
                         <% if(rental.rating_id == null) { %>
-                          <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#commentModal" id="buttonVal" value="1" data-id="1" onclick="commentFunc(<%= rental.item_id %>)">Rate the Experiece</button><br>
+                          <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#commentModal" id="buttonVal" value="1" data-id="1" onclick="commentFunc(<%= rental.item_id %>, <%= rental.reservation_id %>, <%= rental.owner_id %>)">Rate the Experiece</button><br>
                         <% } else{ %>
                           <span>You have finished rating this item</span>
                         <% } %>
@@ -195,7 +195,9 @@
                           <div class="comment-area">                  
                               <textarea name="comment" class="form-control" placeholder="Leave a Comment" rows="4" required></textarea>              
                           </div>  
-                          <input type="hidden" id="itemId" name="itemId" value="">                                   
+                          <input type="hidden" id="itemId" name="itemId" value="">   
+                          <input type="hidden" id="reservationId" name="reservationId" value="">
+                          <input type="hidden" id="ownerId" name="ownerId" value="">                                    
                       </div>
                   </div>
               </div>
@@ -213,9 +215,15 @@
 </body>
 
 <script>
-  function commentFunc(num){
+  function commentFunc(num1, num2, num3){
         itemId = document.getElementById("itemId")
-        itemId.setAttribute("value", num);        
+        itemId.setAttribute("value", num1);     
+        
+        reservationId = document.getElementById("reservationId")
+        reservationId.setAttribute("value", num2);
+        
+        ownerId = document.getElementById("ownerId")
+        ownerId.setAttribute("value", num3);
     }
 </script>
 </html>

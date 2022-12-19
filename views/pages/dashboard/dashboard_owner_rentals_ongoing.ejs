@@ -89,7 +89,7 @@
 	</section>
 
   <!-- UPDATE MODAL -->
-  <form action="/dashboard/user/rentals/ongoing" method="post">
+  <form action="/dashboard/rentals/updateStatus" method="post">
     <div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-labelledby="updateConfirmModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -112,7 +112,7 @@
   </form>
 
   <!-- FINISHING OF TRANSACTION MODAL -->
-  <form action="/tryTable" method="post">
+  <form action="/dashboard/rentals/updateStatus" method="post">
     <div class="modal fade" id="finishTransactionModal" tabindex="-1" aria-labelledby="finishTransactionModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -121,9 +121,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            The item for rental ID number <span id="orderNum" value=""></span> has been returned successfully. Release the security deposit now?
-            <input type="hidden" name="buttonVal" id="buttonValModal" value="">
-            <input type="hidden" name="orderId" id="reservationIdHidden" value="">
+            The item for rental ID number <span id="orderNum2" value=""></span> has been returned successfully. Release the security deposit now?
+            <input type="hidden" name="buttonVal" id="buttonValModal2" value="">
+            <input type="hidden" name="orderId" id="reservationIdHidden2" value="">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
@@ -151,6 +151,12 @@
 
         reservationId = document.getElementById("reservationIdHidden");
         reservationId.setAttribute("value", num);
+
+        orderNum2 = document.getElementById("orderNum2");
+        orderNum2.textContent = num;
+
+        reservationId2 = document.getElementById("reservationIdHidden2");
+        reservationId2.setAttribute("value", num);
     }
 </script>
 

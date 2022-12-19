@@ -90,7 +90,7 @@
 
         <% } %>
   <!-- MODAL -->
-  <form action="/dashboard/user/rentals/ongoing" method="post">
+  <form action="/dashboard/rentals/updateStatus" method="post">
     <div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-labelledby="updateConfirmModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -113,7 +113,7 @@
   </form>
 
   <!-- EXTENSION MODAL -->
-  <form action="/dashboard/user/rentals/ongoing/extension" method="post">
+  <form action="/dashboard/rentals/updateStatus" method="post">
     <div class="modal fade" id="applyExtensionModal" tabindex="-1" aria-labelledby="applyExtensionModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -124,13 +124,13 @@
           <div class="modal-body">
             Rental ID Number: <span id="orderNumExtension" value=""></span><br>
             Input the number of days to extend the rental: <input type="number" name="numDays" min="1" max="5" value="1" required> <br><br>
-            NOTE: It will only be requested if there is no existing reservation for that date.
+            NOTE: It will only be extended if there is no existing reservation for that date.
             <input type="hidden" name="inventoryId" id="inventoryId" value="">
             <input type="hidden" name="orderIdExtension" id="orderIdExtension" value="">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-            <button type="submit" class="btn btn-primary">Request</button>
+            <button type="submit" class="btn btn-primary">Proceed</button>
           </div>
         </div>
       </div>
