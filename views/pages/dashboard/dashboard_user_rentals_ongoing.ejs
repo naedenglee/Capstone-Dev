@@ -70,9 +70,11 @@
               <td id="status"><%= rental.reserve_status %></td>
               <td id="action"><div class="p-1">
                 <% if(rental.reserve_status == 1){ %>
-                  <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="1" data-id="1" onclick="updateBtnFunc(<%= rental.reservation_id %>)">Item Received</button><br>
+                  <span>The lessor has accepted and is about to ship your item. Please wait for the courier to confirm the delivery.</span>
                 <% } else if(rental.reserve_status == 2) { %>
                     <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#updateConfirmModal" id="buttonVal" value="2" data-id="1" onclick="updateBtnFunc(<%= rental.reservation_id %>)">Item Delivered Back to Lessor</button><br>
+                <% } else if(rental.reserve_status == 3) { %>
+                  <span>Please ship the item. Copy and send this link to the courier to confirm the delivery. <br> <a href="/dashboard/return/confirmation/<%= rental.reservation_id %>">Copy this link</a></span>
                 <% } else { %>
                     <span>No Available Action</span>
                 <% } %><p id="status" class="py-1"></p>

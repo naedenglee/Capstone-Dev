@@ -1,5 +1,13 @@
 const {pool} = require('../model/database.js')
 const {Jincr} = require('../model/redis.js')
+const cloudinary = require('cloudinary').v2
+
+cloudinary.config({ 
+    cloud_name: 'ddk9lffn7', 
+    api_key: '646917413963653', 
+    api_secret: 'ptjD8QM9epsZPnkBPX_mRC7JF-Y',
+    secure: true 
+  });
 
 var viewMainDashboard = async(req, res, next) => {
     try{
@@ -429,6 +437,113 @@ const getReport = async(req, res, next) => {
     }
 }
 
+const courierDeliveryPage = async(req, res, next) => {
+    try{
+        var rental_id = req.params.rentalId
+        const result = await pool.query(`SELECT a.reservation_id, a.customer_id,(SELECT username FROM account WHERE account_id = a.customer_id) as customer_username, owner_id, (SELECT username FROM account WHERE account_id = a.owner_id) as owner_username, a.inventory_id, c.item_id,  
+                                        c.item_name, reservation_start, reservation_end,                
+                                        quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount 
+                                        FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
+                                        JOIN item c ON c.item_id = b.item_id
+                                        WHERE a.reservation_id = ($1) and reserve_status = 1`, [rental_id])
+        if(result.rows.length == 0){
+            res.status(404).render('pages/error404')
+        }
+        else if(result.rows){
+            res.render('pages/dashboard/dashboard_courier_deliver', {result})
+        }
+        
+    }
+    catch(ex){
+        console.log(ex)
+    }
+    finally{
+
+    }
+}
+
+const courierReturnPage = async(req, res, next) => {
+    try{
+        var rental_id = req.params.rentalId
+        const result = await pool.query(`SELECT a.reservation_id, a.customer_id,(SELECT username FROM account WHERE account_id = a.customer_id) as customer_username, owner_id, (SELECT username FROM account WHERE account_id = a.owner_id) as owner_username, a.inventory_id, c.item_id,  
+                                        c.item_name, reservation_start, reservation_end,                
+                                        quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount 
+                                        FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
+                                        JOIN item c ON c.item_id = b.item_id
+                                        WHERE a.reservation_id = ($1) and reserve_status = 3`, [rental_id])
+
+        if(result.rows.length == 0){
+            res.status(404).render('pages/error404')
+        }
+        else if(result.rows){
+            res.render('pages/dashboard/dashboard_courier_return', {result})
+        }
+    }
+    catch(ex){
+        console.log(ex)
+    }
+    finally{
+
+    }
+}
+
+const updateCourier = async(req, res, next) =>{
+    const uploadImage = async (imagePath) => {
+
+        // Use the uploaded file's name as the asset's public ID and 
+        // allow overwriting the asset with new versions
+        const options = {
+            use_filename: true,
+            unique_filename: false,
+            overwrite: true,
+            folder:'mang-hiram-courier-photos'
+        };
+    
+        try {
+            // Upload the image
+            const result = await cloudinary.uploader.upload(imagePath, options);
+            return result.secure_url;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    try{
+        await pool.query(`SET SCHEMA 'public'`)
+
+        if(req.body.updateButton == 1){
+            const imagePath = req.body.imageFileb64;
+
+            // Upload the image
+            const imageUrl = await uploadImage(imagePath);
+            
+            await pool.query(`INSERT INTO courier (reservation_id, image_url, courier_status) 
+                                VALUES(($1), ($2), 1)`, [req.params.rentalId, imageUrl])
+            
+            await pool.query(`UPDATE reservation SET reserve_status = (reserve_status + 1) WHERE reservation_id = ($1)`, [req.params.rentalId])
+
+            res.redirect('/dashboard')
+        }
+        else if(req.body.updateButton == 2){
+            const imagePath = req.body.imageFileb64;
+
+            // Upload the image
+            const imageUrl = await uploadImage(imagePath);
+            
+            await pool.query(`INSERT INTO courier (reservation_id, image_url, message, courier_status) 
+                                VALUES(($1), ($2), 1)`, [req.params.rentalId, imageUrl, req.body.reaseon])            
+
+            res.redirect('/dashboard')
+        }
+    }
+    catch(ex){
+        console.log(ex)
+    }
+    finally{
+
+    }
+}
 
 module.exports = { viewMainDashboard, userOngoingRentals, userFinishedRentals, userOngoingRentalsExtension, lessorOngoingRentals, lessorFinishedRentals, 
-                    getRentalRequests, getUserRentalRequests, getDeniedRentalRequests, approveRentalRequest, denyRentalRequest, update_reservation, addComment, getReport}
+                    getRentalRequests, getUserRentalRequests, getDeniedRentalRequests, approveRentalRequest, denyRentalRequest, update_reservation, addComment, 
+                    getReport, courierDeliveryPage, courierReturnPage, updateCourier}

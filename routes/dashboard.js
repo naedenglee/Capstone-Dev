@@ -23,6 +23,10 @@ router.get("/lessor/requests", dashboardController.getRentalRequests)
 
 router.get("/lessor/requests/denied", dashboardController.getDeniedRentalRequests)
 
+router.get('/delivery/confirmation/:rentalId', dashboardController.courierDeliveryPage)
+
+router.get('/return/confirmation/:rentalId', dashboardController.courierReturnPage)
+
 
 //POST requests
 router.post('/user/rentals/ongoing/extension', dashboardController.userOngoingRentalsExtension)
@@ -35,5 +39,7 @@ router.post('/lessor/requests/deny', dashboardController.denyRentalRequest)
 router.post('/rentals/updateStatus', dashboardController.update_reservation)
 
 router.post("/user/rentals/finished/addRating", dashboardController.addComment)
+
+router.post('/courier/confirmation/:rentalId', dashboardController.updateCourier)
 
 module.exports = router

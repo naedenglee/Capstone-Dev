@@ -41,7 +41,7 @@
                </div>
             </div>
             <button type="button" onclick="defaultBtnActive()" id="custom-btn">Choose a file</button>
-            <input id="imageFile" name="imageFile" type="file" hidden><br><br>
+            <input id="imageFile" name="imageFile" type="file" accept="image" hidden><br><br>
             <input type="hidden" id="imageFileb64" name="imageFileb64">
             <!-- <button type="submit">Submit</button> -->
             <h4 style="text-align: left;">Listing Title</h4>
@@ -71,7 +71,8 @@
             <h4 style="text-align: left; margin-top: 18px;">Quantity</h4>
             <input type="number" class="form-control" id="Quantity" name="quantity" placeholder="Quantity" min="1" required>	
             
-            <button type="submit" id="custom-btn">Post</button> 
+            <button type="submit" id="custom-btn" disabled>Post</button> 
+            <button type="button" id="primary1" class="btn btn-lg btn-primary" disabled>Primary button</button>
             <a style="text-decoration:none;" href="/"><button type="button" id="custom-btn">Cancel</button></a>
             </div>
             
@@ -84,7 +85,7 @@
 </body>
 
 <script>
-   function readFile() { 
+   await function readFile() { 
       if (!this.files || !this.files[0]) return;         
       const FR = new FileReader();
          
@@ -95,6 +96,7 @@
       }
 
       document.querySelector("#imageFile").addEventListener("change", readFile);
+      
 </script>
 
 
