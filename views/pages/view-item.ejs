@@ -238,8 +238,8 @@ t
                         <b>Rental fee:</b><br>
                         <b>Deposit fee:</b><br>
                        <label for="quantity"><b>Quantity:</b></label>
-                        <input type="number" name="modalQty" id="modalQty" value="1" min="1" max="<%= result[0].item_quantity %>" required><br>
-                        <b>Owner:</b><br>
+                        <input type="number" name="modalQty" id="modalQty" value="1" min="1" max="<%= result[0].item_quantity %>" required> <br> <span style="font-size:smaller; color: grey;">Available Stock: <%= result[0].item_quantity %></span> <br><br>
+                        
                         <p><b>Mode of Payment:</b></p>
                         <input type="radio" id="currency" name="modeOfPayment" value="1" required>
                         <label for="currency">Mang-Hiram Currency</label><br>
@@ -436,6 +436,19 @@ t
       function insertDate(){
   
       }
+
+      document.getElementById("modalQty").addEventListener("click", function(e) {
+      const value = this.value,
+        max = this.getAttribute("max"),
+        min = this.getAttribute("min"),
+        minned = this.dataset.minned === "true";
+      maxed = this.dataset.maxed === "true";
+      if (value === max && maxed) {
+        alert("The max available quantity is <%= result[0].item_quantity %>");
+      }      
+      this.dataset.maxed = value === max ? "true" : "false";
+      this.dataset.minned = value === min ? "true" : "false";
+    })
       
    </script>
 </html>

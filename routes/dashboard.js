@@ -27,6 +27,13 @@ router.get('/delivery/confirmation/:rentalId', dashboardController.courierDelive
 
 router.get('/return/confirmation/:rentalId', dashboardController.courierReturnPage)
 
+router.get('/courier/confirmation/success', async(req, res, next) => {
+    res.render('pages/dashboard/dashboard_courier_success')
+})
+
+router.get('/courier/confirmation/failed', async(req, res, next) => {
+    res.render('pages/dashboard/dashboard_courier_failed')
+})
 
 //POST requests
 router.post('/user/rentals/ongoing/extension', dashboardController.userOngoingRentalsExtension)

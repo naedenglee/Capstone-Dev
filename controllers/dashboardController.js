@@ -18,7 +18,7 @@ var viewMainDashboard = async(req, res, next) => {
             res.status(401).render('pages/error401')
         }    
         else if(user){
-            res.render('pages/dashboard/dashboard_graph')
+            res.render('pages/dashboard/dashboard_graph', {status:req.query.status})
         }
         
     }
@@ -48,7 +48,7 @@ const userOngoingRentals = async(req, res, next) => {
                 FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
                 JOIN item c ON c.item_id = b.item_id WHERE customer_id = ($1) AND reserve_status IN (1,2,3,4)`, [user_id]);
            
-            res.render('pages/dashboard/dashboard_user_rentals_ongoing', { result:rows })            
+            res.render('pages/dashboard/dashboard_user_rentals_ongoing', { result:rows, status:req.query.status })            
         }        
     }
     catch(ex){
@@ -79,10 +79,10 @@ const userOngoingRentalsExtension = async(req, res, next) => {
                 var insertExtension = await pool.query(`UPDATE reservation SET reservation_end = (reservation_end + INTERVAL '1 DAY' * ${numDays}) 
                                                         WHERE reservation_id = ($1);`, [reservation_id])
                 
-                res.redirect('/dashboard/user/rentals/ongoing')
+                res.redirect('/dashboard/user/rentals/ongoing?status=extensionSuccess')
             }
             else if(result.rows){
-                res.send('MAY NAKA RESERVE!')
+                res.redirect('/dashboard/user/rentals/ongoing?status=extensionFailed')
             }
     }
     catch(ex){
@@ -112,7 +112,7 @@ const userFinishedRentals = async(req, res, next) => {
                 JOIN item c ON c.item_id = b.item_id LEFT JOIN user_rating d ON d.reservation_id = a.reservation_id
                 WHERE customer_id = ($1) and reserve_status = 5`, [user_id]);
             
-            res.render('pages/dashboard/dashboard_user_rentals_finished', { result:rows })            
+            res.render('pages/dashboard/dashboard_user_rentals_finished', { result:rows, status:req.query.status })            
         }       
     }
     catch(ex){
@@ -143,7 +143,7 @@ const lessorOngoingRentals = async(req, res, next) => {
 
             console.log(user_id)
             console.log(rows)
-            res.render('pages/dashboard/dashboard_owner_rentals_ongoing', { result:rows })            
+            res.render('pages/dashboard/dashboard_owner_rentals_ongoing', { result:rows, status:req.query.status })            
         }        
     }
     catch(ex){
@@ -173,7 +173,7 @@ const lessorFinishedRentals = async(req, res, next) => {
                 JOIN item c ON c.item_id = b.item_id LEFT JOIN user_rating d ON d.reservation_id = a.reservation_id
                 WHERE owner_id = ($1) and reserve_status = 5`, [user_id]);
             
-            res.render('pages/dashboard/dashboard_owner_rentals_finished', { result:rows })            
+            res.render('pages/dashboard/dashboard_owner_rentals_finished', { result:rows, status:req.query.status })            
         }       
     }
     catch(ex){
@@ -203,7 +203,7 @@ const getRentalRequests = async(req, res, next) => {
             
             console.log(rows)
 
-            res.render('pages/dashboard/dashboard_requests', { result:rows })            
+            res.render('pages/dashboard/dashboard_requests', { result:rows, status:req.query.status })            
         }        
     }
     catch(ex){
@@ -234,7 +234,7 @@ const getUserRentalRequests = async(req, res, next) => {
             
             console.log(rows)
 
-            res.render('pages/dashboard/dashboard_user_requests', { result:rows })            
+            res.render('pages/dashboard/dashboard_user_requests', { result:rows, status:req.query.status })            
         }        
     }
     catch(ex){
@@ -289,7 +289,7 @@ const approveRentalRequest = async(req, res, next) => {
             await pool.query(`SET SCHEMA 'public'`)
             const updateRentalStatus = await pool.query(`UPDATE reservation SET reserve_status = 1 WHERE reservation_id = ($1)`, [reservation_id])
 
-            res.redirect('/dashboard/lessor/rentals/ongoing')            
+            res.redirect('/dashboard/lessor/rentals/ongoing?status=requestAccepted')            
         }        
     }
     catch(ex){
@@ -314,7 +314,7 @@ const denyRentalRequest = async(req, res, next) => {
             await pool.query(`SET SCHEMA 'public'`)
             const rows = await pool.query(`UPDATE reservation SET reserve_status = 7 WHERE reservation_id = ($1)`, [reservation_id])
 
-            res.redirect('/dashboard/lessor/requests/denied')            
+            res.redirect('/dashboard/lessor/requests?status=requestDenied')            
         }        
     }
     catch(ex){
@@ -381,7 +381,7 @@ const update_reservation = async(req, res, next) =>{
             }
             const result = await pool.query(`CALL update_reservation_status($1, $2)`, [reservation_id, res_status])
             console.log(`reservation updated!`)
-            res.redirect('/dashboard')
+            res.redirect('/dashboard?status=updateSuccess')
         }
     }
     catch(ex){
@@ -406,7 +406,7 @@ const addComment = async(req, res, next) => {
             await pool.query(`SET SCHEMA 'public'`)
             const setRating = await pool.query(`INSERT INTO user_rating (item_id, rating_by, rating, comment, reservation_id, rating_to)
                                                 VALUES(($1), ($2), ($3), ($4), ($5), ($6))`, [item_id, user_id, rating, comment, reservation_id, owner_id])
-            res.redirect('/dashboard/user/rentals/finished')              
+            res.redirect('/dashboard/user/rentals/finished?status=ratingAdded')              
         }     
     }
     catch(ex){
@@ -522,7 +522,7 @@ const updateCourier = async(req, res, next) =>{
             
             await pool.query(`UPDATE reservation SET reserve_status = (reserve_status + 1) WHERE reservation_id = ($1)`, [req.params.rentalId])
 
-            res.redirect('/dashboard')
+            res.redirect('/dashboard/courier/confirmation/success')
         }
         else if(req.body.updateButton == 2){
             const imagePath = req.body.imageFileb64;
@@ -531,9 +531,9 @@ const updateCourier = async(req, res, next) =>{
             const imageUrl = await uploadImage(imagePath);
             
             await pool.query(`INSERT INTO courier (reservation_id, image_url, message, courier_status) 
-                                VALUES(($1), ($2), 1)`, [req.params.rentalId, imageUrl, req.body.reaseon])            
+                                VALUES(($1), ($2), 2)`, [req.params.rentalId, imageUrl, req.body.reason])            
 
-            res.redirect('/dashboard')
+            res.redirect('/dashboard/courier/confirmation/failed')
         }
     }
     catch(ex){

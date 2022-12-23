@@ -16,7 +16,9 @@
     
 	<section id="content">
 		<nav>
+      
 			<i class='bx bx-menu toggle-sidebar' ></i>
+      
 			<form action="#">
 				<div class="form-group">
 				</div>
@@ -31,6 +33,7 @@
 					<li><a href="#"><i class='bx bxs-log-out-circle' ></i> Logout</a></li>
 			</div>
 		</nav>
+    <div id="liveAlertPlaceholder" style="text-align: center; margin-top: 3px;"></div>
 		<div class="dash-content">
             <div class="overview">
                 <div class="title">
@@ -143,6 +146,39 @@
 </body>
 
 <script>
+   async function getStatus(){   
+    var status = '<%=status%>'
+
+    if(status == 'extensionFailed'){
+      const alertPlaceholder = document.getElementById('liveAlertPlaceholder')    
+      const wrapper = document.createElement('div')
+      wrapper.innerHTML = [
+        `<div class="alert alert-danger alert-dismissible" role="alert">`,
+        `   <div>Extension Application Failed!</div>`,
+        '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+        '</div>'
+      ].join('')
+
+      alertPlaceholder.append(wrapper)   
+    }       
+    else if(status == 'extensionSuccess'){
+      const alertPlaceholder = document.getElementById('liveAlertPlaceholder')    
+      const wrapper = document.createElement('div')
+      wrapper.innerHTML = [
+        `<div class="alert alert-success alert-dismissible" role="alert">`,
+        `   <div>Extension Application Success!</div>`,
+        '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+        '</div>'
+      ].join('')
+
+      alertPlaceholder.append(wrapper)   
+    }
+
+  }
+  
+  getStatus()
+
+
   function updateBtnFunc(num){
         buttonValModal = document.getElementById("buttonValModal");
         buttonVal = document.getElementById("buttonVal");
