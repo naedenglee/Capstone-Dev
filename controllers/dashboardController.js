@@ -405,8 +405,8 @@ const addComment = async(req, res, next) => {
         else if(user){                     
             await pool.query(`SET SCHEMA 'public'`)
             const setRating = await pool.query(`INSERT INTO user_rating (item_id, rating_by, rating, comment, reservation_id, rating_to)
-                                                VALUES(($1), ($2), ($3), ($4), ($5))`, [item_id, user_id, rating, comment, reservation_id, owner_id])
-            res.redirect('/dashboard/user/rentals/finished')     
+                                                VALUES(($1), ($2), ($3), ($4), ($5), ($6))`, [item_id, user_id, rating, comment, reservation_id, owner_id])
+            res.redirect('/dashboard/user/rentals/finished')              
         }     
     }
     catch(ex){
