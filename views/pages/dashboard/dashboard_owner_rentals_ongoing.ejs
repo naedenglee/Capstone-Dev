@@ -69,7 +69,7 @@
                         <td id="status"><%= rental.reserve_status %></td>
                         <td id="action"><div class="p-1">
                           <% if(rental.reserve_status == 1){ %>
-                            <span>Please ship the item. Copy and send this link to the courier to confirm the delivery. <br> <a href="/dashboard/delivery/confirmation/<%= rental.reservation_id %>">Copy this link</a></span>
+                            <span>Please ship the item before the rental date. Copy and send this link to the courier to confirm the delivery. <br> <a href="/dashboard/delivery/confirmation/<%= rental.reservation_id %>">Copy this link</a></span>
                           <% } else if(rental.reserve_status == 3) { %>
                             <span>The client has shipped the item. Please wait for the courier to confirm the delivery.</span>
                           <% } else if(rental.reserve_status == 4){ %>
