@@ -531,7 +531,7 @@ const updateCourier = async(req, res, next) =>{
             const imageUrl = await uploadImage(imagePath);
             
             await pool.query(`INSERT INTO courier (reservation_id, image_url, message, courier_status) 
-                                VALUES(($1), ($2), 2)`, [req.params.rentalId, imageUrl, req.body.reason])            
+                                VALUES(($1), ($2), ($3), 2)`, [req.params.rentalId, imageUrl, req.body.reason])            
 
             res.redirect('/dashboard/courier/confirmation/failed')
         }
