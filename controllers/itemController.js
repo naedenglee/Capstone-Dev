@@ -214,6 +214,7 @@ var itemReservation = async (req, res, next) =>{
             }
             if(user){
                 await pool.query(`SET SCHEMA 'public'`)
+                
                 var result = await pool.query(`SELECT item_id FROM cart WHERE account_id = ($1) AND item_id = ($2)`,[user, item_id])
                 if(result.rows.length == 0){
                     //const rows = await pool.query(`INSERT INTO cart  VALUES ($1, $2, 1)`,[user, item_id])
