@@ -145,7 +145,7 @@ nav .toggle-sidebar {
 	cursor: pointer;
 }
 nav form {
-	max-width: 400px;
+	max-width: 400px;  
 	width: 100%;
 	margin-right: auto;
 }
@@ -170,8 +170,8 @@ nav .profile {
 	position: relative;
 }
 nav .profile img {
-	width: 20px;
-	height: 20px;
+	width: 35px;
+	height: 35px;
 	border-radius: 50%;
 	object-fit: cover;
 	cursor: pointer;
@@ -184,7 +184,7 @@ nav .profile .profile-link {
 	padding: 10px 0;
 	box-shadow: 4px 4px 16px rgba(0, 0, 0, .1);
 	border-radius: 10px;
-	width: 160px;
+	width: 350px;  
 	opacity: 0;
 	pointer-events: none;
 	transition: all .3s ease;

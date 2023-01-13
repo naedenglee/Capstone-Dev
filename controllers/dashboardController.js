@@ -12,18 +12,33 @@ cloudinary.config({
 var viewMainDashboard = async(req, res, next) => {
     try{
         var user = req.session.username
-        var user_id = req.session.userId
+        var user_id = req.session.user_id
+        console.log(user_id)
         
         if(!user){
             res.status(401).render('pages/error401')
         }    
         else if(user){
-            res.render('pages/dashboard/dashboard_graph', {status:req.query.status})
+            await pool.query(`SET SCHEMA 'public'`)
+            const {rows: notif} = await pool.query(`SELECT notification_date, owner_id,  client_id, b.username as client_username, 
+                                    reserve_status, notification_type, reservation_id, a.item_id, item_name FROM notification a 
+                                    JOIN account b ON a.client_id = b.account_id LEFT JOIN item c ON a.item_id = c.item_id WHERE owner_id = ($1) OR client_id = ($1)
+                                    ORDER BY notification_id DESC`, [user_id])
+            if(notif.length == 0){
+                var notif_result = 0   
+                console.log(notif_result)             
+            }
+            else if(notif[0]){
+                var notif_result = notif
+                console.log(notif_result)  
+            }
+            
+            res.render('pages/dashboard/dashboard_graph', {status:req.query.status, notif_result, user_id})
         }
         
     }
     catch(ex){
-        res.send(ex)
+        console.log(ex)
     }
     finally{
         pool.release
@@ -287,7 +302,15 @@ const approveRentalRequest = async(req, res, next) => {
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
+            const reservation_check = await pool.query(`SELECT reservation_id, reserve_status, quantity, inventory_id, owner_id, customer_id 
+            FROM reservation WHERE reservation_id = ($1)`, [reservation_id])               
+                let owner_id = reservation_check.rows[0].owner_id
+                let client_id = reservation_check.rows[0].customer_id
+
             const updateRentalStatus = await pool.query(`UPDATE reservation SET reserve_status = 1 WHERE reservation_id = ($1)`, [reservation_id])
+
+            const notif = await pool.query(`INSERT INTO notification (notification_date, owner_id, client_id, notification_type, reservation_id)
+                                            VALUES(CURRENT_DATE, ($1), ($2), 2, ($3))`, [owner_id, client_id, reservation_id])
 
             res.redirect('/dashboard/lessor/rentals/ongoing?status=requestAccepted')            
         }        
@@ -312,7 +335,15 @@ const denyRentalRequest = async(req, res, next) => {
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
+            const reservation_check = await pool.query(`SELECT reservation_id, reserve_status, quantity, inventory_id, owner_id, customer_id 
+            FROM reservation WHERE reservation_id = ($1)`, [reservation_id])                
+                let owner_id = reservation_check.rows[0].owner_id
+                let client_id = reservation_check.rows[0].customer_id
+
             const rows = await pool.query(`UPDATE reservation SET reserve_status = 7 WHERE reservation_id = ($1)`, [reservation_id])
+
+            const notif = await pool.query(`INSERT INTO notification (notification_date, owner_id, client_id, notification_type, reservation_id)
+            VALUES(CURRENT_DATE, ($1), ($2), 3, ($3))`, [owner_id, client_id, reservation_id])
 
             res.redirect('/dashboard/lessor/requests?status=requestDenied')            
         }        
@@ -361,7 +392,8 @@ const update_reservation = async(req, res, next) =>{
         let val = req.body.rental_button
 
         await pool.query(`SET SCHEMA 'public'`)
-        const reservation_check = await pool.query(`SELECT reservation_id, reserve_status, quantity, inventory_id FROM reservation WHERE reservation_id = ($1)`, [reservation_id])
+        const reservation_check = await pool.query(`SELECT reservation_id, reserve_status, quantity, inventory_id, owner_id, customer_id 
+                                                    FROM reservation WHERE reservation_id = ($1)`, [reservation_id])
         //console.log(reservation_check.rows)
         if(reservation_check.rows[0].reservation_id == null){
             res.send(`RESERVATION DOES NOT EXIST`)
@@ -370,7 +402,8 @@ const update_reservation = async(req, res, next) =>{
             let res_status = reservation_check.rows[0].reserve_status
             let res_quantity = reservation_check.rows[0].quantity
             let res_id = reservation_check.rows[0].inventory_id
-            console.log(res_status)
+            let owner_id = reservation_check.rows[0].owner_id
+            let client_id = reservation_check.rows[0].customer_id
             if(res_status == 1){
                 await pool.query(`UPDATE inventory SET item_quantity = item_quantity - ($1) WHERE inventory_id = ($2)`, [res_quantity, res_id])
 
@@ -380,6 +413,8 @@ const update_reservation = async(req, res, next) =>{
                 await pool.query(`UPDATE inventory SET item_quantity = item_quantity + ($1) WHERE inventory_id = ($2)`, [res_quantity, res_id])
             }
             const result = await pool.query(`CALL update_reservation_status($1, $2)`, [reservation_id, res_status])
+            const notif = await pool.query(`INSERT INTO notification (notification_date, owner_id, client_id, reserve_status, notification_type, reservation_id)
+                                            VALUES(CURRENT_DATE, ($1), ($2), ($3), 0, ($4))`, [owner_id, client_id, res_status + 1, reservation_id])
             console.log(`reservation updated!`)
             res.redirect('/dashboard?status=updateSuccess')
         }
@@ -516,11 +551,19 @@ const updateCourier = async(req, res, next) =>{
 
             // Upload the image
             const imageUrl = await uploadImage(imagePath);
+
+            const reservation_check = await pool.query(`SELECT reservation_id, reserve_status, quantity, inventory_id, owner_id, customer_id 
+                                                    FROM reservation WHERE reservation_id = ($1)`, [req.params.rentalId])
+                let res_status = reservation_check.rows[0].reserve_status
+                let owner_id = reservation_check.rows[0].owner_id
+                let client_id = reservation_check.rows[0].customer_id
             
             await pool.query(`INSERT INTO courier (reservation_id, image_url, courier_status) 
                                 VALUES(($1), ($2), 1)`, [req.params.rentalId, imageUrl])
             
             await pool.query(`UPDATE reservation SET reserve_status = (reserve_status + 1) WHERE reservation_id = ($1)`, [req.params.rentalId])
+            await pool.query(`INSERT INTO notification (notification_date, owner_id, client_id, reserve_status, notification_type, reservation_id)
+                                            VALUES(CURRENT_DATE, ($1), ($2), ($3), 0, ($4))`, [owner_id, client_id, res_status + 1, req.params.rentalId])
 
             res.redirect('/dashboard/courier/confirmation/success')
         }

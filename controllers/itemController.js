@@ -219,6 +219,8 @@ var itemReservation = async (req, res, next) =>{
                 if(result.rows.length == 0){
                     //const rows = await pool.query(`INSERT INTO cart  VALUES ($1, $2, 1)`,[user, item_id])
                     const rows = await pool.query(`INSERT INTO cart (account_id, item_id, qty)VALUES ($1, $2, 1)`,[user, item_id])
+                    const notif = await pool.query(`INSERT INTO notification (notification_date, owner_id, client_id, notification_type, item_id )
+                                            VALUES(CURRENT_DATE, (SELECT account_id FROM inventory WHERE item_id = ($2)), ($1), 1, ($2))`, [user, item_id])
                     req.session.cart_count += 1
                 }
                 else if(result.rows){
