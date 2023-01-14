@@ -117,9 +117,11 @@ window.addEventListener('click', function (e) {
 // ---------- CHARTS ----------
 
 // BAR CHART
+var arr = [2,3,4];
+
 var barChartOptions = {
     series: [{
-      data: [3, 2, 9]
+      data: arr
     }],
     chart: {
       type: 'bar',
