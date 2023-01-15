@@ -15,6 +15,7 @@ var getProfile = async (req,res, next)=>{
         if(itemRows.length == 0){
             res.render('pages/user-profile', { result:rows, 
                 user:req.session.username, 
+                user_id:req.session.user_id,
                 cart_count:req.session.cart_count, 
                 currency:req.session.currency,
                 itemRows:0 })
@@ -22,6 +23,7 @@ var getProfile = async (req,res, next)=>{
         else if(itemRows){
             res.render('pages/user-profile', { result:rows, 
                 user:req.session.username, 
+                user_id:req.session.user_id,
                 cart_count:req.session.cart_count, 
                 currency:req.session.currency,
                 itemRows})

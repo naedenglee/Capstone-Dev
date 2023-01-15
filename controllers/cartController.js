@@ -21,7 +21,8 @@ var getCart = async (req, res, next) =>{
             const result = await pool.query(sqlQuery)
             res.render('pages/cart', { user, result:result.rows, 
                                        cart_count:req.session.cart_count, 
-                                       currency:req.session.currency })
+                                       currency:req.session.currency,
+                                        user_id:req.session.user_id })
         }        
     }
     catch(ex){

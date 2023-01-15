@@ -7,6 +7,7 @@ var home = (req, res, next) =>{
     res.render('pages/homepage', 
     { 
         user:req.session.username, 
+        user_id:req.session.user_id,
         cart_count:req.session.cart_count, 
         currency:req.session.currency, 
         status:req.query.loginStatus

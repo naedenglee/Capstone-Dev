@@ -72,11 +72,73 @@ var sellerInsert = async (req, res, next)=>{
     }
 }
 
+var sellerItems = async(req, res, next) => {
+    var user = req.session.username
+    var user_id = req.session.user_id
 
+    if(!user){
+        res.status(401).render('pages/error401')
+    }
+    else if(user){
+        await pool.query(`SET SCHEMA 'public'`)
+        const {rows: sellerItems} = await pool.query(`SELECT a.item_id, item_name, item_category, item_description, rental_rate, replacement_cost, item_quantity
+                                                        FROM item a JOIN inventory b ON a.item_id = b.item_id WHERE b.account_id = ($1)`, [user_id])
+        if(sellerItems.length == 0){
+            var sellerItemsResult = 0
+        }
+        else if(sellerItems[0]){
+            var sellerItemsResult = sellerItems
+        }
+
+
+        res.render('pages/seller_items', { user:req.session.username, 
+                                        user_id:req.session.user_id,
+                                        cart_count:req.session.cart_count, 
+                                        currency:req.session.currency, 
+                                        status:req.query.loginStatus,
+                                        sellerItemsResult,
+                                        status:req.query.status })
+    }
+}
+
+var updateItem = async(req, res, next) => {
+    try{
+        var user = req.session.username
+
+        if(!user)[
+            res.status(401).render('pages/error401')
+        ]
+        else if(user){
+            var item_id = req.body.itemId
+            var item_name = req.body.itemName
+            var quantity = req.body.quantity
+            var category = req.body.categoryModal
+            var rental_rate = req.body.rentalRate
+            var deposit = req.body.deposit
+            var description = req.body.descriptionModal
+
+            await pool.query(`SET SCHEMA 'public'`)
+            await pool.query(`UPDATE item SET item_name = ($1), 
+                            item_category = ($2), 
+                            rental_rate = ($3),
+                            replacement_cost = ($4),
+                            item_description = ($5)
+                            WHERE  item_id = ($6)`, [item_name, category, rental_rate, deposit, description, item_id])
+
+            await pool.query(`UPDATE inventory SET item_quantity = ($1) WHERE item_id = ($2)`, [quantity, item_id])
+
+            res.redirect('/seller/items?status=editSuccess')
+        }
+    }
+    catch(ex){
+        console.log(ex)
+    }
+    
+}
 
 
 module.exports = {
-    sellerInsert
+    sellerInsert, sellerItems, updateItem
 }
 
 

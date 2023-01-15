@@ -23,7 +23,8 @@ const search_text = async (req, res, next) => {
             result:test, 
             user:req.session.username, 
             cart_count:req.session.cart_count, 
-            currency:req.session.currency
+            currency:req.session.currency,
+            user_id:req.session.user_id
         })
     }
     catch(ex){

@@ -22,7 +22,8 @@ var allItemView = async (req, res, next)=> {
             result:rows, 
             user:req.session.username, 
             cart_count:req.session.cart_count, 
-            currency:req.session.currency
+            currency:req.session.currency,
+            user_id:req.session.user_id
         })
     }
     catch(ex){
@@ -54,7 +55,8 @@ var categoryItemView = async(req,res,next) => {
             result:rows, 
             user:req.session.username, 
             cart_count:req.session.cart_count, 
-            currency:req.session.currency
+            currency:req.session.currency,
+            user_id:req.session.user_id
         })
     }
     catch(ex){
@@ -184,6 +186,7 @@ var viewItem = async  (req, res, next)=>{
         res.render('pages/view-item',
         {   result:results, 
             user:req.session.username, 
+            user_id:req.session.user_id,
             result_date:dates, 
             cart_count:req.session.cart_count, 
             currency:req.session.currency,

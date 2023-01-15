@@ -1,13 +1,13 @@
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="#"><img src="/images/logoMH.png" width="200px"></a>
+      <a class="navbar-brand" href="/"><img src="/images/logoMH.png" width="200px"></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <!-- alert placeholder -->
-      <div id="liveAlertPlaceholder" style="text-align: center; margin-top: 3px;"></div>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
+      
+      <div class="collapse navbar-collapse" id="navbarResponsive">        
         <ul class="navbar-nav ms-auto">
           <li class="nav-item active">
             <a class="nav-link" href="/">Home</a>
@@ -35,7 +35,8 @@
               </a>
             
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" href="/profile/<%= user_id %>">Profile</a></li>
+                <li><a class="dropdown-item" href="/seller/items">Your Items</a></li>
                 <li>
                     <a class="dropdown-item" href="/cart">Cart <i class="fa-solid fa-cart-shopping"></i>
                       
