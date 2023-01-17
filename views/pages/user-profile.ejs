@@ -39,36 +39,26 @@
                   <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
                     class="rounded-circle img-fluid" style="width: 150px;">
                   <h5 class="my-3"><%= result[0].username  %> </h5>
-                  <p class="text-muted mb-1">4.0 <i class="fa-solid fa-star" style="color: orange;"></i></p>
+                  <p class="text-muted mb-1">
+                    <% if(userRatingResult[0].rate_count == 0){ %>
+                      No Reviews
+                    <% } else { %>
+                      <%= userRatingResult[0].average_rating %> <i class="fa-solid fa-star" style="color: orange;"></i>
+                    <% } %>
+                    </p>
                   <p class="text-muted mb-4">Sta. Mesa, Manila</p>
                   <div class="d-flex justify-content-center mb-2">
-                    <button type="button" class="btn btn-primary">Follow</button>
-                    <button type="button" class="btn btn-outline-primary ms-1">Message</button>
+                    <% if(profile_id != user_id){ %>
+                      <a href="#"><button type="button" class="btn btn-outline-primary ms-1">Message</button></a>
+                    <% } else if(profile_id == user_id){ %>
+                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" value="1" data-bs-target="#finishTransactionModal">Edit Profile</button>
+                    <% } %>
+                    
+                    
                   </div>
                 </div>
               </div>
-              <div class="card mb-4 mb-lg-0">
-                <div class="card-body p-0">
-                  <ul class="list-group list-group-flush rounded-3">
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i class="fas fa-globe fa-lg text-warning"></i>
-                      <p class="mb-0">https://naedenglee.com</p>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
-                      <p class="mb-0">@naedenglee</p>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
-                      <p class="mb-0">naedenglee</p>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
-                      <p class="mb-0">naedenglee</p>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+              
             </div>
             <div class="col-lg-8">
               <div class="card mb-4">
@@ -79,7 +69,11 @@
                       <p class="mb-0">Email</p>
                     </div>
                     <div class="col-sm-9">
-                      <p class="text-muted mb-0">naedenglee@gmail.com</p>
+                      <p class="text-muted mb-0"><%= profile[0].email %>
+                        <% if(profile_id == user_id){ %>
+                          <button type="button" class="btn btn-primary"  data-bs-toggle="modal" value="2" data-bs-target="#finishTransactionModal2" style="float: right;">Edit Email</button></p>
+
+                        <% } %>
                     </div>
                   </div>
                   <hr>
@@ -88,7 +82,7 @@
                       <p class="mb-0">Phone</p>
                     </div>
                     <div class="col-sm-9">
-                      <p class="text-muted mb-0">(097) 234-5678</p>
+                      <p class="text-muted mb-0"><%= profile[0].phone_num %></p>
                     </div>
                   </div>
                   <hr>
@@ -108,52 +102,26 @@
                     <div class="card-body">
                       <p class="mb-4"><b>ABOUT</b></i>
                       </p>
-                     <p> Videoke For Rent 🎤 <br>
-                      600 PESOS ONLY PER 24 HOURS ‼️‼️ <br>
-                      ✔️ Perfect for Any Occasion and Events <br>
-                      👉 Birthday , kasal , binyag , fiesta <br>
-                      ✔️ BrandNew <br>
-                      ✔️ High Quality Sounds ( Premium Set Up )<br>
-                      ✔️ Latest Songs ( Platinum Version 90 )<br>
-                      ✔️ 20,000+ Songs<br>
-                      ✔️ Hard Copy Song B<br>
-                      ✔️ Always Sanitized<br>
-                      ✔️ ⏳ 24 hours Duration <br>
-                      Note : Any Damages or loss will be charged sa umarkila
-                     </p>
+                      <% if(profile[0].about == null){ %>
+                        <p> No about info</p>
+                      <% }else if(profile[0].about){ %>
+                        <p> <%= profile[0].about %></p>
+                      <% } %>
+                     
                     </div>
                   </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card mb-4 mb-md-0">
-                      <div class="card-body">
-                        <p class="mb-4"><span class="text-primary font-italic me-1">46 Reviews</span> 4.6 <i class="fa-solid fa-star" style="color: orange;"></i>
-                        </p>
-                        <p class="mb-1" style="font-size: .77rem;">5.0</p>
-                        <div class="progress rounded" style="height: 5px;">
-                          <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85"
-                            aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <p class="mt-4 mb-1" style="font-size: .77rem;">4.0</p>
-                        <div class="progress rounded" style="height: 5px;">
-                          <div class="progress-bar" role="progressbar" style="width: 43%" aria-valuenow="43"
-                            aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <p class="mt-4 mb-1" style="font-size: .77rem;">3.0</p>
-                        <div class="progress rounded" style="height: 5px;">
-                          <div class="progress-bar" role="progressbar" style="width: 19%" aria-valuenow="19"
-                            aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <p class="mt-4 mb-1" style="font-size: .77rem;">2.0</p>
-                        <div class="progress rounded" style="height: 5px;">
-                          <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
-                            aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <p class="mt-4 mb-1" style="font-size: .77rem;">1.0</p>
-                        <div class="progress rounded mb-2" style="height: 5px;">
-                          <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
-                            aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
+                      <div class="card-body" style="height: 120px;">
+                        <% if(userRatingResult[0].rate_count == 0){ %>
+                          No Reviews
+                        <% } else { %>
+                          <p class="mb-4"><span class="text-primary font-italic me-1"><%= userRatingResult[0].rate_count %> Reviews</span> <%= userRatingResult[0].average_rating %> <i class="fa-solid fa-star" style="color: orange;"></i>
+                          </p>                         
+                        <% } %>
+                        
+                        
                       </div>
                     </div>
                   </div>
@@ -164,7 +132,7 @@
           <div class="categories" style="margin-top: 20px;">
                 <!-- Products-->
                 <% if(itemRows == 0){ %>
-                  <h6>This user has no items for sale.</h6>
+                  <center><h6>This user has no items for sale.</h6></center>
                 <% }else if(itemRows) { %>
                   <div class="row">
                   <% itemRows.forEach(function(item){ %>
@@ -195,6 +163,107 @@
 
         </div>
       </section>
+
+      <form action="/profile/update" method="post">
+        <div class="modal fade" id="finishTransactionModal" tabindex="-1" aria-labelledby="finishTransactionModalLabel" aria-hidden="true" >
+          <div class="modal-dialog" >
+            <div class="modal-content">
+              <div class="modal-header">
+                
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="container2">
+                    <h1>Edit Profile</h1>
+                    <p>Note: Changes made here will reflect immediately</p>
+                    <hr>
+              
+                    <div class="row">
+                              <div class="col">
+                                  <div class="form-group my-2">
+                                      <label for="phoneNum">Mobile Number</label>
+                                      <input type="text" class="form-control" id="phoneNumModal" name="phoneNum" value="<%= profile[0].phone_num %>" required>		
+                                  </div>
+                              </div>                              				
+                          </div>
+                          
+                          <div class="row">
+                              <div class="col">
+                                  <div class="form-group my-2">
+                                    <label for="aboutModal">About Info</label>
+                                    <textarea class="form-control" id="aboutModal" name="about" rows="4"><%= profile[0].about %></textarea>	
+                                  </div>
+                              </div>                          
+                             
+                          </div>
+                    
+                          <br>                      
+                          </div>
+              
+              
+                    
+                    <label>
+                      <input type="checkbox"  name="remember" style="margin-bottom:15px" required> All inputs above are correct.
+                    </label>
+                    <br>
+                    <button type="submit" name="profileButton" value="1" class="btn btn-primary">Save Changes</button>
+                   
+              
+                   
+                  </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>      
+      </form>
+
+
+      <!-- MODAL 2 FOR EMAIL -->
+      <form action="/profile/update" method="post">
+        <div class="modal fade" id="finishTransactionModal2" tabindex="-1" aria-labelledby="finishTransactionModalLabel2" aria-hidden="true" >
+          <div class="modal-dialog" >
+            <div class="modal-content">
+              <div class="modal-header">
+                
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="container2">
+                    <h1>Edit E-Mail Address</h1>
+                    <p>Note: Changes made here will reflect immediately. Changes in your email address will result in requiring you to verify again when listing new items.</p>
+                    <hr>
+              
+                    <div class="row">
+                              <div class="col">
+                                  <div class="form-group my-2">
+                                      <label for="emailModal">E-mail Address</label>
+                                      <input type="email" class="form-control" id="emailModal" name="email" value="<%= profile[0].email %>" required>		
+                                  </div>
+                              </div>                              				
+                          </div>                    
+                          
+                    
+                          <br>                      
+                          </div>
+              
+              
+                    
+                    <label>
+                      <input type="checkbox"  name="remember" style="margin-bottom:15px" required> All inputs above are correct.
+                    </label>
+                    <br>
+                    <button type="submit" name="profileButton" value="2" class="btn btn-primary">Save Changes</button>
+                   
+              
+                   
+                  </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>      
+      </form>
 
       <!-- Footer -->
 <footer class="text-center text-lg-start bg-light text-muted" style="margin-top: 27px;">
