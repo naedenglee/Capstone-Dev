@@ -213,7 +213,7 @@ var itemReservation = async (req, res, next) =>{
         if(req.body.submitButton == "addToCart"){
             
             if(!user){
-                res.redirect('/')
+                res.status(401).render('pages/error401')
             }
             if(user){
                 await pool.query(`SET SCHEMA 'public'`)

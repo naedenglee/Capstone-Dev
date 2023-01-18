@@ -137,27 +137,27 @@ t
       <h4>Rating breakdown</h4>
       <p class="mb-1" style="font-size: .77rem;">5.0 = <%=ratingsTotal[0].rating5 %></p>
     <div class="progress rounded" style="height: 8px;">
-      <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85"
+      <div class="progress-bar" role="progressbar" id="progress5"  aria-valuenow="85"
         aria-valuemin="0" aria-valuemax="100"></div>
     </div>
     <p class="mt-4 mb-1" style="font-size: .77rem;">4.0 = <%=ratingsTotal[0].rating4 %> </p>
     <div class="progress rounded" style="height: 8px;">
-      <div class="progress-bar" role="progressbar" style="width: 43%" aria-valuenow="43"
+      <div class="progress-bar" role="progressbar" id="progress4"  aria-valuenow="43"
         aria-valuemin="0" aria-valuemax="100"></div>
     </div>
     <p class="mt-4 mb-1" style="font-size: .77rem;">3.0 = <%=ratingsTotal[0].rating3 %></p>
     <div class="progress rounded" style="height: 8px;">
-      <div class="progress-bar" role="progressbar" style="width: 19" aria-valuenow="19"
+      <div class="progress-bar" role="progressbar" id="progress3"  aria-valuenow="19"
         aria-valuemin="0" aria-valuemax="100"></div>
     </div>
     <p class="mt-4 mb-1" style="font-size: .77rem;">2.0 = <%=ratingsTotal[0].rating2 %> </p>
     <div class="progress rounded" style="height: 8px;">
-      <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+      <div class="progress-bar" role="progressbar" id="progress2"  aria-valuenow="0"
         aria-valuemin="0" aria-valuemax="100"></div>
     </div>
     <p class="mt-4 mb-1" style="font-size: .77rem;">1.0 = <%=ratingsTotal[0].rating1 %> </p>
     <div class="progress rounded mb-1" style="height: 8px;">
-      <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+      <div class="progress-bar" role="progressbar" id="progress1"  aria-valuenow="0"
         aria-valuemin="0" aria-valuemax="100"></div>
     </div>
   </div>
@@ -449,6 +449,11 @@ t
       this.dataset.maxed = value === max ? "true" : "false";
       this.dataset.minned = value === min ? "true" : "false";
     })
-      
+    
+    document.getElementById("progress5").style.width = "<%=ratingsTotal[0].percent5 %>%"
+    document.getElementById("progress4").style.width = "<%=ratingsTotal[0].percent4 %>%"
+    document.getElementById("progress3").style.width = "<%=ratingsTotal[0].percent3 %>%"
+    document.getElementById("progress2").style.width = "<%=ratingsTotal[0].percent2 %>%"
+    document.getElementById("progress1").style.width = "<%=ratingsTotal[0].percent1 %>%"
    </script>
 </html>

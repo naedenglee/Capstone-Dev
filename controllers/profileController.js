@@ -21,6 +21,7 @@ var getProfile = async (req,res, next)=>{
         }
         else if(itemRowsResult){
            var itemRows = itemRowsResult
+           console.log(itemRows)
         }
 
         res.render('pages/user-profile', { result:rows, 
