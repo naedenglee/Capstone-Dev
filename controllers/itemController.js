@@ -121,6 +121,12 @@ var viewItem = async  (req, res, next)=>{
             values: [req.params.id]
         }
 
+        var sqlQuery8 = {
+            text: `SELECT map_x_coordinate, map_y_coordinate FROM profile 
+            WHERE account_id = (SELECT account_id FROM inventory WHERE item_id = ($1))`,
+            values: [req.params.id]
+        }
+
         //var sqlQuery3 = {
         //    text: `SELECT rating, comment FROM <<tablename>> WHERE item_id = $(1)`, //item id ang hanap
         //    values: [req.params.id]
@@ -181,6 +187,14 @@ var viewItem = async  (req, res, next)=>{
             var ratingsTotal = resultRateTotal
             console.log(ratings)          
         }
+
+        const {rows: mapCoordinates} = await pool.query(sqlQuery8)
+        if(mapCoordinates.length == 0){
+            var map = 0
+        }
+        else if(mapCoordinates[0]){
+            var map = mapCoordinates   
+        }
         
         await Jincr(`item_perf:${req.params.id}`, 'detail_rate')
         res.render('pages/view-item',
@@ -193,6 +207,7 @@ var viewItem = async  (req, res, next)=>{
             sum_quantity,
             ratings,
             ratingsTotal,
+            map,
             user_id:req.session.user_id
         })
     }

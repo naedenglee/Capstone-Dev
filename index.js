@@ -12,6 +12,7 @@ const emailRoute = require('./routes/email.js')
 const errorRoute = require('./routes/errorRoute.js')
 const searchRoute = require('./routes/search.js')
 const rentalRoute = require('./routes/rental.js')
+const agreementRoute = require('./routes/terms.js')
 const {CacheInventory} = require('./controllers/cache.js')
 var session = require('cookie-session')
 
@@ -41,6 +42,7 @@ app.use('/cart', cartRoute)
 app.use('/email', emailRoute)
 app.use('/search', searchRoute)
 app.use('/rental', rentalRoute)
+app.use('/rentalAgreement', agreementRoute)
 app.use('*', errorRoute)
 
 process.on('unhandledRejection', function(reason, promise) {

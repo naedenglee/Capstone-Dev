@@ -12,7 +12,7 @@ var getProfile = async (req,res, next)=>{
         const {rows: userRatingResult} = await pool.query(`SELECT COUNT(rating) as rate_count, ROUND( AVG(rating)::numeric, 1) as average_rating 
                                         FROM user_rating WHERE rating_to = ($1);`, [req.params.user_id])
 
-        const {rows: userProfileResult} = await pool.query(`SELECT a.account_id, phone_num, about, email 
+        const {rows: userProfileResult} = await pool.query(`SELECT a.account_id, phone_num, about, email, map_x_coordinate, map_y_coordinate 
                                         FROM profile a JOIN account b ON a.account_id = b.account_id WHERE a.account_id = ($1);`, [req.params.user_id])
 
 
@@ -68,6 +68,8 @@ var updateProfile = async(req, res, next) => {
         var email = req.body.email
         var aboutProfile = req.body.about
         var phoneNum = req.body.phoneNum
+        var x_coord = req.body.map_x
+        var y_coord = req.body.map_y
 
         if(!user){
             res.status(401).redirect('pages/error401')
@@ -76,7 +78,9 @@ var updateProfile = async(req, res, next) => {
             await pool.query(`SET SCHEMA 'public'`)
 
             if(req.body.profileButton == 1){
-                await pool.query(`UPDATE profile SET phone_num = ($1), about = ($2) WHERE account_id = ($3)`, [phoneNum, aboutProfile, user_id])
+                await pool.query(`UPDATE profile SET phone_num = ($1), about = ($2), 
+                                map_x_coordinate = ($3), 
+                                map_y_coordinate = ($4) WHERE account_id = ($5)`, [phoneNum, aboutProfile, x_coord, y_coord, user_id])
                 res.redirect(`/profile/${user_id}`)
             }
             else if(req.body.profileButton == 2){

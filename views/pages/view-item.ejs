@@ -67,8 +67,8 @@ crossorigin=""></script>
                 <!-- line separator -->
               <hr style="height:2px;border-width:0;color:gray;background-color:gray">
              
-              <p style="font-weight: bold;">Rental fee: <%= result[0].rental_rate %><br>
-                  Deposit fee: <%= result[0].replacement_cost %><br>
+              <p style="font-weight: bold;">Rental fee: ₱<%= result[0].rental_rate %><br>
+                  Deposit fee: ₱<%= result[0].replacement_cost %><br>
                  
                </p>
             </div>
@@ -91,10 +91,15 @@ crossorigin=""></script>
                 
   <!-- MAP -->
           <br>
-          <p>Location</p>
-          <div id="map">
+          <p style="font-weight: bold;">INTERACTIVE MAP</p>
+          <% if(map[0].map_x_coordinate == null || map[0].map_y_coordinate == null){ %>
+            <p>There is no map info for this user.</p>
+          <% }else if(map[0].map_x_coordinate != null && map[0].map_y_coordinate != null){ %>
+            <div id="map"></div>
+          <% } %>
+          
   
-          </div>
+          
   <!-- MAP END-->
           <br>
        <h4>Item owned by <%= result[0].vusername %></h4>
@@ -110,13 +115,13 @@ crossorigin=""></script>
             <br>
             <br>
         <button class="btn-message">Message</button>
-        <a href="/profile/<%= result[0].owner %>"><button class="btn-profile">See Profile</button></a>
+        <a href="/profile/<%= result[0].account_id %>"><button class="btn-profile">See Profile</button></a>
             </div>
           </div>
           
         </div>
   </div>
-t
+
   <div class="container" style="margin-top: -100px;">
     <hr>
     <% if(ratingsTotal == 0){ %>
@@ -264,7 +269,7 @@ t
   </form>
   
     <!-- Footer -->
-  <footer class="text-center text-lg-start bg-light text-muted">
+  <footer class="text-center text-lg-start bg-light text-muted" style="margin-left: -300px; margin-right: -300px">
     <!-- Section: Social media -->
     <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
       <!-- Left -->
@@ -425,13 +430,15 @@ t
           });
       });
   
-      
-      var map = L.map('map').setView([14.601, 121.0151], 17);
+      x_coord = <%= map[0].map_x_coordinate %>;
+      y_coord = <%= map[0].map_y_coordinate %>;
+
+      var map = L.map('map').setView([x_coord, y_coord], 17);
        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
        maxZoom: 19,
        attribution: '© OpenStreetMap'
       }).addTo(map);
-      var marker = L.marker([14.601, 121.0151]).addTo(map);
+      var marker = L.marker([x_coord, y_coord]).addTo(map);
   
       function insertDate(){
   

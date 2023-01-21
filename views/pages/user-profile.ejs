@@ -19,6 +19,14 @@
 <!-- for latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
+  <!-- for leflet.js (map)-->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+crossorigin=""></script>
+
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -96,6 +104,7 @@
                   </div>
                 </div>
               </div>
+              
               <div class="row">
                 <div class="col-md-8">
                   <div class="card mb-4 mb-md-0">
@@ -117,7 +126,9 @@
                         <% if(userRatingResult[0].rate_count == 0){ %>
                           No Reviews
                         <% } else { %>
-                          <p class="mb-4"><span class="text-primary font-italic me-1"><%= userRatingResult[0].rate_count %> Reviews</span> <%= userRatingResult[0].average_rating %> <i class="fa-solid fa-star" style="color: orange;"></i>
+                          <center style="margin-top: 25px;">
+                            <p class="mb-4"><span class="text-primary font-italic me-1"><%= userRatingResult[0].rate_count %> Reviews</span> <%= userRatingResult[0].average_rating %> <i class="fa-solid fa-star" style="color: orange;"></i>
+                          </center>
                           </p>                         
                         <% } %>
                         
@@ -125,6 +136,35 @@
                       </div>
                     </div>
                   </div>
+              </div>
+
+              <div class="card mb-4" style="margin-top: 20px; ">
+                <div class="card-body">
+                  <% if(profile_id == user_id){ %>
+                    <% if(profile[0].map_x_coordinate == null || profile[0].map_y_coordinate == null){ %>
+                      <center><p style="font-weight: bold;">INTERACTIVE MAP</p></center>
+                      <center>
+                        <p data-toggle="modal" data-target="#myModal">Insert location coordinates to display an interactive map here.</p>
+                        <button type="button" class="btn btn-primary"  data-bs-toggle="modal" value="2" data-bs-target="#finishTransactionModal">Insert</button></p>
+
+                      </center>
+                    <% } else{ %>
+                      <center><p style="font-weight: bold;">INTERACTIVE MAP</p></center>
+                      <div id="map" style="height: 250px;"></div>
+                    <% } %>
+                  <% }else if(profile_id != user_id){ %>
+                    <% if(profile[0].map_x_coordinate == null || profile[0].map_y_coordinate == null){ %>
+                      <center><p style="font-weight: bold;">INTERACTIVE MAP</p></center>
+                      <center><p>No map information available for this user.</p></center>
+                    <% } else{ %>
+                      <center><p style="font-weight: bold;">INTERACTIVE MAP</p></center>
+                      <div id="map" style="height: 250px;"></div>
+                    <% } %>
+                  <% } %>
+
+                  
+                  
+                </div>
               </div>
         
             </div>
@@ -195,6 +235,22 @@
                                   </div>
                               </div>                          
                              
+                          </div>
+
+                          <div class="row">
+                            <p>Location (for interactive map)</p>
+                            <div class="col">
+                                <div class="form-group my-2">
+                                  <label for="mapx">X-Coordinate</label>
+                                  <input class="form-control" type="number" step="any" id="mapx" name="map_x" value="<%= profile[0].map_x_coordinate %>">
+                                </div>
+                            </div> 
+                            <div class="col">
+                              <div class="form-group my-2">
+                                <label for="mapy">Y-Coordinate</label>
+                                <input class="form-control" type="number" step="any" id="mapy" name="map_y" value="<%= profile[0].map_y_coordinate %>">
+                              </div>
+                          </div>                            
                           </div>
                     
                           <br>                      
@@ -382,4 +438,16 @@
   <!-- Footer -->
 </body>
 
+<script>
+  x_coord = <%= profile[0].map_x_coordinate %>;
+  y_coord = <%= profile[0].map_y_coordinate %>;
+  var map = L.map('map').setView([x_coord, y_coord], 17);
+       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+       maxZoom: 19,
+       attribution: '© OpenStreetMap'
+      }).addTo(map);
+      var marker = L.marker([x_coord, y_coord]).addTo(map);
+
+  
+</script>
 </html>
