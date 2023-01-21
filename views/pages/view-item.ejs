@@ -430,15 +430,19 @@ crossorigin=""></script>
           });
       });
   
-      x_coord = <%= map[0].map_x_coordinate %>;
-      y_coord = <%= map[0].map_y_coordinate %>;
+      x_coord = '<%= map[0].map_x_coordinate %>';
+      y_coord = '<%= map[0].map_y_coordinate %>';
 
+      
       var map = L.map('map').setView([x_coord, y_coord], 17);
        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
        maxZoom: 19,
        attribution: '© OpenStreetMap'
       }).addTo(map);
       var marker = L.marker([x_coord, y_coord]).addTo(map);
+      
+
+      
   
       function insertDate(){
   
