@@ -94,6 +94,7 @@
             <p class="Item-category" style="color: gray;"><%= item.item_category %></p>
             <p class="Item-Description" style="white-space: pre-wrap;" > Rate: ₱<%= item.rental_rate %> per day</p>
             </a>
+            
             <form method="post" action="/items">
               <input type="hidden" name="itemId" value="<%= item.item_id %>">
               <!-- <button name="addtocart" type="submit" value="<%= item.item_id %>">Add To Wishlist</button> -->
