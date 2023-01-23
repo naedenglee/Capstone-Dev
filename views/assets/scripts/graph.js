@@ -1,3 +1,4 @@
+
 const allDropdown = document.querySelectorAll('#sidebar .side-dropdown');
 const sidebar = document.getElementById('sidebar');
 
@@ -116,12 +117,13 @@ window.addEventListener('click', function (e) {
 
 // ---------- CHARTS ----------
 
-// BAR CHART
-var arr = [2,3,4];
 
-var barChartOptions = {
+// BAR CHART
+// Most Search Item
+
+var searchChartOptions = {
     series: [{
-      data: arr
+      data: []
     }],
     chart: {
       type: 'bar',
@@ -150,7 +152,7 @@ var barChartOptions = {
       show: false
     },
     xaxis: {
-      categories: ["Laptop", "Phone","Camera"],
+      categories: [],
     },
     yaxis: {
       title: {
@@ -159,11 +161,12 @@ var barChartOptions = {
     }
   };
   
-  var barChart = new ApexCharts(document.querySelector("#bar-chart"), barChartOptions);
-  barChart.render();
+    searchChartOptions.xaxis.categories.splice(1,1)
+    
   
   
   // AREA CHART
+// Wishlisht and Reservation
   var areaChartOptions = {
     series: [{
       name: 'Wishlist',
@@ -213,9 +216,10 @@ var barChartOptions = {
   areaChart.render();
 
   // BAR CHART 2
-var barChartOptions = {
+// TOP 3 BEST SELLERS 
+var bestChartOptions = {
     series: [{
-      data: [4, 8, 2]
+      data: []
     }],
     chart: {
       type: 'bar',
@@ -244,7 +248,7 @@ var barChartOptions = {
       show: false
     },
     xaxis: {
-      categories: ["Laptop", "Phone", "Monitor"],
+      categories: [],
     },
     yaxis: {
       title: {
@@ -253,13 +257,12 @@ var barChartOptions = {
     }
   };
   
-  var barChart = new ApexCharts(document.querySelector("#bar-chart2"), barChartOptions);
-  barChart.render();
   
    // BAR CHART 3
-var barChartOptions = {
+// TOP 3 MOST VIEWED PRODUCTS
+var viewedChartOptions = {
     series: [{
-      data: [6, 4, 2]
+      data: []
     }],
     chart: {
       type: 'bar',
@@ -289,7 +292,7 @@ var barChartOptions = {
       show: false
     },
     xaxis: {
-      categories: [ "Monitor", "Headphones", "Camera"],
+      categories: [],
     },
     yaxis: {
       title: {
@@ -298,5 +301,40 @@ var barChartOptions = {
     }
   };
   
-  var barChart = new ApexCharts(document.querySelector("#bar-chart3"), barChartOptions);
-  barChart.render();
+
+var stats2 = document.getElementById("scriptValue").getAttribute("data-stats");
+
+
+            JSON.parse(stats2).forEach( function (graph){
+                if(graph.s_id != null){
+                    searchChartOptions.series[0].data.push(graph.search_rate)
+                    searchChartOptions.xaxis.categories.push(graph.item_name)
+                    if(graph.d_id != null){
+                        viewedChartOptions.series[0].data.push(graph.detail_rate)
+                        viewedChartOptions.xaxis.categories.push(graph.item_name)
+                        if(graph.u_id != null){
+                        bestChartOptions.series[0].data.push(graph.unique_rental)
+                        bestChartOptions.xaxis.categories.push(graph.item_name)
+                        }
+                    }
+                }
+                else if(graph.d_id != null){
+                    viewedChartOptions.series[0].data.push(graph.detail_rate)
+                    viewedChartOptions.xaxis.categories.push(graph.item_name)
+
+                    if(graph.u_id != null){
+                        bestChartOptions.series[0].data.push(graph.unique_rental)
+                        bestChartOptions.xaxis.categories.push(graph.item_name)
+                    }
+                }
+                else if(graph.u_id != null){
+                    bestChartOptions.series[0].data.push(graph.unique_rental)
+                    bestChartOptions.xaxis.categories.push(graph.item_name)
+                }
+            })
+  var searchbarChart = new ApexCharts(document.querySelector("#bar-chart"), searchChartOptions);
+  searchbarChart.render();
+  var viewedbarChart = new ApexCharts(document.querySelector("#bar-chart3"), viewedChartOptions);
+  viewedbarChart.render();
+  var bestbarChart = new ApexCharts(document.querySelector("#bar-chart2"), bestChartOptions);
+  bestbarChart.render();

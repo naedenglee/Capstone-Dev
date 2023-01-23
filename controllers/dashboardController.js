@@ -461,7 +461,16 @@ const getReport = async(req, res, next) => {
             res.status(401).render('pages/error401')
         }
         else if(user){                     
-            res.render('pages/dashboard/dashboard_reports')
+            await pool.query(`SET SCHEMA 'public'`)
+            const {rows: totals} = await pool.query(`SELECT * FROM total_reports($1)`,[user_id])
+            const {rows: reports} = await pool.query(`SELECT * FROM googol_reports() WHERE account_id = ($1)`,[user_id])
+            console.log(totals)
+
+            res.render('pages/dashboard/dashboard_reports',
+                {
+                    total:totals,
+                    report: reports
+                })
         }     
     }
     catch(ex){
@@ -471,6 +480,7 @@ const getReport = async(req, res, next) => {
 
     }
 }
+
 
 const courierDeliveryPage = async(req, res, next) => {
     try{
@@ -586,6 +596,8 @@ const updateCourier = async(req, res, next) =>{
 
     }
 }
+
+
 
 module.exports = { viewMainDashboard, userOngoingRentals, userFinishedRentals, userOngoingRentalsExtension, lessorOngoingRentals, lessorFinishedRentals, 
                     getRentalRequests, getUserRentalRequests, getDeniedRentalRequests, approveRentalRequest, denyRentalRequest, update_reservation, addComment, 

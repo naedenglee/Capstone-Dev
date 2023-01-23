@@ -43,7 +43,7 @@ function getOrSetCache (key, cb){
             if(error) return reject(error)
             if (data != null) return resolve(JSON.parse(data))
             const {rows} = await cb()
-            redisClient.setex(key, 3600, JSON.stringify(rows))
+            redisClient.setex(key, 600, JSON.stringify(rows))
             resolve(rows)
         })
     })

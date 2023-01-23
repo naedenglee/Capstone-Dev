@@ -12,7 +12,6 @@ var home = (req, res, next) =>{
         currency:req.session.currency, 
         status:req.query.loginStatus
     })
-    console.log(req.query.loginStatus)
 }
 
 
@@ -40,8 +39,6 @@ var login = async (req, res, next) =>{
                 //refresh password forms
             }
             else{
-                console.log('YOU ARE NOW LOGGED IN')
-                console.log(req.body.user)
                 req.session.username = req.body.user;
                 // var user = req.session.username
                 let cartQuery = {
@@ -58,8 +55,6 @@ var login = async (req, res, next) =>{
                 req.session.cart_count = result2.rows.length
 
                 const result3 = await pool.query(currencyQuery)
-                        console.log('GOOD WALLET QUERY')                
-                        console.log(result3.rows[0].user_currency)
                         currency = req.session.currency
                         req.session.currency = result3.rows[0].user_currency
                         req.session.user_id = vid
@@ -79,7 +74,6 @@ var login = async (req, res, next) =>{
 var signup = async(req, res, next) =>{
     try{
         if(req.body.password != req.body.password2){
-            console.log( req.body[0].password)
             console.log("WRONG PASSWORD")
             return res.send({
                 success: false,
@@ -87,29 +81,28 @@ var signup = async(req, res, next) =>{
             })
         }
         else{
-            console.log(req.body.password)
             var salt = bcrypt.genSaltSync(10);
             var hashed_password = bcrypt.hashSync(req.body.password, salt);
 
             let sqlQuery ={
-                text: `CALL register($1,$2,$3,$4,$5,$6,$7,$8, null)`,
+                text: `CALL register($1,$2,$3,$4,$5,$6,$7,$8, $9, $10, $11, $12, null)`,
                 values: [
-                        req.body.username, hashed_password, 
-                        req.body.email, req.body.fname, null, 
-                        req.body.lName, req.body.bday, 
-                        req.body.phone_num]
+                        req.body.username, hashed_password, // 1 2 
+                        req.body.email, req.body.fname, // 3 4 
+                        req.body.lname, null, // 5 6
+                        req.body.phone_num, req.body.housmumber,// 7 8
+                        req.body.street, req.body.barangay, // 9 10
+                        req.body.district, req.body.city_prov // 11 12
+                        ]
             }
+
             await pool.query(`SET SCHEMA 'public'`)
             const result = await pool.query(sqlQuery)
             let {vaccount_id} = result.rows[0]
             if(vaccount_id != null){ // IF NOT NULL THEN SUCCESS
-                console.log(vaccount_id)
-                console.log('SUCCESS!') 
                 return res.redirect('/?loginStatus=signupSuccess')
             }
             else{
-                console.log('ACCOUNT EXISTS') // IF NULL THEN EXISTING
-                console.log(vaccount_id)
                 return res.send({
                     success: 'ACCOUNT EXISTS',
                     statusCode: 200,

@@ -29,6 +29,17 @@ pool = new Pool({
     }
 });
 
+const publisher = new Redis({
+    host: 'redis-14177.c241.us-east-1-4.ec2.cloud.redislabs.com',
+    port: 14177,
+    password: 'BRnnDE9XLcV6DqGUKg8UiIQeJBKdSG4i'
+});
+
+const subscriber = new Redis({
+    host: 'redis-14177.c241.us-east-1-4.ec2.cloud.redislabs.com',
+    port: 14177,
+    password: 'BRnnDE9XLcV6DqGUKg8UiIQeJBKdSG4i'
+});
 
 
 //const pool = new Pool({
@@ -43,5 +54,8 @@ pool = new Pool({
 
 module.exports = {
     pool,
-    redisClient
+    redisClient,
+    Redis,
+    publisher,
+    subscriber
 }
