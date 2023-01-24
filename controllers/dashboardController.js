@@ -20,6 +20,7 @@ var viewMainDashboard = async(req, res, next) => {
         }    
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
+            const {rows: stats} = await pool.query(`SELECT * FROM top_graph(${user_id})`)
             const {rows: notif} = await pool.query(`SELECT notification_date, owner_id,  client_id, b.username as client_username, 
                                     reserve_status, notification_type, reservation_id, a.item_id, item_name FROM notification a 
                                     JOIN account b ON a.client_id = b.account_id LEFT JOIN item c ON a.item_id = c.item_id WHERE owner_id = ($1) OR client_id = ($1)
@@ -32,13 +33,12 @@ var viewMainDashboard = async(req, res, next) => {
                 var notif_result = notif
                 console.log(notif_result)  
             }
-            
-            res.render('pages/dashboard/dashboard_graph', {status:req.query.status, notif_result, user_id})
+
+            res.render('pages/dashboard/dashboard_graph', {result:stats, status:req.query.status, notif_result, user_id})
         }
-        
     }
     catch(ex){
-        console.log(ex)
+        console.log(`Dashboard main Error ${ex}`)
     }
     finally{
         pool.release
