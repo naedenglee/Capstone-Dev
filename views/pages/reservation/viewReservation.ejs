@@ -20,8 +20,7 @@
 
         
 </head>
-<body>    
-    <% result.forEach(function(rental){ %>
+<body>  
     <section class="vh-100 gradient-custom-2">
         
           <div class="row d-flex justify-content-center align-items-center h-100">
@@ -30,9 +29,14 @@
                 <div class="card-header p-4">
                   <div class="d-flex justify-content-between align-items-center">
                     <div style="padding-left:  40px; padding-right:  40px; padding-top:  10px; padding-bottom:  10px">
-                      <p class="text-muted mb-2"> Order ID: <span class="fw-bold text-body">1222528743</span></p>
-                      <p class="text-muted mb-0"> Place On: <span class="fw-bold text-body">12,March 2019</span> </p>
-                      <p class="text-muted mb-0"> Current Status: <span class="fw-bold text-body">Ongoing</span> </p>
+                      <p class="text-muted mb-2"> Order ID: <span class="fw-bold text-body"><%= rental[0].reservation_id %></span></p>
+                      <p class="text-muted mb-0"> 
+                        <% if(rental[0].reserve_status == 5){ %>
+                          Current Status: <span class="fw-bold text-body">Finished</span>
+                        <% } else { %>
+                          Current Status: <span class="fw-bold text-body">Ongoing</span>
+                        <% } %>
+                      </p>
                     </div>
                     
                   </div>
@@ -40,19 +44,36 @@
                 <div class="card-body p-4"> 
                   <div class="d-flex flex-row mb-4 pb-2">
                     <div class="flex-fill" style="padding-left:  40px; padding-right:  40px; padding-top:  20px">
-                      <h5 class="bold">Item: <%= rental.item_name %></h5>
-                      <p class="text-muted"> Qt: 1 item</p>
-                      <h6 class="mb-3"> Total Amount <br> (including deposit): P120 <span class="small text-muted"> via (COD) </span></h6>
-                      <h6 class="mb-3">Owner: naenae</h6><br>
+                      <h5 class="bold">Item: <%= rental[0].item_name %></h5>
+                      <p class="text-muted"> Quantity: <%= rental[0].quantity %></p>
+                      <h6 class="mb-3"> Total Amount <br> (including deposit): ₱<%= rental[0].total_amount.toFixed(2) %> <span class="small text-muted"> via (COD) </span></h6>
+                      <h6 class="mb-3">Owner: <%= rental[0].owner_username %></h6>
+                      <h6 class="mb-3">Client: <%= rental[0].customer_username %></h6><br>
                       <h5>SHIPPING INFORMATION</h5>
-                      <h6 class="mb-3" style="margin-bottom: 0">Shipped From: <span class="text-muted"> 3572, Magistrado Araullo, Sta. Mesa, Manila </span> </h6>
-                      <h6 class="mb-3" style="margin-top: 0">Shipped To: <span class="text-muted"> 3572, Magistrado Araullo, Sta. Mesa, Manila </span> </h6><br>
-                      <p class="text-muted">Rental Start: <span class="text-body">Date</span></p>
-                      <p class="text-muted">Rental End: <span class="text-body">Date</span></p>
+                      <h6 class="" style="margin-bottom: 0">Owner: <span class="text-muted"> <%= owner_address[0].full_name %> </span> </h6>
+                      <h6 class="mb-3" style="margin-bottom: 0">Owner Address: <span class="text-muted"> 
+                        <%= owner_address[0].house_number %>, 
+                        <%= owner_address[0].street %>, 
+                        <%= owner_address[0].barangay %>,
+                        <%= owner_address[0].district %>, 
+                        <%= owner_address[0].city_prov %> 
+                      </span> </h6>
+
+                      <h6 class="" style="margin-bottom: 0">Client: <span class="text-muted"> <%= customer_address[0].full_name %> </span> </h6>
+                      <h6 class="mb-3" style="margin-bottom: 0">Client Address: <span class="text-muted"> 
+                        <%= customer_address[0].house_number %>, 
+                        <%= customer_address[0].street %>, 
+                        <%= customer_address[0].barangay %>,
+                        <%= customer_address[0].district %>, 
+                        <%= customer_address[0].city_prov %> 
+                      </span> </h6>
+
+                      <p class="text-muted">Rental Start: <span class="text-body"><%= rental[0].reservation_start.toDateString() %></span></p>
+                      <p class="text-muted">Rental End: <span class="text-body"><%= rental[0].reservation_end.toDateString() %></span></p>
                     </div>
                     <div>
                       <img class="align-self-center img-fluid"
-                        src="<%= rental.image_path %>" width="250">
+                        src="<%= rental[0].image_path %>" width="250">
                     </div>
                   </div>                  
                 </div>
@@ -61,6 +82,5 @@
             </div>
           </div>       
       </section>
-      <% }) %>  
 </body>
 </html>

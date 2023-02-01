@@ -45,6 +45,7 @@
                   </div>
                   <div class="col">
                     The item for Rental ID Number <%= notif.reservation_id%> has been received by the client through courier.
+                    <a href="/rental/view/delivery/<%= notif.reservation_id%>">View Delivery Confirmation</a>
                    <input type="hidden" id="notif_type" value="<%=notif.notification_type %>">
                    <input type="hidden" id="notif_value" value="The item for Rental ID Number <%= notif.reservation_id%> has been received by the client through courier.">
                   </div></a></li>       
