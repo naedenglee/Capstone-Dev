@@ -62,7 +62,7 @@
                     The client for Rental ID Number <%= notif.reservation_id%> has accepted the item and the transaction will proceed.
                     <a href="/rental/view/delivery/<%= notif.reservation_id%>">View Delivery Confirmation</a>
                    <input type="hidden" id="notif_type" value="<%=notif.notification_type %>">
-                   <input type="hidden" id="notif_value" value="The item for Rental ID Number <%= notif.reservation_id%> has been received by the client through courier.">
+                   <input type="hidden" id="notif_value" value=" The client for Rental ID Number <%= notif.reservation_id%> has accepted the item and the transaction will proceed.">
                   </div></a></li>       
                 </div>
                 <hr class="hr" />      
@@ -77,7 +77,7 @@
                       The client for Rental ID Number <%= notif.reservation_id%> has rejected the item. The transaction is cancelled.
                       <a href="/rental/view/delivery/<%= notif.reservation_id%>">View Delivery Confirmation</a>
                      <input type="hidden" id="notif_type" value="<%=notif.notification_type %>">
-                     <input type="hidden" id="notif_value" value="The item for Rental ID Number <%= notif.reservation_id%> has been received by the client through courier.">
+                     <input type="hidden" id="notif_value" value="The client for Rental ID Number <%= notif.reservation_id%> has rejected the item. The transaction is cancelled.">
                     </div></a></li>       
                   </div>
                   <hr class="hr" />                          
