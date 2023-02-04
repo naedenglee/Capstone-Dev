@@ -61,7 +61,7 @@ const userOngoingRentals = async(req, res, next) => {
                 DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
                 quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount
                 FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                JOIN item c ON c.item_id = b.item_id WHERE customer_id = ($1) AND reserve_status IN (1,2,3,4)`, [user_id]);
+                JOIN item c ON c.item_id = b.item_id WHERE customer_id = ($1) AND reserve_status IN (1,2,3,4,6,10)`, [user_id]);
            
             res.render('pages/dashboard/dashboard_user_rentals_ongoing', { result:rows, status:req.query.status })            
         }        
@@ -75,6 +75,40 @@ const userOngoingRentals = async(req, res, next) => {
     }
 }
 
+// const userOngoingRentalsExtension = async(req, res, next) => {
+//     try{    
+//         var user = req.session.username
+//         var user_id = req.session.userId
+//         var inventory_id = req.body.inventoryId
+//         var reservation_id = req.body.orderIdExtension
+//         var numDays = parseInt(req.body.numDays)
+
+        
+//             await pool.query(`SET SCHEMA 'public'`)
+//             var  result  = await pool.query(`SELECT reservation_id, inventory_id
+//             FROM reservation WHERE (SELECT reservation_end + INTERVAL '1 DAY' * ${numDays} as reservation_end 
+//             FROM reservation WHERE reservation_id = ${reservation_id}) between reservation_start and reservation_end
+//             GROUP BY reservation_id HAVING inventory_id = ${inventory_id}`)
+
+//             if(result.rows.length == 0){
+//                 var insertExtension = await pool.query(`UPDATE reservation SET reservation_end = (reservation_end + INTERVAL '1 DAY' * ${numDays}) 
+//                                                         WHERE reservation_id = ($1);`, [reservation_id])
+                
+//                 res.redirect('/dashboard/user/rentals/ongoing?status=extensionSuccess')
+//             }
+//             else if(result.rows){
+//                 res.redirect('/dashboard/user/rentals/ongoing?status=extensionFailed')
+//             }
+//     }
+//     catch(ex){
+//         res.send(ex)
+//     }
+//     finally{
+//         pool.release
+//         next()
+//     }
+// }
+
 const userOngoingRentalsExtension = async(req, res, next) => {
     try{    
         var user = req.session.username
@@ -82,7 +116,6 @@ const userOngoingRentalsExtension = async(req, res, next) => {
         var inventory_id = req.body.inventoryId
         var reservation_id = req.body.orderIdExtension
         var numDays = parseInt(req.body.numDays)
-
         
             await pool.query(`SET SCHEMA 'public'`)
             var  result  = await pool.query(`SELECT reservation_id, inventory_id
@@ -90,14 +123,14 @@ const userOngoingRentalsExtension = async(req, res, next) => {
             FROM reservation WHERE reservation_id = ${reservation_id}) between reservation_start and reservation_end
             GROUP BY reservation_id HAVING inventory_id = ${inventory_id}`)
 
-            if(result.rows.length == 0){
+            if(result.rows.length == 0){                
                 var insertExtension = await pool.query(`UPDATE reservation SET reservation_end = (reservation_end + INTERVAL '1 DAY' * ${numDays}) 
                                                         WHERE reservation_id = ($1);`, [reservation_id])
-                
-                res.redirect('/dashboard/user/rentals/ongoing?status=extensionSuccess')
+
+                res.redirect('/dashboard/user/rentals/ongoing')
             }
             else if(result.rows){
-                res.redirect('/dashboard/user/rentals/ongoing?status=extensionFailed')
+                res.send('MAY NAKA RESERVE!')
             }
     }
     catch(ex){
@@ -125,7 +158,7 @@ const userFinishedRentals = async(req, res, next) => {
                 quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount, 
                 rating_id FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
                 JOIN item c ON c.item_id = b.item_id LEFT JOIN user_rating d ON d.reservation_id = a.reservation_id
-                WHERE customer_id = ($1) and reserve_status = 5`, [user_id]);
+                WHERE customer_id = ($1) and reserve_status IN (5,7)`, [user_id]);
             
             res.render('pages/dashboard/dashboard_user_rentals_finished', { result:rows, status:req.query.status })            
         }       
@@ -154,7 +187,7 @@ const lessorOngoingRentals = async(req, res, next) => {
                 c.item_name, image_path, reservation_start, reservation_end , 
                 DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
                 quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                JOIN item c ON c.item_id = b.item_id WHERE owner_id = ($1) AND reserve_status IN (1,2,3,4)`, [user_id]);
+                JOIN item c ON c.item_id = b.item_id WHERE owner_id = ($1) AND reserve_status IN (1,2,3,4,6,10)`, [user_id]);
 
             console.log(user_id)
             console.log(rows)
@@ -186,7 +219,7 @@ const lessorFinishedRentals = async(req, res, next) => {
                 quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount, 
                 rating_id, rating FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
                 JOIN item c ON c.item_id = b.item_id LEFT JOIN user_rating d ON d.reservation_id = a.reservation_id
-                WHERE owner_id = ($1) and reserve_status = 5`, [user_id]);
+                WHERE owner_id = ($1) and reserve_status IN (5,7)`, [user_id]);
             
             res.render('pages/dashboard/dashboard_owner_rentals_finished', { result:rows, status:req.query.status })            
         }       
@@ -424,6 +457,76 @@ const update_reservation = async(req, res, next) =>{
     }
 }
 
+const accept_item = async(req, res, next) =>{
+    try{
+
+        var reservation_id = req.body.orderId
+        let val = req.body.rental_button
+
+        await pool.query(`SET SCHEMA 'public'`)
+        const reservation_check = await pool.query(`SELECT reservation_id, reserve_status, quantity, inventory_id, owner_id, customer_id 
+                                                    FROM reservation WHERE reservation_id = ($1)`, [reservation_id])
+        //console.log(reservation_check.rows)
+        if(reservation_check.rows[0].reservation_id == null){
+            res.send(`RESERVATION DOES NOT EXIST`)
+        }
+        else{
+            let res_status = reservation_check.rows[0].reserve_status
+            let res_quantity = reservation_check.rows[0].quantity
+            let res_id = reservation_check.rows[0].inventory_id
+            let owner_id = reservation_check.rows[0].owner_id
+            let client_id = reservation_check.rows[0].customer_id
+            if(res_status == 1){
+                await pool.query(`UPDATE inventory SET item_quantity = item_quantity - ($1) WHERE inventory_id = ($2)`, [res_quantity, res_id])
+
+            }
+            const result = await pool.query(`UPDATE reservation SET reserve_status = 2 WHERE reservation_id = ($1)`, [reservation_id])
+            const notif = await pool.query(`INSERT INTO notification (notification_date, owner_id, client_id, reserve_status, notification_type, reservation_id)
+                                            VALUES(CURRENT_DATE, ($1), ($2), ($3), 0, ($4))`, [owner_id, client_id, 2, reservation_id])
+            console.log(`reservation updated!`)
+            res.redirect('/dashboard?status=updateSuccess')
+        }
+    }
+    catch(ex){
+        res.send(`Dashboard update_reservation ERROR: ${ex}`)
+    }
+}
+
+const reject_item = async(req, res, next) =>{
+    try{
+
+        var reservation_id = req.body.orderId
+        let val = req.body.rental_button
+
+        await pool.query(`SET SCHEMA 'public'`)
+        const reservation_check = await pool.query(`SELECT reservation_id, reserve_status, quantity, inventory_id, owner_id, customer_id 
+                                                    FROM reservation WHERE reservation_id = ($1)`, [reservation_id])
+        //console.log(reservation_check.rows)
+        if(reservation_check.rows[0].reservation_id == null){
+            res.send(`RESERVATION DOES NOT EXIST`)
+        }
+        else{
+            let res_status = reservation_check.rows[0].reserve_status
+            let res_quantity = reservation_check.rows[0].quantity
+            let res_id = reservation_check.rows[0].inventory_id
+            let owner_id = reservation_check.rows[0].owner_id
+            let client_id = reservation_check.rows[0].customer_id
+            if(res_status == 1){
+                await pool.query(`UPDATE inventory SET item_quantity = item_quantity - ($1) WHERE inventory_id = ($2)`, [res_quantity, res_id])
+
+            }
+            const result = await pool.query(`UPDATE reservation SET reserve_status = 6 WHERE reservation_id = ($1)`, [reservation_id])
+            const notif = await pool.query(`INSERT INTO notification (notification_date, owner_id, client_id, reserve_status, notification_type, reservation_id)
+                                            VALUES(CURRENT_DATE, ($1), ($2), ($3), 0, ($4))`, [owner_id, client_id, 6, reservation_id])
+            console.log(`reservation updated!`)
+            res.redirect('/dashboard?status=updateSuccess')
+        }
+    }
+    catch(ex){
+        res.send(`Dashboard update_reservation ERROR: ${ex}`)
+    }
+}
+
 const addComment = async(req, res, next) => {
     try{
         var user = req.session.username
@@ -515,7 +618,7 @@ const courierReturnPage = async(req, res, next) => {
                                         quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount 
                                         FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
                                         JOIN item c ON c.item_id = b.item_id
-                                        WHERE a.reservation_id = ($1) and reserve_status = 3`, [rental_id])
+                                        WHERE a.reservation_id = ($1) and reserve_status IN (3, 6)`, [rental_id])
 
         if(result.rows.length == 0){
             res.status(404).render('pages/error404')
@@ -588,6 +691,27 @@ const updateCourier = async(req, res, next) =>{
 
             res.redirect('/dashboard/courier/confirmation/failed')
         }
+        else if(req.body.updateButton == 3){
+            const imagePath = req.body.imageFileb64;
+
+            // Upload the image
+            const imageUrl = await uploadImage(imagePath);
+
+            const reservation_check = await pool.query(`SELECT reservation_id, reserve_status, quantity, inventory_id, owner_id, customer_id 
+                                                    FROM reservation WHERE reservation_id = ($1)`, [req.params.rentalId])
+                let res_status = reservation_check.rows[0].reserve_status
+                let owner_id = reservation_check.rows[0].owner_id
+                let client_id = reservation_check.rows[0].customer_id
+            
+            await pool.query(`INSERT INTO courier (reservation_id, image_url, courier_status) 
+                                VALUES(($1), ($2), 1)`, [req.params.rentalId, imageUrl])
+            
+            await pool.query(`UPDATE reservation SET reserve_status = 10 WHERE reservation_id = ($1)`, [req.params.rentalId])
+            await pool.query(`INSERT INTO notification (notification_date, owner_id, client_id, reserve_status, notification_type, reservation_id)
+                                            VALUES(CURRENT_DATE, ($1), ($2), ($3), 0, ($4))`, [owner_id, client_id, 10, req.params.rentalId])
+
+            res.redirect('/dashboard/courier/confirmation/success')
+        }
     }
     catch(ex){
         console.log(ex)
@@ -601,4 +725,4 @@ const updateCourier = async(req, res, next) =>{
 
 module.exports = { viewMainDashboard, userOngoingRentals, userFinishedRentals, userOngoingRentalsExtension, lessorOngoingRentals, lessorFinishedRentals, 
                     getRentalRequests, getUserRentalRequests, getDeniedRentalRequests, approveRentalRequest, denyRentalRequest, update_reservation, addComment, 
-                    getReport, courierDeliveryPage, courierReturnPage, updateCourier}
+                    getReport, courierDeliveryPage, courierReturnPage, updateCourier, accept_item, reject_item}

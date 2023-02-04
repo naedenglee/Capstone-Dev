@@ -69,6 +69,10 @@
                           <% } else if(rental.reserve_status == 4){ %>
                             <button class="btn btn-primary button-1" data-bs-toggle="modal" name="rental_button" data-bs-target="#finishTransactionModal" id="buttonVal" value="4" data-id="2" onclick="updateBtnFunc(<%= rental.reservation_id %>)" data-id="1">Finish Transaction</button><br>
                               <!-- <button class="btn btn-primary button-1" data-id="1">Damaged Item</button><br> -->
+                          <% } else if(rental.reserve_status == 10){ %>
+                            <span>The item has been received by the client through courier. Please wait to see if they accept or reject. <br> <a href="/rental/view/delivery/<%= rental.reservation_id %>">View Delivery Confirmation</a></span>
+                          <% } else if(rental.reserve_status == 6) { %>
+                            <span>The rental is cancelled due to item defects. Please wait for the client to deliver back the item.</span>
                           <% } else { %>
                               <span>No Available Action</span>
                           <% } %>

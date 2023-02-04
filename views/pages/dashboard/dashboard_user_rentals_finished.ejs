@@ -133,6 +133,7 @@
                     <th scope="col">Return Date</th>
                     <th scope="col">Quantity</th>
                     <th scope="col">Total Amount</th>
+                    <th scope="col">Details</th>
                     <th scope="col">Reviews</th>
                   </tr>
                 </thead>
@@ -146,13 +147,20 @@
                       <td id="returnDate"><%= rental.reservation_end.toDateString() %></td>
                       <td id="qty"><%= rental.quantity %></td>
                       <td id="totalAmount"><%= rental.total_amount %></td>
-                      <td id="reviews"><div class="p-1">                        
-                        <% if(rental.rating_id == null) { %>
-                          <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#commentModal" id="buttonVal" value="1" data-id="1" onclick="commentFunc(<%= rental.item_id %>, <%= rental.reservation_id %>, <%= rental.owner_id %>)">Rate the Experiece</button><br>
-                        <% } else{ %>
-                          <span>You have finished rating this item</span>
-                        <% } %>
-                      </div></td>                      
+                      <% if(rental.reserve_status == 7){ %>
+                        <td id="details">Cancelled</td>
+                        <td id="reviews"><div class="p-1">Not Available</div>
+                      <% }else if(rental.reserve_status == 5){ %>
+                        <td id="details">Finished</td>
+                        <td id="reviews"><div class="p-1">                        
+                          <% if(rental.rating_id == null) { %>
+                            <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#commentModal" id="buttonVal" value="1" data-id="1" onclick="commentFunc(<%= rental.item_id %>, <%= rental.reservation_id %>, <%= rental.owner_id %>)">Rate the Experiece</button><br>
+                          <% } else{ %>
+                            <span>You have finished rating this item</span>
+                          <% } %>
+                        </div></td>   
+                      <% } %>                     
+                                         
                     </tr>
                   <% }) %>  
                 </tbody>

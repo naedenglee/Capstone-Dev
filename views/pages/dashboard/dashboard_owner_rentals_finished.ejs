@@ -132,6 +132,7 @@
                     <th scope="col">Return Date</th>
                     <th scope="col">Quantity</th>
                     <th scope="col">Total Amount</th>
+                    <th scope="col">Details</th>
                     <th scope="col">Review</th>
                   </tr>
                 </thead>
@@ -145,13 +146,19 @@
                       <td id="returnDate"><%= rental.reservation_end.toDateString() %></td>
                       <td id="qty"><%= rental.quantity %></td>
                       <td id="totalAmount"><%= rental.total_amount %></td>
-                      <td id="reviews"><div class="p-1">                        
-                        <% if(rental.rating_id == null) { %>
-                          <span>The client is yet to leave a review.</span>
-                        <% } else{ %>
-                          <span>Client Rating: <%= rental.rating %> Stars</span>
-                        <% } %>
-                      </div></td>                      
+                      <% if(rental.reserve_status == 7){ %>
+                        <td id="details">Cancelled</td>
+                        <td id="reviews"><div class="p-1">Not Available</div>
+                      <% }else if(rental.reserve_status == 5){ %>
+                        <td id="details">Finished</td>
+                        <td id="reviews"><div class="p-1">                        
+                          <% if(rental.rating_id == null) { %>
+                            <span>The client is yet to leave a review.</span>
+                          <% } else{ %>
+                            <span>Client Rating: <%= rental.rating %> Stars</span>
+                          <% } %>
+                        </div></td>  
+                      <% } %>                                                 
                     </tr>
                   <% }) %>  
                 </tbody>

@@ -73,6 +73,12 @@
                   <span>Please ship the item. Copy and send this link to the courier to confirm the delivery. <br> <a href="/dashboard/return/confirmation/<%= rental.reservation_id %>">Copy this link</a></span>
                 <% } else if(rental.reserve_status == 4) { %>
                   <span>The item has been received by the owner through courier. <a href="/rental/view/delivery/<%= rental.reservation_id %>">View Delivery Confirmation</a></span>
+                <% } else if(rental.reserve_status == 10) { %>
+                  <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#acceptItemModal" id="buttonVal" value="2" data-id="1" onclick="acceptItemFunc(<%= rental.reservation_id %>)">Accept Item</button><br>
+                  <button class="btn btn-primary button-1" data-bs-toggle="modal" data-bs-target="#rejectItemModal" id="buttonVal" value="2" data-id="1" onclick="rejectItemFunc(<%= rental.reservation_id %>)">Damaged Item</button><br>
+                <% } else if(rental.reserve_status == 6) { %>
+                  <span>You have cancelled the rental. Please return the item back to the sender. <br>Copy and send this link to the courier to confirm the delivery. <br> 
+                    <a href="/dashboard/return/confirmation/<%= rental.reservation_id %>">Copy this link</a></span>
                 <% } else { %>
                   <span>No Available Action</span>                 
                 <% } %><p id="status" class="py-1"></p>
@@ -112,8 +118,54 @@
     </div>      
   </form>
 
+  <!-- Accept item modal -->
+  <form action="/dashboard/user/rentals/ongoing/accept" method="post">
+    <div class="modal fade" id="acceptItemModal" tabindex="-1" aria-labelledby="acceptItemModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateConfirmModalLabel">ACCEPT ITEM</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Do you wish to accept the item for rental ID number <span id="rentalNum" value=""></span>? The transaction will proceed after accepting.
+            <input type="hidden" name="buttonVal" id="acceptbuttonValModal" value="">
+            <input type="hidden" name="orderId" id="acceptreservationIdHidden" value="">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-primary">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>      
+  </form>
+
+  <!-- Reject Item Modal -->
+  <form action="/dashboard/user/rentals/ongoing/reject" method="post">
+    <div class="modal fade" id="rejectItemModal" tabindex="-1" aria-labelledby="acceptItemModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateConfirmModalLabel">REJECT/DAMAGED ITEM</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Do you wish to reject the item for rental ID number <span id="rental2Num" value=""></span>? The item should be returned and the transaction will be cancelled.
+            <input type="hidden" name="buttonVal" id="rejectbuttonValModal" value="">
+            <input type="hidden" name="orderId" id="rejectreservationIdHidden" value="">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-primary">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>      
+  </form>
+
   <!-- EXTENSION MODAL -->
-  <form action="/dashboard/rentals/updateStatus" method="post">
+  <form action="/dashboard/user/rentals/ongoing/extension" method="post">
     <div class="modal fade" id="applyExtensionModal" tabindex="-1" aria-labelledby="applyExtensionModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -124,13 +176,13 @@
           <div class="modal-body">
             Rental ID Number: <span id="orderNumExtension" value=""></span><br>
             Input the number of days to extend the rental: <input type="number" name="numDays" min="1" max="5" value="1" required> <br><br>
-            NOTE: It will only be extended if there is no existing reservation for that date.
+            NOTE: It will only be requested if there is no existing reservation for that date.
             <input type="hidden" name="inventoryId" id="inventoryId" value="">
             <input type="hidden" name="orderIdExtension" id="orderIdExtension" value="">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-            <button type="submit" class="btn btn-primary">Proceed</button>
+            <button type="submit" class="btn btn-primary">Request</button>
           </div>
         </div>
       </div>
@@ -196,6 +248,34 @@
       orderIdSpan.textContent = num;
       orderId.setAttribute("value", num);
       inventoryId.setAttribute("value", invenId);
+    }
+
+    function acceptItemFunc(num){
+        buttonValModal = document.getElementById("acceptbuttonValModal");
+        buttonVal = document.getElementById("buttonVal");
+        status = buttonVal.value
+        buttonValModal.setAttribute("value", status);
+        console.log(status)
+
+        orderNum = document.getElementById("rentalNum");
+        orderNum.textContent = num;
+
+        reservationId = document.getElementById("acceptreservationIdHidden");
+        reservationId.setAttribute("value", num);
+    }
+
+    function rejectItemFunc(num){
+        buttonValModal = document.getElementById("rejectbuttonValModal");
+        buttonVal = document.getElementById("buttonVal");
+        status = buttonVal.value
+        buttonValModal.setAttribute("value", status);
+        console.log(status)
+
+        orderNum = document.getElementById("rental2Num");
+        orderNum.textContent = num;
+
+        reservationId = document.getElementById("rejectreservationIdHidden");
+        reservationId.setAttribute("value", num);
     }
 </script>
 </html>

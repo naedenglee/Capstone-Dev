@@ -49,4 +49,8 @@ router.post("/user/rentals/finished/addRating", dashboardController.addComment)
 
 router.post('/courier/confirmation/:rentalId', dashboardController.updateCourier)
 
+router.post('/user/rentals/ongoing/accept', dashboardController.accept_item)
+
+router.post('/user/rentals/ongoing/reject', dashboardController.reject_item)
+
 module.exports = router

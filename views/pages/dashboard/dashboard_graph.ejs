@@ -36,7 +36,7 @@
                New!</span>
             <ul class="profile-link" style="max-height: 500px; overflow:scroll;">       
             <% notif_result.forEach(function(notif){ %>
-              <% if(notif.reserve_status == 2 && notif.owner_id == user_id){ %>
+              <% if(notif.reserve_status == 10 && notif.owner_id == user_id){ %>
                 <div class="row">
                   <li><a href="#">
                   <div class="col" style="width: 10px;">
@@ -51,7 +51,37 @@
                   </div></a></li>       
                 </div>
                 <hr class="hr" />
-              <% }else if(notif.reserve_status == 3 && notif.owner_id == user_id){ %>
+              <% }else if(notif.reserve_status == 2 && notif.owner_id == user_id){ %>
+                <div class="row">
+                  <li><a href="#">
+                  <div class="col" style="width: 10px;">
+                    <!-- <%= notif.notification_date.toISOString().split('T')[0] %> -->
+                    <%= notif.notification_date.toDateString() %>
+                  </div>
+                  <div class="col">
+                    The client for Rental ID Number <%= notif.reservation_id%> has accepted the item and the transaction will proceed.
+                    <a href="/rental/view/delivery/<%= notif.reservation_id%>">View Delivery Confirmation</a>
+                   <input type="hidden" id="notif_type" value="<%=notif.notification_type %>">
+                   <input type="hidden" id="notif_value" value="The item for Rental ID Number <%= notif.reservation_id%> has been received by the client through courier.">
+                  </div></a></li>       
+                </div>
+                <hr class="hr" />      
+                <% }else if(notif.reserve_status == 7 && notif.owner_id == user_id) { %>
+                  <div class="row">
+                    <li><a href="#">
+                    <div class="col" style="width: 10px;">
+                      <!-- <%= notif.notification_date.toISOString().split('T')[0] %> -->
+                      <%= notif.notification_date.toDateString() %>
+                    </div>
+                    <div class="col">
+                      The client for Rental ID Number <%= notif.reservation_id%> has rejected the item. The transaction is cancelled.
+                      <a href="/rental/view/delivery/<%= notif.reservation_id%>">View Delivery Confirmation</a>
+                     <input type="hidden" id="notif_type" value="<%=notif.notification_type %>">
+                     <input type="hidden" id="notif_value" value="The item for Rental ID Number <%= notif.reservation_id%> has been received by the client through courier.">
+                    </div></a></li>       
+                  </div>
+                  <hr class="hr" />                          
+                <% }else if(notif.reserve_status == 3 && notif.owner_id == user_id){ %>
                 <div class="row">
                   <li><a href="#">
                   <div class="col" style="width: 10px;">
