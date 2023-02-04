@@ -57,7 +57,7 @@ const userOngoingRentals = async(req, res, next) => {
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
             const {rows} = await pool.query(`SELECT a.reservation_id, a.owner_id, a.inventory_id, c.item_id,  
-                c.item_name, image_path, reservation_start, reservation_end , 
+                c.item_name, image_path, reservation_start, reservation_end , replacement_cost, rental_rate,
                 DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
                 quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount
                 FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
@@ -184,7 +184,7 @@ const lessorOngoingRentals = async(req, res, next) => {
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
             const {rows} = await pool.query(`SELECT a.reservation_id, a.customer_id, a.inventory_id, c.item_id,  
-                c.item_name, image_path, reservation_start, reservation_end , 
+                c.item_name, image_path, reservation_start, reservation_end , replacement_cost, rental_rate,
                 DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
                 quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
                 JOIN item c ON c.item_id = b.item_id WHERE owner_id = ($1) AND reserve_status IN (1,2,3,4,6,10)`, [user_id]);
