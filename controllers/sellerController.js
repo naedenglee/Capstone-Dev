@@ -31,6 +31,8 @@ var sellerInsert = async (req, res, next)=>{
         }
     };
 
+    
+
     const imagePath = req.body.imageFileb64;
 
     // Upload the image
