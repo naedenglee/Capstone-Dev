@@ -184,3 +184,261 @@ BEGIN
     COMMIT;
 END $$;
 
+
+CREATE OR REPLACE FUNCTION top_graph (INT)
+RETURNS TABLE (
+    s_id INT, search_rate INT,
+    d_id INT, detail_rate INT,
+    u_id INT, unique_rental INT,
+    item_name CHARACTER VARYING
+)
+AS $$
+    SELECT graph.*, b.item_name
+    FROM (
+        SELECT *
+        FROM(
+            SELECT item_id AS s_id, search_rate -- QUERIES TOP 3 SEARCHED 
+            FROM item_performance 
+            WHERE account_id = $1
+            ORDER BY search_rate DESC
+            LIMIT 3
+        ) t1
+        FULL JOIN (
+            SELECT item_id AS d_id, detail_rate -- QUERIES TOP 3 VIEWS
+            FROM item_performance 
+            WHERE account_id = $1
+            ORDER BY detail_rate DESC
+            LIMIT 3
+        ) t2
+        ON s_id=d_id
+        FULL JOIN (
+            SELECT item_id AS u_id, unique_rental -- QUERIES TOP 3 SUCCESSFUL RENT
+            FROM item_performance 
+            WHERE account_id = $1
+            ORDER BY unique_rental DESC
+            LIMIT 3
+        ) t3
+        ON d_id = u_id
+    ) AS graph
+    LEFT JOIN item b
+    ON s_id = b.item_id 
+    OR d_id = b.item_id 
+    OR u_id = b.item_id 
+$$ LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION () -- FOR THE BLOCKS
+RETURNS TABLE (
+    products INT, purchase_order INT,
+    sales_order INT, lifetime_sales INT, 
+)
+
+    SELECT DISTINCT account_id, 
+        COUNT(item_id) OVER (PARTITION BY account_id ) AS products
+        COUNT(reservation_id) 
+    SELECT DISTINCT account_id, 
+        (SELECT DISTINCT owner_id, COUNT(reservation_id) OVER (PARTITION BY owner_id) FROM reservation WHERE reserve_status = 5) 
+    FROM inventory
+    ORDER BY account_id;
+
+    SELECT DISTINCT  account_id, COUNT(a.item_id)
+    LEFT JOIN reservation b
+    ON b.owner_id = a.account_id
+    GROUP BY account_id
+    ORDER BY account_id;
+
+    SELECT owner_id, reservation_id, reserve_status 
+    FROM reservation 
+    ORDER BY owner_id ASC
+
+-- PRODUCTS 
+SELECT DISTINCT account_id, COUNT(item_id)
+FROM inventory
+GROUP BY account_id
+ORDER BY account_id ASC;
+
+-- PURCHASE ORDERS 
+SELECT DISTINCT owner_id, COUNT(reservation_id)
+FROM reservation 
+WHERE reserve_status IS NULL
+GROUP BY owner_id
+ORDER BY owner_id ASC;
+
+
+-- SALES ORDERS 
+SELECT account_id, owner_id, COUNT(DISTINCT(reservation_id))
+FROM reservation a 
+LEFT JOIN inventory b
+ON a.owner_id = account_id
+WHERE reserve_status < 5 AND reserve_status IS NOT NULL
+GROUP BY owner_id, account_id
+ORDER BY owner_id ASC;
+
+-- LIFETIME SALES
+SELECT  a.owner_id, a.reservation_id, 
+        c.rental_rate, 
+        EXTRACT(DAY FROM AGE(reservation_end, reservation_start)),
+        EXTRACT(DAY FROM AGE(reservation_end, reservation_start)) * rental_rate AS profit,
+FROM reservation a
+LEFT JOIN inventory b
+ON a.owner_id = b.account_id
+LEFT JOIN item c
+ON b.item_id = c.item_id
+WHERE reserve_status = 5
+ORDER BY owner_id ASC;
+
+SELECT  a.owner_id,
+        SUM(EXTRACT(DAY FROM AGE(reservation_end, reservation_start)) * rental_rate) AS profit
+FROM reservation a
+LEFT JOIN inventory b
+ON a.owner_id = b.account_id
+LEFT JOIN item c
+ON b.item_id = c.item_id
+WHERE reserve_status = 5
+GROUP BY a.owner_id
+ORDER BY owner_id ASC;
+
+CREATE OR REPLACE FUNCTION dashboard_summary (INT)
+RETURNS TABLE (
+    account_id INT, 
+    lifetime_sales FLOAT,
+    sales_orders INT, 
+    purchase_orders INT,
+    products INT
+)
+AS $$
+SELECT  totals.pr_id AS account_id, 
+        COALESCE( NULLIF(totals.lifetime_sales, NULL) ,0) AS lifetime_sales,
+        COALESCE( NULLIF(totals.sales_orders, NULL) ,0) AS sales_orders,
+        COALESCE( NULLIF(totals.purchase_orders, NULL) ,0) AS purchase_orders,
+        COALESCE( NULLIF(totals.products, NULL) ,0) AS products
+FROM (
+    SELECT *
+    FROM(
+        SELECT DISTINCT account_id AS pr_id, COUNT(item_id) AS products
+        FROM inventory
+        GROUP BY account_id
+        ORDER BY account_id ASC
+    ) t1
+    FULL JOIN (
+        SELECT  a.owner_id, b.account_id AS l_id,
+                SUM((EXTRACT(DAY FROM AGE(reservation_end, reservation_start)) * rental_rate) * quantity) AS lifetime_sales
+        FROM reservation a
+        LEFT JOIN inventory b
+        ON a.owner_id = b.account_id
+        LEFT JOIN item c
+        ON b.item_id = c.item_id
+        WHERE reserve_status = 5
+        GROUP BY a.owner_id, b.account_id
+        ORDER BY owner_id ASC
+    ) t2
+    ON pr_id = l_id
+    FULL JOIN (
+        SELECT account_id, owner_id AS s_id, COUNT(DISTINCT(reservation_id)) AS sales_orders
+        FROM reservation a 
+        LEFT JOIN inventory b
+        ON a.owner_id = account_id
+        WHERE reserve_status < 5 AND reserve_status IS NOT NULL
+        GROUP BY owner_id, account_id
+        ORDER BY owner_id ASC
+    ) t3
+    ON pr_id = s_id 
+    FULL JOIN (
+        SELECT DISTINCT owner_id as p_id, COUNT(reservation_id) AS purchase_orders
+        FROM reservation 
+        WHERE reserve_status IS NULL
+        GROUP BY owner_id
+        ORDER BY owner_id ASC
+    ) t4
+    ON pr_id = p_id
+) AS totals
+WHERE totals.pr_id = $1;
+$$ LANGUAGE SQL;
+
+
+
+
+AS $$
+$$ LANGUAGE SQL;
+
+-- REPORTS PAGE
+
+NOT NULL
+CREATE OR REPLACE FUNCTION googol_reports()
+RETURNS TABLE (
+    item_name CHARACTER VARYING, item_id INT,
+    account_id INT, search_rate INT,
+    detail_rate INT, add_cart INT, 
+    rm_cart INT, reservations INT,
+    unique_rental INT, last_update DATE,
+    sr_percent FLOAT, dr_percent FLOAT,
+    ac_percent FLOAT, rm_percent FLOAT,
+    res_percent FLOAT, ur_percent FLOAT,
+    a2d_percent FLOAT, u2d_percent FLOAT
+)
+AS $$
+    SELECT b.item_name, a.*,
+        round((search_rate/(SUM(search_rate) OVER (PARTITION BY account_id )::DECIMAL(100,2))*100),2) AS sr_percent,
+        round((detail_rate/(SUM(detail_rate) OVER (PARTITION BY account_id )::DECIMAL(100,2))*100),2) AS dr_percent,
+        round((add_cart/(SUM(add_cart) OVER (PARTITION BY account_id )::DECIMAL(100,2))*100),2) AS ac_percent,
+        round((rm_cart/(SUM(rm_cart) OVER (PARTITION BY account_id )::DECIMAL(100,2))*100),2) AS rm_percent,
+        round((reservations/(SUM(reservations) OVER (PARTITION BY account_id )::DECIMAL(100,2))*100),2) AS res_percent,
+        round((unique_rental/(SUM(unique_rental) OVER (PARTITION BY account_id )::DECIMAL(100,2))*100),2) AS ur_percent,
+        round((LEAD(add_cart,0) OVER (PARTITION BY account_id)/LEAD(detail_rate,0) OVER (PARTITION BY account_id )::DECIMAL(100,2)*100),2) AS a2d_percent,
+        round((LEAD(unique_rental,0) OVER (PARTITION BY account_id)/LEAD(detail_rate,0) OVER (PARTITION BY account_id )::DECIMAL(100,2)*100),2) AS u2d_percent
+    FROM item_performance a 
+    LEFT JOIN item b 
+    ON a.item_id = b.item_id
+    ORDER BY account_id;
+$$ LANGUAGE SQL;
+
+
+CREATE OR REPLACE FUNCTION total_reports(IN INT)
+RETURNS TABLE (
+    sr_sum INT, dr_sum INT,
+    ac_sum INT, rm_sum INT, 
+    res_sum INT, uq_sum INT,
+    a2d_percent FLOAT, 
+    u2d_percent FLOAT
+)
+AS $$
+
+    SELECT 
+        SUM(search_rate) AS sr_sum,
+        SUM(detail_rate) AS dr_sum,
+        SUM(add_cart) AS ac_sum,
+        SUM(rm_cart) AS rm_sum,
+        SUM(reservations) AS res_sum,
+        SUM(unique_rental) AS ur_sum,
+        round((SUM(add_cart)/SUM(detail_rate)::DECIMAL(100,2)*100),2) AS a2d_percentage,
+        round((SUM(unique_rental)/SUM(detail_rate)::DECIMAL(100,2)*100),2) AS u2d_percentage
+    FROM item_performance
+    WHERE account_id = $1
+    GROUP BY account_id;
+$$ LANGUAGE SQL;
+
+
+---- WISHLIST VS RESERVATION PER MONTH
+SELECT SUM(reservations) AS Reservation, SUM(add_cart) AS Wishlist 
+FROM item_performance a
+    RIGHT JOIN inventory b
+    ON a.item_id = b.item_id 
+    RIGHT JOIN item c
+    ON a.item_id = c.item_id
+WHERE a.last_update BETWEEN '2022-12-1' AND '2022-12-31' AND b.account_id =1
+GROUP BY account_id
+ORDER BY a.account)id
+
+
+
+
+SELECT account_id,
+    SUM(reservations) AS total_reservations,
+    SUM(add_cart) AS total_wishlist
+FROM 
+    item_performance
+
+GROUP BY
+    account_id
+ORDER BY 
+    account_id ASC;
+

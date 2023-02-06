@@ -44,8 +44,7 @@
                       <div class="chat_people">
                         <div class="chat_img"> <img src="/images/system_images/profile-icon.png"> </div>
                         <div class="chat_ib">
-                            <h5><%=members.name %> <span class="chat_date">Dec 25</span></h5>
-                          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptas atque</p>
+                            <h5 style="margin-top: 15px"><%=members.name %> <span class="chat_date"></span></h5>
                         </div>
                       </div>
                     </a>
@@ -54,12 +53,15 @@
                 </div>
                 </div>
                 <div class="mesgs">
-                  <div class="msg_history">
+                  <div class="msg_history" id = "msg_history">
                   <% messages.forEach(function(message){ %>
                       <% if(user_id == message.sender){ %>
                         <div class="outgoing_msg">
                           <div class="sent_msg">
                               <p><%=message.chatMessage %></p>
+                            <% if(message.image !=null || message.image == ''){ %>
+                              <a href= "<%=message.image%>"><img src = "<%=message.image%>"></a>
+                            <% } %>
                               <span class="time_date"> <%=message.time%></span> </div>
                         </div>
                       <% }else if(user_id == message.receiver){ %>
@@ -68,6 +70,9 @@
                           <div class="received_msg">
                             <div class="received_withd_msg">
                               <p><%=message.chatMessage %></p>
+                            <% if(message.image !=null || message.image == ''){ %>
+                              <a href= "<%=message.image%>"><img src = "<%=message.image%>"></a>
+                            <% } %>
                               <span class="time_date"> <%=message.time%></span> </div>
                           </div>
                         </div>
@@ -85,15 +90,29 @@
                     <!--<a href="#" class="float">
                         <i class="fa fa-plus my-float"></i>
                         </a> -->
-                        <form method="post" enctype="multipart/form-data">
-
-                            <label for="apply"><input type="file" name="" id="apply" accept="image/*,.pdf"><i class="fa fa-plus my-float"></i></label>
-                                
-                            </form> 
+                            <label for="apply"><input type="file" name="imageFile" id="apply" accept="image/*,.pdf"><i class="fa fa-plus my-float"></i></label>
+                            <input type="hidden" id="imageFileb64" name="imageFileb64">
                   </div>
                 </div>
               </div>
-               
             </div></div>
+            <script src="/assets/scripts/itemlist-forms.js"></script>
 </body>
+
+<script>
+    nestedElement = document.getElementById("msg_history");
+    nestedElement.scrollTo(0, nestedElement.scrollHeight);
+    function readFile() { 
+      if (!this.files || !this.files[0]) return;         
+      const FR = new FileReader();
+         
+      FR.addEventListener("load", function(evt) {
+         document.querySelector("#imageFileb64").value = evt.target.result;
+      });          
+      FR.readAsDataURL(this.files[0]);      
+      }
+
+      document.querySelector("#apply").addEventListener("change", readFile);
+</script>
+
 </html>
