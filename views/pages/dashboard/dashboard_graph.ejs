@@ -189,7 +189,7 @@
                   <p class="text-primary">PRODUCTS</p>
                   <span class="material-icons-outlined text-blue">inventory_2</span>
                 </div></a> 
-                <span class="text-primary font-weight-bold">249</span>
+                <span class="text-primary font-weight-bold"><%= summary[0].products %></span>
               </div>
     
               <div class="card">
@@ -199,7 +199,7 @@
                   <span class="material-icons-outlined text-orange">add_shopping_cart</span>
                 </div>
             </a> 
-                <span class="text-primary font-weight-bold">83</span>
+                <span class="text-primary font-weight-bold"><%= summary[0].purchase_orders %></span>
               </div>
     
               <div class="card">
@@ -209,17 +209,7 @@
                   <span class="material-icons-outlined text-green">shopping_cart</span>
                 </div>
             </a> 
-                <span class="text-primary font-weight-bold">79</span>
-              </div>
-    
-              <div class="card">
-                <a href="#">
-                <div class="card-inner">
-                  <p class="text-primary">INVENTORY ALERTS</p>
-                  <span class="material-icons-outlined text-red">notification_important</span>
-                </div>
-            </a> 
-                <span class="text-primary font-weight-bold">56</span>
+                <span class="text-primary font-weight-bold"><%= summary[0].sales_orders %></span>
               </div>
 
               <div class="card">
@@ -229,7 +219,7 @@
                   <span class="material-icons-outlined text-red">notification_important</span>
                 </div>
             </a> 
-                <span class="text-primary font-weight-bold">₱ 6,000</span>
+                <span class="text-primary font-weight-bold">₱<%= summary[0].lifetime_sales %></span>
               </div>
     
             </div>

@@ -21,13 +21,16 @@
     <div class="p-5 my-4 bg-light rounded-3">
         <center><img src="/images/system_images/deliver.png"></center>
         <h3>Delivery Confirmation</h3> <br>
-        <p><strong>Sender:</strong> <%= result.rows[0].customer_username %> <br>
-            <strong>Contact no.:</strong> 09098716739 <br>
-            <i class="fa-solid fa-location-pin"></i> 15 st. paul San Mateo <br>
+          <h5 class="bold">Item: <%= result.rows[0].item_name %></h5>
+          <p class="text-muted"> Quantity: <%= result.rows[0].quantity %></p>
+          <h6 class="mb-3"> Total Amount <br> (including deposit): ₱<%= result.rows[0].total_amount %> <span class="small text-muted"> via (COD) </span></h6>
+        <p><strong>Sender:</strong> <%= result.rows[0].owner_username %> <br>
+            <strong>Contact no.:</strong><%= result.rows[0].owner_phone_num%><br>
+            <i class="fa-solid fa-location-pin"></i> <%= result.rows[0].owner_address%><br>
             <hr>
-            <strong>Receiver:</strong> <%= result.rows[0].owner_username %> <br>
-            <strong>Contact no.:</strong> 09098716739 <br>
-            <i class="fa-solid fa-location-dot"></i> 18 rosal Marikina City </p>
+            <strong>Receiver:</strong> <%= result.rows[0].customer_username %> <br>
+            <strong>Contact no.:</strong> <%= result.rows[0].customer_phone_num %><br>
+            <i class="fa-solid fa-location-dot"></i> <%= result.rows[0].customer_address%></p>
 
       </div>
     <div class="row">

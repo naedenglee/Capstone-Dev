@@ -54,7 +54,10 @@
                 </div>
                 </div>
                 <div class="mesgs">
-                  <span><%= chatName %></span>
+                <div class="msg_name">
+                                    <h4 style="margin-top: -15px;"><%= chatName %></h4>
+                                    <hr>
+                                  </div>
                   <div class="msg_history" id = "msg_history">                    
                   <% messages.forEach(function(message){ %>
                       <% if(user_id == message.sender){ %>

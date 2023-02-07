@@ -34,7 +34,6 @@
                                     <h4><%= item.item_name %></h4>
                                     <p>Description: <br><%= item.item_description %></p>
                                     <h5>₱<span for="check-<%= item.cart_id %>"><%= item.rental_rate %></span></h5>
-                                    <p class="unit">Quantity: <input name="" value="<%= item.qty %>"></p>
                                     <button type="submit"><p class="btn-area"><i aria-hidden="true" class="fa fa-trash"></i> <span class="btn2">Remove</span></p></button>
                                 </div>
                             </div>
@@ -42,15 +41,6 @@
                     </form>                    
                   <% }) %>
 
-			</div>
-			<div class="right-bar">
-				<p><span>Subtotal</span> <span id="subtotal">₱0</span></p>
-				<hr>
-				<p><span>Reservation fee</span> <span>₱0</span></p>
-				<hr>
-				<p><span>Security fee</span> <span>₱0</span></p>
-				<hr>
-				<p><span>Total</span> <span>₱0</span></p><a href="#"><i class="fa fa-shopping-cart"></i>Checkout</a>
 			</div>
 		</div>
 	</div>

@@ -1,4 +1,4 @@
-const {pool} = require('../model/database.js')
+const {Jgets, pool} = require('../model/database.js')
 const {Jincr} = require('../model/redis.js')
 const cloudinary = require('cloudinary').v2
 
@@ -25,16 +25,24 @@ var viewMainDashboard = async(req, res, next) => {
                                     reserve_status, notification_type, reservation_id, a.item_id, item_name FROM notification a 
                                     JOIN account b ON a.client_id = b.account_id LEFT JOIN item c ON a.item_id = c.item_id WHERE owner_id = ($1) OR client_id = ($1)
                                     ORDER BY notification_id DESC`, [user_id])
+            const {rows: summary} = await pool.query(`SELECT * FROM dashboard_summary($1)`,[user_id])
             if(notif.length == 0){
                 var notif_result = 0   
-                console.log(notif_result)             
+                //console.log(notif_result)             
             }
             else if(notif[0]){
                 var notif_result = notif
-                console.log(notif_result)  
+                //console.log(notif_result)  
             }
+            console.log(summary[0].purchase_orders)
 
-            res.render('pages/dashboard/dashboard_graph', {result:stats, status:req.query.status, notif_result, user_id})
+            res.render('pages/dashboard/dashboard_graph', 
+            {
+                result:stats, 
+                status:req.query.status, 
+                notif_result, user_id,
+                summary
+            })
         }
     }
     catch(ex){
@@ -152,13 +160,25 @@ const userFinishedRentals = async(req, res, next) => {
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const {rows} = await pool.query(`SELECT a.reservation_id, a.owner_id, a.inventory_id, c.item_id,  
-                c.item_name, image_path, reservation_start, reservation_end , 
-                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount, 
-                rating_id FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                JOIN item c ON c.item_id = b.item_id LEFT JOIN user_rating d ON d.reservation_id = a.reservation_id
-                WHERE customer_id = ($1) and reserve_status IN (5,7)`, [user_id]);
+            const {rows} = await pool.query
+                (
+                    `SELECT  a.reservation_id, a.owner_id, 
+                            a.inventory_id, c.item_id,  
+                            c.item_name, image_path, 
+                            reservation_start, reservation_end , 
+                            DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                            quantity, a.reserve_status, mode_of_payment, 
+                            (rental_rate * (reservation_end - reservation_start)) *a.quantity as total_amount, 
+                            rating_id 
+                    FROM reservation a 
+                    JOIN inventory b 
+                    ON b.inventory_id = a.inventory_id 
+                    JOIN item c 
+                    ON c.item_id = b.item_id 
+                    LEFT JOIN user_rating d 
+                    ON d.reservation_id = a.reservation_id
+                    WHERE customer_id = ($1) AND reserve_status IN (5,7)`, 
+                [user_id]);
             
             res.render('pages/dashboard/dashboard_user_rentals_finished', { result:rows, status:req.query.status })            
         }       
@@ -183,14 +203,26 @@ const lessorOngoingRentals = async(req, res, next) => {
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const {rows} = await pool.query(`SELECT a.reservation_id, a.customer_id, a.inventory_id, c.item_id,  
-                c.item_name, image_path, reservation_start, reservation_end , replacement_cost, rental_rate,
-                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                JOIN item c ON c.item_id = b.item_id WHERE owner_id = ($1) AND reserve_status IN (1,2,3,4,6,10)`, [user_id]);
+            const {rows} = await pool.query
+                (`
+                    SELECT  a.reservation_id, a.customer_id, 
+                            a.inventory_id, c.item_id,  
+                            c.item_name, image_path, 
+                            reservation_start, reservation_end , 
+                            replacement_cost, rental_rate,
+                            DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                            quantity, a.reserve_status, mode_of_payment, 
+                            (rental_rate * (reservation_end - reservation_start)) * a.quantity as total_amount 
+                    FROM reservation a 
+                    JOIN inventory b 
+                    ON b.inventory_id = a.inventory_id 
+                    JOIN item c 
+                    ON c.item_id = b.item_id 
+                    WHERE owner_id = ($1) AND reserve_status IN (1,2,3,4,6,10)
+                `, [user_id]);
 
-            console.log(user_id)
-            console.log(rows)
+            //console.log(user_id)
+            //console.log(rows)
             res.render('pages/dashboard/dashboard_owner_rentals_ongoing', { result:rows, status:req.query.status })            
         }        
     }
@@ -213,13 +245,25 @@ const lessorFinishedRentals = async(req, res, next) => {
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const {rows} = await pool.query(`SELECT a.reservation_id, a.customer_id, a.inventory_id, c.item_id,  
-                c.item_name, image_path, reservation_start, reservation_end , 
-                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount, 
-                rating_id, rating FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                JOIN item c ON c.item_id = b.item_id LEFT JOIN user_rating d ON d.reservation_id = a.reservation_id
-                WHERE owner_id = ($1) and reserve_status IN (5,7)`, [user_id]);
+            const {rows} = await pool.query
+                (`
+                    SELECT  a.reservation_id, a.customer_id, 
+                            a.inventory_id, c.item_id,  
+                            c.item_name, image_path, 
+                            reservation_start, reservation_end, 
+                            DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                            quantity, a.reserve_status, mode_of_payment, 
+                            (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount, 
+                            rating_id, rating 
+                    FROM reservation a 
+                    JOIN inventory b 
+                    ON b.inventory_id = a.inventory_id 
+                    JOIN item c 
+                    ON c.item_id = b.item_id 
+                    LEFT JOIN user_rating d 
+                    ON d.reservation_id = a.reservation_id
+                    WHERE owner_id = ($1) and reserve_status IN (5,7)
+                `, [user_id]);
             
             res.render('pages/dashboard/dashboard_owner_rentals_finished', { result:rows, status:req.query.status })            
         }       
@@ -242,14 +286,23 @@ const getRentalRequests = async(req, res, next) => {
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const { rows } = await pool.query(`SELECT a.reservation_id, a.customer_id, a.inventory_id, c.item_id,  
-                c.item_name, image_path, reservation_start, reservation_end , 
-                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount 
-                FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                JOIN item c ON c.item_id = b.item_id WHERE owner_id = ($1) AND reserve_status is null`, [user_id])
+            const { rows } = await pool.query
+                (`
+                    SELECT  a.reservation_id, a.customer_id, 
+                            a.inventory_id, c.item_id,  
+                            c.item_name, image_path, reservation_start, reservation_end , 
+                            DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                            quantity, a.reserve_status, mode_of_payment, 
+                            (rental_rate * (reservation_end - reservation_start)) *a.quantity as total_amount 
+                    FROM reservation a 
+                    JOIN inventory b 
+                    ON b.inventory_id = a.inventory_id 
+                    JOIN item c 
+                    ON c.item_id = b.item_id 
+                    WHERE owner_id = ($1) AND reserve_status IS NULL
+                `, [user_id])
             
-            console.log(rows)
+            //console.log(rows)
 
             res.render('pages/dashboard/dashboard_requests', { result:rows, status:req.query.status })            
         }        
@@ -273,14 +326,22 @@ const getUserRentalRequests = async(req, res, next) => {
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const { rows } = await pool.query(`SELECT a.reservation_id, a.owner_id, a.inventory_id, c.item_id,  
-                c.item_name, image_path, reservation_start, reservation_end , 
-                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount 
-                FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                JOIN item c ON c.item_id = b.item_id WHERE customer_id = ($1) AND reserve_status is null`, [user_id])
-            
-            console.log(rows)
+            const { rows } = await pool.query
+                (`
+                    SELECT  a.reservation_id, a.owner_id, 
+                            a.inventory_id, c.item_id,  
+                            c.item_name, image_path, 
+                            reservation_start, reservation_end , 
+                            DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                            quantity, a.reserve_status, mode_of_payment, 
+                            (rental_rate * (reservation_end - reservation_start)) * a.quantity as total_amount 
+                    FROM reservation a 
+                    JOIN inventory b 
+                    ON b.inventory_id = a.inventory_id 
+                    JOIN item c 
+                    ON c.item_id = b.item_id 
+                    WHERE customer_id = ($1) AND reserve_status IS NULL
+                `, [user_id])
 
             res.render('pages/dashboard/dashboard_user_requests', { result:rows, status:req.query.status })            
         }        
@@ -304,12 +365,22 @@ const getDeniedRentalRequests = async(req, res, next) => {
         }
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
-            const { rows } = await pool.query(`SELECT a.reservation_id, a.customer_id, a.inventory_id, c.item_id,  
-                c.item_name, image_path, reservation_start, reservation_end , 
-                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount 
-                FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                JOIN item c ON c.item_id = b.item_id WHERE owner_id = ($1) AND reserve_status = 7`, [user_id])
+            const { rows } = await pool.query
+                (`
+                    SELECT  a.reservation_id, a.customer_id, 
+                            a.inventory_id, c.item_id,  
+                            c.item_name, image_path, 
+                            reservation_start, reservation_end , 
+                            DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                            quantity, a.reserve_status, mode_of_payment, 
+                            (rental_rate * (reservation_end - reservation_start)) + a.quantity as total_amount 
+                    FROM reservation a 
+                    JOIN inventory b 
+                    ON b.inventory_id = a.inventory_id 
+                    JOIN item c 
+                    ON c.item_id = b.item_id 
+                    WHERE owner_id = ($1) AND reserve_status = 7
+                `, [user_id])
 
                 res.render('pages/dashboard/dashboard_requests_denied', { result:rows })            
         }        
@@ -328,7 +399,7 @@ const approveRentalRequest = async(req, res, next) => {
         var user = req.session.username
         var user_id = req.session.user_id
         var reservation_id = req.body.orderId
-        console.log(reservation_id)
+        //console.log(reservation_id)
         
         if(!user){
             res.status(401).render('pages/error401')
@@ -565,9 +636,21 @@ const getReport = async(req, res, next) => {
         }
         else if(user){                     
             await pool.query(`SET SCHEMA 'public'`)
+            const {rows: count} = await pool.query(`SELECT item_id FROM item_performance`)
+            await count.forEach(async function (messages, index){
+                    const perf = await Jgets(`item_perf:${this[index].item_id}`, '.')
+                     await pool.query(`UPDATE item_performance 
+                                SET detail_rate = ($2), 
+                                add_cart= ($3), 
+                                rm_cart= ($4), 
+                                reservations= ($5), 
+                                unique_rental = ($6), 
+                                search_rate= ($7)
+                                WHERE item_id = ($1)`
+                        , await Object.values(perf))
+            } ,count)
             const {rows: totals} = await pool.query(`SELECT * FROM total_reports($1)`,[user_id])
             const {rows: reports} = await pool.query(`SELECT * FROM googol_reports() WHERE account_id = ($1)`,[user_id])
-            console.log(totals)
 
             res.render('pages/dashboard/dashboard_reports',
                 {
@@ -588,12 +671,29 @@ const getReport = async(req, res, next) => {
 const courierDeliveryPage = async(req, res, next) => {
     try{
         var rental_id = req.params.rentalId
-        const result = await pool.query(`SELECT a.reservation_id, a.customer_id,(SELECT username FROM account WHERE account_id = a.customer_id) as customer_username, owner_id, (SELECT username FROM account WHERE account_id = a.owner_id) as owner_username, a.inventory_id, c.item_id,  
-                                        c.item_name, reservation_start, reservation_end,                
-                                        quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount 
-                                        FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                                        JOIN item c ON c.item_id = b.item_id
-                                        WHERE a.reservation_id = ($1) and reserve_status = 1`, [rental_id])
+        const result = await pool.query
+            (`
+                SELECT  a.reservation_id, a.customer_id,
+                        (SELECT username FROM account WHERE account_id = a.customer_id) as customer_username, 
+                        owner_id, (SELECT username FROM account WHERE account_id = a.owner_id) as owner_username, a.inventory_id, c.item_id,  
+                        c.item_name, reservation_start, reservation_end,                
+                        quantity, a.reserve_status, mode_of_payment, replacement_cost,
+                        (rental_rate * (reservation_end - reservation_start)) * a.quantity as total_amount ,
+                        (SELECT phone_num FROM profile WHERE a.owner_id = account_id) AS owner_phone_num,
+                        (SELECT phone_num FROM profile WHERE a.customer_id = account_id) AS customer_phone_num,
+                        (SELECT CONCAT(house_number, ' ', street, ' ', barangay, ' ', district, ' ', city_prov)
+                        FROM address
+                        WHERE account_id = owner_id) AS owner_address,
+                        (SELECT CONCAT(house_number, ' ', street, ' ', barangay, ' ', district, ' ', city_prov)
+                        FROM address
+                        WHERE account_id = customer_id) AS customer_address
+                FROM reservation a 
+                JOIN inventory b 
+                ON b.inventory_id = a.inventory_id 
+                JOIN item c 
+                ON c.item_id = b.item_id
+                WHERE a.reservation_id = ($1) AND reserve_status = 1
+            `, [rental_id])
         if(result.rows.length == 0){
             res.status(404).render('pages/error404')
         }
@@ -613,12 +713,30 @@ const courierDeliveryPage = async(req, res, next) => {
 const courierReturnPage = async(req, res, next) => {
     try{
         var rental_id = req.params.rentalId
-        const result = await pool.query(`SELECT a.reservation_id, a.customer_id,(SELECT username FROM account WHERE account_id = a.customer_id) as customer_username, owner_id, (SELECT username FROM account WHERE account_id = a.owner_id) as owner_username, a.inventory_id, c.item_id,  
-                                        c.item_name, reservation_start, reservation_end,                
-                                        quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount 
-                                        FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
-                                        JOIN item c ON c.item_id = b.item_id
-                                        WHERE a.reservation_id = ($1) and reserve_status IN (3, 6)`, [rental_id])
+        const result = await pool.query
+            (`
+                SELECT  a.reservation_id, a.customer_id,
+                        (SELECT username FROM account WHERE account_id = a.customer_id) as customer_username, 
+                        owner_id, (SELECT username FROM account WHERE account_id = a.owner_id) as owner_username, 
+                        a.inventory_id, c.item_id,  
+                        c.item_name, reservation_start, reservation_end,                
+                        quantity, a.reserve_status, mode_of_payment, replacement_cost,
+                        (rental_rate * (reservation_end - reservation_start)) * a.quantity as total_amount ,
+                        (SELECT phone_num FROM profile WHERE a.owner_id = account_id) AS owner_phone_num,
+                        (SELECT phone_num FROM profile WHERE a.customer_id = account_id) AS customer_phone_num,
+                        (SELECT CONCAT(house_number, ' ', street, ' ', barangay, ' ', district, ' ', city_prov)
+                        FROM address
+                        WHERE account_id = owner_id) AS owner_address,
+                        (SELECT CONCAT(house_number, ' ', street, ' ', barangay, ' ', district, ' ', city_prov)
+                        FROM address
+                        WHERE account_id = customer_id) AS customer_address
+                FROM reservation a 
+                JOIN inventory b 
+                ON b.inventory_id = a.inventory_id 
+                JOIN item c 
+                ON c.item_id = b.item_id
+                WHERE a.reservation_id = ($1) and reserve_status IN (3, 6)
+            `, [rental_id])
 
         if(result.rows.length == 0){
             res.status(404).render('pages/error404')

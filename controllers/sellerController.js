@@ -1,4 +1,4 @@
-const {pool} = require('../model/database.js')
+const {pool, redisClient} = require('../model/database.js')
 const cloudinary = require('cloudinary').v2
 
 cloudinary.config({ 
@@ -57,6 +57,8 @@ var sellerInsert = async (req, res, next)=>{
         await pool.query(`SET SCHEMA 'public'`)
         const result = await pool.query(sqlQuery)
         let {vitem_id} = result.rows[0]
+        await redisClient.send_command('DEL', 'data')
+ 
 
         if(vitem_id == null){ // DATABASE RETURNS vinventory_id NULL 
             return res.send('Conflict Query')
@@ -128,6 +130,9 @@ var updateItem = async(req, res, next) => {
                             WHERE  item_id = ($6)`, [item_name, category, rental_rate, deposit, description, item_id])
 
             await pool.query(`UPDATE inventory SET item_quantity = ($1) WHERE item_id = ($2)`, [quantity, item_id])
+            await redisClient.send_command('DEL', 'data')
+            await redisClient.send_command('DEL',`view_item_id:${item_id}`)
+            await redisClient.send_command('DEL',`${category}`)
 
             res.redirect('/seller/items?status=editSuccess')
         }
