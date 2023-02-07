@@ -46,11 +46,17 @@
                     <div class="flex-fill" style="padding-left:  40px; padding-right:  40px; padding-top:  20px">
                       <h5 class="bold">Item: <%= rental[0].item_name %></h5>
                       <p class="text-muted"> Quantity: <%= rental[0].quantity %></p>
-                      <h6 class="mb-3"> Total Amount <br> (including deposit): ₱<%= rental[0].total_amount.toFixed(2) %> <span class="small text-muted"> via (COD) </span></h6>
+                      <h5 class="mb-3"> Total Amount <br> (including deposit): ₱<%= rental[0].total_amount.toFixed(2) %> <span class="small text-muted"> via (COD) </span></h5>
+                      <h6>BREAKDOWN:</h6>
+                      <h6>Days: <%= rental[0].rental_days %></h6>
+                      <h6>Rental Rate: ₱<%= rental[0].rental_rate.toFixed(2) %> <span class="small text-muted"> per day </span></h6>                      
+                      <h6>Total Rental Rate: ₱<%= (rental[0].rental_days * rental[0].rental_rate.toFixed(2) * rental[0].quantity).toFixed(2) %> <span class="small text-muted"> (Quantity * Rental Rate * Days)</span></h6>
+                      <h6 class="mb-3">Replacement Cost: ₱<%= rental[0].replacement_cost %></h6>
                       <h6 class="mb-3">Owner: <%= rental[0].owner_username %></h6>
                       <h6 class="mb-3">Client: <%= rental[0].customer_username %></h6><br>
                       <h5>SHIPPING INFORMATION</h5>
                       <h6 class="" style="margin-bottom: 0">Owner: <span class="text-muted"> <%= owner_address[0].full_name %> </span> </h6>
+                      <h6 class="" style="margin-bottom: 0">Owner's Contact Info: <span class="text-muted"> <%= rental[0].owner_phone_num %> </span> </h6>
                       <h6 class="mb-3" style="margin-bottom: 0">Owner Address: <span class="text-muted"> 
                         <%= owner_address[0].house_number %>, 
                         <%= owner_address[0].street %>, 
@@ -60,6 +66,7 @@
                       </span> </h6>
 
                       <h6 class="" style="margin-bottom: 0">Client: <span class="text-muted"> <%= customer_address[0].full_name %> </span> </h6>
+                      <h6 class="" style="margin-bottom: 0">Customer's Contact Info: <span class="text-muted"> <%= rental[0].customer_phone_num %> </span> </h6>
                       <h6 class="mb-3" style="margin-bottom: 0">Client Address: <span class="text-muted"> 
                         <%= customer_address[0].house_number %>, 
                         <%= customer_address[0].street %>, 

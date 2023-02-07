@@ -12,13 +12,17 @@ var viewRental = async(req, res, next) => {
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
             const {rows: rental} = await pool.query(`SELECT a.reservation_id, a.owner_id, d.username as owner_username, a.customer_id, 
+                (SELECT phone_num FROM profile WHERE account_id = owner_id) as owner_phone_num,
+				(SELECT phone_num FROM profile WHERE account_id = customer_id) as customer_phone_num,
                 (SELECT username FROM account WHERE account_id = a.customer_id) as customer_username, a.inventory_id, c.item_id,  
                 c.item_name, image_path, reservation_start, reservation_end , 
-                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount
+                DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining, rental_rate, replacement_cost, 
+                (reservation_end - reservation_start) as rental_days,
+                quantity, a.reserve_status, mode_of_payment, ((rental_rate * (reservation_end - reservation_start))*quantity) + replacement_cost as total_amount
                 FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
                 JOIN item c ON c.item_id = b.item_id JOIN account d ON d.account_id = a.owner_id
                 WHERE reservation_id = ($1) AND (owner_id = ($2) OR customer_id = ($2))`, [rental_id, user_id]);
+
             if(rental.length == 0){
                 res.status(404).render('pages/error404')
             }

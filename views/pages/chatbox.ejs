@@ -19,7 +19,8 @@
   
 </head>
 <body>
-    <div class="container">
+  <%- include ('navbar') -%>
+    <div class="container" style="margin-top: 100px;">
         <h3 class=" text-center">Messaging</h3>
         <div class="messaging">
               <div class="inbox_msg">
@@ -53,7 +54,8 @@
                 </div>
                 </div>
                 <div class="mesgs">
-                  <div class="msg_history" id = "msg_history">
+                  <span><%= chatName %></span>
+                  <div class="msg_history" id = "msg_history">                    
                   <% messages.forEach(function(message){ %>
                       <% if(user_id == message.sender){ %>
                         <div class="outgoing_msg">

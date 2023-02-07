@@ -17,6 +17,27 @@ img{ max-width:100%;}
 }
 .top_spac{ margin: 20px 0 0;}
 
+/* FOR CART NUMBER */
+.badge {
+  padding-left: 9px;
+  padding-right: 9px;
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
+}
+
+.label-warning[href],
+.badge-warning[href] {
+  background-color: #c67605;
+}
+#lblCartCount {
+    font-size: 12px;
+    background: #20dbc2;
+    color: #fff;
+    padding: 0 5px;
+    vertical-align: top;
+    margin-left: -10px; 
+}
 
 .recent_heading {float: left; width:40%;}
 .srch_bar {

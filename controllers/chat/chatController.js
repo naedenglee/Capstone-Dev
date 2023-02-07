@@ -55,6 +55,20 @@ var showRoom = async (req, res, next)=> {
                 this[index] = JSON.parse(messages)
         }, allChat)
 
+        //new
+        console.log(chat_id)
+        console.log(chat_id == null)
+        
+        let chatname = ''
+
+        if(chat_id == null){
+            chatname = ''
+        }
+        else if(chat_id){
+            let checkName = allChat.filter(e=> e.chat_id == chat_id)
+            chatname = checkName[0].name
+        }
+
         res.render('pages/chatbox', 
         { 
             user_id,
@@ -62,7 +76,11 @@ var showRoom = async (req, res, next)=> {
             messages: productsers,
             chat_id,
             getRoom,
-            room_id: req.params.room_id
+            chatName:chatname,            
+            room_id: req.params.room_id,
+            user:req.session.username, 
+            cart_count:req.session.cart_count, 
+            currency:req.session.currency, 
         })
 
     }

@@ -13,14 +13,14 @@
             <a class="nav-link" href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
+            <a class="nav-link" href="/items">Browse</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Services</a>
+            <a class="nav-link" href="/chat/show">Chat</a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" href="#">Contact</a>
-          </li>
+          </li> -->
           <% if(!user){ %>
             <li class="nav-item">
               <a class="nav-link" href="#">No User</a>
@@ -37,13 +37,13 @@
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="/profile/<%= user_id %>">Your Profile</a></li>
                 <li><a class="dropdown-item" href="/seller/items">Your Items</a></li>
+                <li><a class="dropdown-item" href="/email/check-verified">List an Item</a></li>
                 <li>
                     <a class="dropdown-item" href="/cart">Cart <i class="fa-solid fa-cart-shopping"></i>
                       
                       <span class='badge badge-warning' id='lblCartCount'> <%= cart_count %> </span>
                     </a>
-                </li>                
-                <li><a class="dropdown-item" href="#">Wallet: ₱<%= currency %></a></li>                              
+                </li>                      
                 <li><a class="dropdown-item" href="/logout">Logout</a></li>
               </ul>
             </div>
