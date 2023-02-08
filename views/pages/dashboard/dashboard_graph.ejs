@@ -183,44 +183,44 @@
             
             <div class="main-cards">
     
+              <a href="/seller/items">
               <div class="card">
-                <a href="#">
                 <div class="card-inner">
                   <p class="text-primary">PRODUCTS</p>
                   <span class="material-icons-outlined text-blue">inventory_2</span>
-                </div></a> 
+                </div>
                 <span class="text-primary font-weight-bold"><%= summary[0].products %></span>
               </div>
-    
+                </a> 
+              <a href="/dashboard/lessor/requests">
               <div class="card">
-            <a href="#">
                 <div class="card-inner">
-                  <p class="text-primary">PURCHASE ORDERS</p>
+                  <p class="text-primary">RENTAL REQUESTS</p>
                   <span class="material-icons-outlined text-orange">add_shopping_cart</span>
                 </div>
-            </a> 
                 <span class="text-primary font-weight-bold"><%= summary[0].purchase_orders %></span>
               </div>
+              </a> 
     
+              <a href="/dashboard/lessor/rentals/ongoing">
               <div class="card">
-                <a href="#">
                 <div class="card-inner">
-                  <p class="text-primary">SALES ORDERS</p>
+                  <p class="text-primary">ONGOING RENTALS</p>
                   <span class="material-icons-outlined text-green">shopping_cart</span>
                 </div>
-            </a> 
                 <span class="text-primary font-weight-bold"><%= summary[0].sales_orders %></span>
               </div>
+              </a> 
 
+              <a href="/dashboard/lessor/rentals/finished">
               <div class="card">
-                <a href="#">
                 <div class="card-inner">
                   <p class="text-primary">LIFETIME SALES</p>
                   <span class="material-icons-outlined text-red">notification_important</span>
                 </div>
-            </a> 
                 <span class="text-primary font-weight-bold">₱<%= summary[0].lifetime_sales %></span>
               </div>
+              </a> 
     
             </div>
     

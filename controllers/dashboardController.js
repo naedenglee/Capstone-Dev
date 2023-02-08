@@ -67,7 +67,7 @@ const userOngoingRentals = async(req, res, next) => {
             const {rows} = await pool.query(`SELECT a.reservation_id, a.owner_id, a.inventory_id, c.item_id,  
                 c.item_name, image_path, reservation_start, reservation_end , replacement_cost, rental_rate,
                 DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount
+                quantity, a.reserve_status, mode_of_payment, (rental_rate * (reservation_end - reservation_start) * quantity) + (quantity * replacement_cost) as total_amount
                 FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
                 JOIN item c ON c.item_id = b.item_id WHERE customer_id = ($1) AND reserve_status IN (1,2,3,4,6,10)`, [user_id]);
            
@@ -212,7 +212,7 @@ const lessorOngoingRentals = async(req, res, next) => {
                             replacement_cost, rental_rate,
                             DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
                             quantity, a.reserve_status, mode_of_payment, 
-                            (rental_rate * (reservation_end - reservation_start)) * a.quantity as total_amount 
+                            (rental_rate * (reservation_end - reservation_start)* quantity) + (replacement_cost * a.quantity) as total_amount 
                     FROM reservation a 
                     JOIN inventory b 
                     ON b.inventory_id = a.inventory_id 
@@ -253,7 +253,7 @@ const lessorFinishedRentals = async(req, res, next) => {
                             reservation_start, reservation_end, 
                             DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
                             quantity, a.reserve_status, mode_of_payment, 
-                            (rental_rate * (reservation_end - reservation_start)) + replacement_cost as total_amount, 
+                            (rental_rate * (reservation_end - reservation_start)) * quantity as total_amount, 
                             rating_id, rating 
                     FROM reservation a 
                     JOIN inventory b 
@@ -293,7 +293,7 @@ const getRentalRequests = async(req, res, next) => {
                             c.item_name, image_path, reservation_start, reservation_end , 
                             DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
                             quantity, a.reserve_status, mode_of_payment, 
-                            (rental_rate * (reservation_end - reservation_start)) *a.quantity as total_amount 
+                            (rental_rate * (reservation_end - reservation_start)* a.quantity) + (replacement_cost * a.quantity) as total_amount 
                     FROM reservation a 
                     JOIN inventory b 
                     ON b.inventory_id = a.inventory_id 
@@ -334,7 +334,7 @@ const getUserRentalRequests = async(req, res, next) => {
                             reservation_start, reservation_end , 
                             DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
                             quantity, a.reserve_status, mode_of_payment, 
-                            (rental_rate * (reservation_end - reservation_start)) * a.quantity as total_amount 
+                            (rental_rate * (reservation_end - reservation_start)* quantity) + (a.quantity * replacement_cost) as total_amount 
                     FROM reservation a 
                     JOIN inventory b 
                     ON b.inventory_id = a.inventory_id 
@@ -373,7 +373,7 @@ const getDeniedRentalRequests = async(req, res, next) => {
                             reservation_start, reservation_end , 
                             DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
                             quantity, a.reserve_status, mode_of_payment, 
-                            (rental_rate * (reservation_end - reservation_start)) + a.quantity as total_amount 
+                            (rental_rate * (reservation_end - reservation_start)* quantity) + (replacement_cost * a.quantity) as total_amount 
                     FROM reservation a 
                     JOIN inventory b 
                     ON b.inventory_id = a.inventory_id 
@@ -678,7 +678,7 @@ const courierDeliveryPage = async(req, res, next) => {
                         owner_id, (SELECT username FROM account WHERE account_id = a.owner_id) as owner_username, a.inventory_id, c.item_id,  
                         c.item_name, reservation_start, reservation_end,                
                         quantity, a.reserve_status, mode_of_payment, replacement_cost,
-                        (rental_rate * (reservation_end - reservation_start)) * a.quantity as total_amount ,
+                        (rental_rate * (reservation_end - reservation_start)* a.quantity) + (replacement_cost * a.quantity) as total_amount ,
                         (SELECT phone_num FROM profile WHERE a.owner_id = account_id) AS owner_phone_num,
                         (SELECT phone_num FROM profile WHERE a.customer_id = account_id) AS customer_phone_num,
                         (SELECT CONCAT(house_number, ' ', street, ' ', barangay, ' ', district, ' ', city_prov)
@@ -721,7 +721,7 @@ const courierReturnPage = async(req, res, next) => {
                         a.inventory_id, c.item_id,  
                         c.item_name, reservation_start, reservation_end,                
                         quantity, a.reserve_status, mode_of_payment, replacement_cost,
-                        (rental_rate * (reservation_end - reservation_start)) * a.quantity as total_amount ,
+                        (rental_rate * (reservation_end - reservation_start)* quantity) + (replacement_cost * a.quantity) as total_amount ,
                         (SELECT phone_num FROM profile WHERE a.owner_id = account_id) AS owner_phone_num,
                         (SELECT phone_num FROM profile WHERE a.customer_id = account_id) AS customer_phone_num,
                         (SELECT CONCAT(house_number, ' ', street, ' ', barangay, ' ', district, ' ', city_prov)

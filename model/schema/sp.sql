@@ -297,6 +297,16 @@ WHERE reserve_status = 5
 GROUP BY a.owner_id
 ORDER BY owner_id ASC;
 
+
+
+        SELECT SUM() ::DECIMAL(100,2))*100),2) AS sr_percent,
+
+        SELECT owner_id, reservation_id,
+        SUM((EXTRACT(DAY FROM AGE(reservation_end, reservation_start)) * rental_rate) * quantity) OVER (PARTITION BY owner_id ) AS lifetime_sales
+        FROM reservation
+        LEFT JOIN item b
+        ON item_id = b.item_id
+
 CREATE OR REPLACE FUNCTION dashboard_summary (INT)
 RETURNS TABLE (
     account_id INT, 
@@ -321,10 +331,11 @@ FROM (
     ) t1
     FULL JOIN (
         SELECT  a.owner_id, b.account_id AS l_id,
-                SUM((EXTRACT(DAY FROM AGE(reservation_end, reservation_start)) * rental_rate) * quantity) AS lifetime_sales
+                SUM((rental_rate * (reservation_end - reservation_start)) *a.quantity) as lifetime_sales
+                 --SUM(((EXTRACT(DAY FROM AGE(reservation_end, reservation_start)) * rental_rate)* quantity)) AS lifetime_sales
         FROM reservation a
         LEFT JOIN inventory b
-        ON a.owner_id = b.account_id
+        ON a.inventory_id = b.inventory_id
         LEFT JOIN item c
         ON b.item_id = c.item_id
         WHERE reserve_status = 5

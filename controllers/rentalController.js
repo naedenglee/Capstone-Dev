@@ -18,7 +18,7 @@ var viewRental = async(req, res, next) => {
                 c.item_name, image_path, reservation_start, reservation_end , 
                 DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining, rental_rate, replacement_cost, 
                 (reservation_end - reservation_start) as rental_days,
-                quantity, a.reserve_status, mode_of_payment, ((rental_rate * (reservation_end - reservation_start))*quantity) + replacement_cost as total_amount
+                quantity, a.reserve_status, mode_of_payment, ((rental_rate * (reservation_end - reservation_start))*quantity) + (replacement_cost * quantity) as total_amount
                 FROM reservation a JOIN inventory b ON b.inventory_id = a.inventory_id 
                 JOIN item c ON c.item_id = b.item_id JOIN account d ON d.account_id = a.owner_id
                 WHERE reservation_id = ($1) AND (owner_id = ($2) OR customer_id = ($2))`, [rental_id, user_id]);

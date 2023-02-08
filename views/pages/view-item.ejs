@@ -231,7 +231,7 @@ crossorigin=""></script>
                             <div class="p-container"></div>
                         </div>
                     </div>
-                    <div class="col">                    
+                    <div class="col" >                    
                           <label for="Startdate"><b>Reservation Start:</b></label>
                           <input type="text" id="start_date" name="start_date" value="" readonly><br>
                               
@@ -240,16 +240,15 @@ crossorigin=""></script>
                           <input type="text" id="end_date" name="end_date" value="" readonly><br>
                         
                         <p>
-                        <b>Rental fee:</b><br>
-                        <b>Deposit fee:</b><br>
+                        <b>Rental fee:  <%= result[0].rental_rate %></b><br>
+                        <b>Deposit fee: <%= result[0].replacement_cost %></b><br>
                        <label for="quantity"><b>Quantity:</b></label>
                         <input type="number" name="modalQty" id="modalQty" value="1" min="1" max="<%= result[0].item_quantity %>" required> <br> <span style="font-size:smaller; color: grey;">Available Stock: <%= result[0].item_quantity %></span> <br><br>
-                        
                         <p><b>Mode of Payment:</b></p>
                         <!--<input type="radio" id="currency" name="modeOfPayment" value="1" required>
-                        <label for="currency">Mang-Hiram Currency</label><br>
-                        <input type="radio" id="gcash" name="modeOfPayment" value="2">
-                        <label for="gcash">GCash</label><br>                        -->
+                              <label for="currency">Mang-Hiram Currency</label><br> -->
+                        <!-- <input type="radio" id="gcash"  name="modeOfPayment" onClick="showModal()" value="2">
+                        <label for="gcash">GCash</label><br>                      -->  
                         <input type="radio" id="cod" name="modeOfPayment" value="3">
                         <label for="cod">Cash on Delivery</label>
                      </p>
@@ -267,7 +266,27 @@ crossorigin=""></script>
       </div>
     </div>
   </form>
-  
+ <form action="/dashboard/user/rentals/ongoing/accept" method="post">
+    <div class="modal fade" id="acceptItemModal" tabindex="-1" aria-labelledby="acceptItemModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateConfirmModalLabel">ACCEPT ITEM</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Do you wish to accept the item for rental ID number <span id="rentalNum" value=""></span>? The transaction will proceed after accepting.
+            <input type="hidden" name="buttonVal" id="acceptbuttonValModal" value="">
+            <input type="hidden" name="orderId" id="acceptreservationIdHidden" value="">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-primary">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form> 
     <!-- Footer -->
   <footer class="text-center text-lg-start bg-light text-muted" style="margin-left: -300px; margin-right: -300px">
     <!-- Section: Social media -->
@@ -389,6 +408,17 @@ crossorigin=""></script>
   
   <script>
       var dateToday = new Date() 
+
+
+      function showModal(){
+            //document.getElementById("acceptItemModal").style.display='block'
+            //document.getElementById("btnModal").style.display='block'
+            //<a data-dismiss="modal" data-toggle="modal" href="#lost">Click</a>
+            $('#btnModal').modal('hide')
+            $('#acceptItemModal').modal('show')
+                console.log('hello')
+
+            }
       
       $(function() {
         $('input[name="daterange"]').daterangepicker({
