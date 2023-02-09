@@ -121,6 +121,7 @@ var updateItem = async(req, res, next) => {
             var deposit = req.body.deposit
             var description = req.body.descriptionModal
 
+
             await pool.query(`SET SCHEMA 'public'`)
             await pool.query(`UPDATE item SET item_name = ($1), 
                             item_category = ($2), 

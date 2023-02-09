@@ -63,7 +63,7 @@ crossorigin=""></script>
   
             <h4 style="font-weight: bold;">Description:</h4>
            
-            <div class="desc" style="font: weight 1px; color: darkslategrey;"><%= result[0].item_description %></div>
+            <div class="desc" style="font: weight 1px; color: darkslategrey; white-space: pre-wrap;"><%= result[0].item_description %></div>
                 <!-- line separator -->
               <hr style="height:2px;border-width:0;color:gray;background-color:gray">
              
@@ -139,28 +139,28 @@ crossorigin=""></script>
       
   
     <div class="col-sm-3">
-      <h4>Rating breakdown</h4>
-      <p class="mb-1" style="font-size: .77rem;">5.0 = <%=ratingsTotal[0].rating5 %></p>
+      <h4>Rating Breakdown</h4>
+      <p class="mb-1" style="font-size: .77rem;"><i class="fa-solid fa-star" style="color: orange;"></i> 5.0 (<%=ratingsTotal[0].rating5 %>)</p>
     <div class="progress rounded" style="height: 8px;">
       <div class="progress-bar" role="progressbar" id="progress5"  aria-valuenow="85"
         aria-valuemin="0" aria-valuemax="100"></div>
     </div>
-    <p class="mt-4 mb-1" style="font-size: .77rem;">4.0 = <%=ratingsTotal[0].rating4 %> </p>
+    <p class="mt-4 mb-1" style="font-size: .77rem;"><i class="fa-solid fa-star" style="color: orange;"></i> 4.0 (<%=ratingsTotal[0].rating4 %>) </p>
     <div class="progress rounded" style="height: 8px;">
       <div class="progress-bar" role="progressbar" id="progress4"  aria-valuenow="43"
         aria-valuemin="0" aria-valuemax="100"></div>
     </div>
-    <p class="mt-4 mb-1" style="font-size: .77rem;">3.0 = <%=ratingsTotal[0].rating3 %></p>
+    <p class="mt-4 mb-1" style="font-size: .77rem;"><i class="fa-solid fa-star" style="color: orange;"></i> 3.0 (<%=ratingsTotal[0].rating3 %>)</p>
     <div class="progress rounded" style="height: 8px;">
       <div class="progress-bar" role="progressbar" id="progress3"  aria-valuenow="19"
         aria-valuemin="0" aria-valuemax="100"></div>
     </div>
-    <p class="mt-4 mb-1" style="font-size: .77rem;">2.0 = <%=ratingsTotal[0].rating2 %> </p>
+    <p class="mt-4 mb-1" style="font-size: .77rem;"><i class="fa-solid fa-star" style="color: orange;"></i> 2.0 (<%=ratingsTotal[0].rating2 %>) </p>
     <div class="progress rounded" style="height: 8px;">
       <div class="progress-bar" role="progressbar" id="progress2"  aria-valuenow="0"
         aria-valuemin="0" aria-valuemax="100"></div>
     </div>
-    <p class="mt-4 mb-1" style="font-size: .77rem;">1.0 = <%=ratingsTotal[0].rating1 %> </p>
+    <p class="mt-4 mb-1" style="font-size: .77rem;"><i class="fa-solid fa-star" style="color: orange;"></i> 1.0 (<%=ratingsTotal[0].rating1 %>) </p>
     <div class="progress rounded mb-1" style="height: 8px;">
       <div class="progress-bar" role="progressbar" id="progress1"  aria-valuenow="0"
         aria-valuemin="0" aria-valuemax="100"></div>
@@ -245,12 +245,10 @@ crossorigin=""></script>
                        <label for="quantity"><b>Quantity:</b></label>
                         <input type="number" name="modalQty" id="modalQty" value="1" min="1" max="<%= result[0].item_quantity %>" required> <br> <span style="font-size:smaller; color: grey;">Available Stock: <%= result[0].item_quantity %></span> <br><br>
                         <p><b>Mode of Payment:</b></p>
-                        <!--<input type="radio" id="currency" name="modeOfPayment" value="1" required>
-                              <label for="currency">Mang-Hiram Currency</label><br> -->
-                        <!-- <input type="radio" id="gcash"  name="modeOfPayment" onClick="showModal()" value="2">
-                        <label for="gcash">GCash</label><br>                      -->  
-                        <input type="radio" id="cod" name="modeOfPayment" value="3">
-                        <label for="cod">Cash on Delivery</label>
+                          <input type="radio" id="gcash"  name="modeOfPayment" onClick="showModal()" value="2">
+                          <label for="gcash">GCash</label><br>                    
+                          <input type="radio" id="cod" name="modeOfPayment" onClick="codModal()" value="3">
+                          <label for="cod">Cash on Delivery</label>
                      </p>
                     </div>
                   </div>
@@ -267,26 +265,99 @@ crossorigin=""></script>
     </div>
   </form>
  <form action="/dashboard/user/rentals/ongoing/accept" method="post">
-    <div class="modal fade" id="acceptItemModal" tabindex="-1" aria-labelledby="acceptItemModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="updateConfirmModalLabel">ACCEPT ITEM</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal -->
+        <div class="modal fade" id="GModal" role="dialog">
+        <div class="modal-dialog">
+          
+<!-- Modal content-->
+            <div class="modal-content" style= "width: 750px; ">
+              <div class="modal-header" style ="background-color: #33cccc; color: white;">
+                  <h4 class="modal-title" style ="background-color: #33cccc; color: white;">Payment Confirmation</h4>
+                <span class="close" data-dismiss="modal" style = " color: white;" onClick="backModal()">&times;</span>
+              </div>
+              <div class="modal-body" style="background-color: white;">
+
+                    <div class="container" style="color: black; width: 650px; height: auto; background-color: white; font-family: 'Poppins'; font-size: medium;" >
+                        <div class="p-5 my-4 bg-white rounded-3">
+                            <img src="/images/GCash-Logo.png" style="width: 200px; height:120px;">
+                            <p><strong>Name: <%= result[0].vusername %></strong>  <br>
+                                <strong>Contact no.: <%= map[0].phone_num %> </strong><br>
+                                <hr>
+                                <strong>Reservation Start: <span id="gResStart"></strong></span><br>
+                                <strong >Reservation End:  <span id="gResEnd"></span></strong><br>
+                                <strong >Item Name:</strong> <%= result[0].item_name %><br>
+                                <strong >Quantity</strong> <span id="gQuantity"></span> <br>
+                                <strong>Rental Fee:</strong> ₱<span id="gRental"></span><br>
+                                <strong>Deposit Fee:</strong> ₱<span id="gReplacement"></span> <br>
+                                <br>
+                                <strong>Total:</strong> ₱<span id="gTotal"></span><br>
+                                <hr>
+                                <h4>Proof of Payment</h4>
+                                
+                            <div style="width: 400px;">
+                            <label for="formFileLg" class="form-label">Upload an image here</label>
+                    <input class="form-control form-control-lg" id="formFileLg" type="file" required />
+                    </div>
+                   
+                    <br>
+                    <br>
+                    
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onClick="backModal()" disabled>Submit</button>
+               <button type="button" class="btn btn-default" data-dismiss="modal" onClick="backModal()">Cancel</button>
+              </div>
+            </div>
           </div>
-          <div class="modal-body">
-            Do you wish to accept the item for rental ID number <span id="rentalNum" value=""></span>? The transaction will proceed after accepting.
-            <input type="hidden" name="buttonVal" id="acceptbuttonValModal" value="">
-            <input type="hidden" name="orderId" id="acceptreservationIdHidden" value="">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-            <button type="submit" class="btn btn-primary">Yes</button>
           </div>
         </div>
-      </div>
-    </div>
+        </div>
   </form> 
+
+<!-- COD Modal -->
+        <div class="modal fade" id="codModal" role="dialog">
+        <div class="modal-dialog">
+<!-- COD Modal content-->
+            <div class="modal-content" style= "width: 750px; ">
+              <div class="modal-header" style ="background-color: #33cccc; color: white;">
+                  <h4 class="modal-title" style ="background-color: #33cccc; color: white;">Payment Details</h4>
+                <span class="close" data-dismiss="modal" style = " color: white;" onClick="codModal()">&times;</span>
+              </div>
+              <div class="modal-body" style="background-color: white;">
+
+                    <div class="container" style="color: black; width: 650px; height: auto; background-color: white; font-family: 'Poppins'; font-size: medium;" >
+                        <div class="p-5 my-4 bg-white rounded-3">
+                            <img src="/images/system_images/deliver.png" style="width: 200px; height:150px;">
+                            <p><strong>Name: <%= result[0].vusername %></strong>  <br>
+                                <strong>Contact no.: <%= map[0].phone_num %> </strong><br>
+                                <hr>
+                                <strong>Reservation Start: <span id="cResStart"></strong></span><br>
+                                <strong >Reservation End:  <span id="cResEnd"></span></strong><br>
+                                <strong >Item Name:</strong> <%= result[0].item_name %><br>
+                                <strong >Quantity</strong> <span id="cQuantity"></span> <br>
+                                <strong>Rental Fee:</strong> ₱<span id="cRental"></span><br>
+                                <strong>Deposit Fee:</strong> ₱<span id="cReplacement"></span> <br>
+                                <br>
+                                <strong>Total:</strong> ₱<span id="cTotal"></span><br>
+                                <hr>
+                    <br>
+                    <br>
+                    
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onClick="backModal()" disabled>Submit</button>
+               <button type="button" class="btn btn-default" data-dismiss="modal" onClick="backModal()">Cancel</button>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+        </div>
+  </form> 
+
+
     <!-- Footer -->
   <footer class="text-center text-lg-start bg-light text-muted" style="margin-left: -300px; margin-right: -300px">
     <!-- Section: Social media -->
@@ -408,17 +479,43 @@ crossorigin=""></script>
   
   <script>
       var dateToday = new Date() 
+      var getDate
+
+
+            //document.getElementById("acceptItemModal").style.display='block'
+            //document.getElementById("btnModal").style.display='block'
+      function codModal(){
+          cQty = document.getElementById("modalQty").value;
+                gRent = <%= result[0].rental_rate %> * cQty
+                gRep =  <%= result[0].replacement_cost %> * cQty
+                gTotalsing = ((getDate * gRent)) + (gRep)
+          cRental.innerHTML = gRent; 
+          cReplacement.innerHTML = gRep; 
+            cTotal.innerHTML = gTotalsing
+                cQuantity.innerHTML = cQty; 
+                $('#btnModal').modal('hide')
+                $('#codModal').modal('show')
+        }
+            //<a data-dismiss="modal" data-toggle="modal" href="#lost">Click</a>
 
 
       function showModal(){
-            //document.getElementById("acceptItemModal").style.display='block'
-            //document.getElementById("btnModal").style.display='block'
-            //<a data-dismiss="modal" data-toggle="modal" href="#lost">Click</a>
-            $('#btnModal').modal('hide')
-            $('#acceptItemModal').modal('show')
-                console.log('hello')
-
-            }
+          gQty = document.getElementById("modalQty").value;
+                gRent = <%= result[0].rental_rate %> * gQty
+                gRep =  <%= result[0].replacement_cost %> * gQty
+                gTotalsing = ((getDate * gRent)) + (gRep)
+          gRental.innerHTML = gRent; 
+          gReplacement.innerHTML = gRep; 
+            gTotal.innerHTML = gTotalsing
+                gQuantity.innerHTML = gQty; 
+                $('#btnModal').modal('hide')
+                $('#GModal').modal('show')
+        }
+      function backModal(){
+            $('#GModal').modal('hide')
+            $('#codModal').modal('hide')
+                $('#btnModal').modal('show')
+        }
       
       $(function() {
         $('input[name="daterange"]').daterangepicker({
@@ -450,12 +547,33 @@ crossorigin=""></script>
              
         }
     },
+
         function(start, end, label) {
           startTxtField = document.getElementById("start_date");
           endTxtField = document.getElementById("end_date");
           startTxtField.setAttribute("value", start.format('YYYY-MM-DD'));
           endTxtField.setAttribute("value", end.format('YYYY-MM-DD'));
-          console.log("date: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+            
+                    
+          gQty = document.getElementById("modalQty").value;
+                gRent = <%= result[0].rental_rate %> * gQty
+                gRep =  <%= result[0].replacement_cost %> * gQty
+                getDate = Math.ceil(Math.abs(start -end)/ (1000 * 60 * 60 * 24)) -1;
+                  console.log(getDate)
+
+          gRental.innerHTML = gRent; 
+          gReplacement.innerHTML = gRep; 
+
+          gstartTxtField = document.getElementById("gResStart");
+          gendTxtField = document.getElementById("gResEnd");
+          gstartTxtField.innerHTML = start.format('YYYY-MM-DD');
+          gendTxtField.innerHTML = end.format('YYYY-MM-DD');
+
+
+          cstartTxtField = document.getElementById("cResStart");
+          cendTxtField = document.getElementById("cResEnd");
+          cstartTxtField.innerHTML = start.format('YYYY-MM-DD');
+          cendTxtField.innerHTML = end.format('YYYY-MM-DD');
           
           });
       });

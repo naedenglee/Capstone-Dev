@@ -53,14 +53,14 @@
                         <td id="id"><%=item.item_id %></td>
                         <td id="itemName"><%=item.item_name %></td>
                         <td id="category"><%=item.item_category %></td>
-                        <td id="description" style="max-width: 400px"><%=item.item_description %></td>
+                        <td id="description" style="max-width: 400px; white-space: pre-wrap;"><%=item.item_description %></td>
                         <td id="rentalRate"><%=item.rental_rate %></td>
                         <td id="deposit"><%=item.replacement_cost %></td>
                         <td id="quantity"><%=item.item_quantity %></td>                      
                         <td id="action"><div class="p-1">
                             
                         <button class="btn btn-primary button-1" data-bs-toggle="modal" name="rental_button" data-bs-target="#finishTransactionModal" id="buttonVal" value="4" data-id="2" 
-                        onclick="updateBtnFunc(<%=item.item_id %>, '<%=item.item_name %>', <%=item.item_quantity %>, '<%=item.item_category %>', <%=item.rental_rate %>, <%=item.replacement_cost %>, <%=item.item_quantity %>, '<%=item.item_description %>')" 
+                        onclick="updateBtnFunc(<%=item.item_id %>, '<%=item.item_name %>', <%=item.item_quantity %>, `<%=item.item_category %>`, <%=item.rental_rate %>, <%=item.replacement_cost %>, <%=item.item_quantity %>, `<%=item.item_description%>`)" 
                         data-id="1">Edit Item Details</button><br>
                                                     
                         <p id="status" class="py-1"></p>
@@ -141,8 +141,8 @@
                     </div>                         	
                       </div>
                       <div class="row">
-                        <div class="col">
-                            <div class="form-group my-2">
+                        <div class="col" >
+                            <div class="form-group my-2" style="white-space: pre-wrap;">
                                 <label for="description">Item Description</label>
                                 <textarea class="form-control" id="descriptionModal" name="descriptionModal" rows="4"></textarea>	
                             </div>
@@ -193,6 +193,7 @@
     modalId.setAttribute("value", id)
 
     modalDescription = document.getElementById("descriptionModal")
+          
     modalDescription.value = desc
 
     }

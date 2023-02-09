@@ -122,7 +122,7 @@ var viewItem = async  (req, res, next)=>{
         }
 
         var sqlQuery8 = {
-            text: `SELECT map_x_coordinate, map_y_coordinate FROM profile 
+            text: `SELECT map_x_coordinate, map_y_coordinate, phone_num FROM profile 
             WHERE account_id = (SELECT account_id FROM inventory WHERE item_id = ($1))`,
             values: [req.params.id]
         }
@@ -194,6 +194,7 @@ var viewItem = async  (req, res, next)=>{
         }
         else if(mapCoordinates[0]){
             var map = mapCoordinates   
+            console.log(map)
         }
         
         await Jincr(`item_perf:${req.params.id}`, 'detail_rate')
