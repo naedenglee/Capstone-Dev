@@ -2,6 +2,14 @@
 const {pool, redisClient} = require('../model/database.js')
 const {getOrSetCache, getOrSetHashCache, Jsets, Jgets, Jincr} = require('../model/redis.js')
 
+const cloudinary = require('cloudinary').v2
+
+cloudinary.config({ 
+    cloud_name: 'ddk9lffn7', 
+    api_key: '646917413963653', 
+    api_secret: 'ptjD8QM9epsZPnkBPX_mRC7JF-Y',
+    secure: true 
+});
 //availability(reservation calendar)
 var allItemView = async (req, res, next)=> {
     try{
@@ -246,9 +254,6 @@ var itemReservation = async (req, res, next) =>{
                     res.send('Item is already in the cart!')
                     //ADD MODULAR ITEM IS ALREADY IN CART!
                 }
-                
-    
-            
     
                 await Jincr(`item_perf:${req.params.id}`, 'add_cart')
                 res.redirect('/items')
@@ -260,6 +265,8 @@ var itemReservation = async (req, res, next) =>{
             }
             else if(user){
                 await pool.query(`SET SCHEMA 'public'`)
+
+
                 const foo = await pool.query(`SELECT inventory_id, account_id FROM inventory WHERE item_id = ($1)`, [req.params.id])
                 console.log(foo.rows)
                 let {inventory_id, account_id} = foo.rows[0]
@@ -275,6 +282,8 @@ var itemReservation = async (req, res, next) =>{
                 if(vinventory_id == null){ // DATABASE RETURNS vinventory_id NULL 
                     return res.send('Item is already reserved!')
                 }
+                
+                
 
                 else if(vinventory_id != null){ // IF ACCOUNT DOES EXIST
                     await Jincr(`item_perf:${req.params.id}`, 'reservations')

@@ -292,7 +292,7 @@ const getRentalRequests = async(req, res, next) => {
                             a.inventory_id, c.item_id,  
                             c.item_name, image_path, reservation_start, reservation_end , 
                             DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                            quantity, a.reserve_status, mode_of_payment, 
+                            quantity, a.reserve_status, mode_of_payment, online_payment, rental_rate, replacement_cost,
                             (rental_rate * (reservation_end - reservation_start)* a.quantity) + (replacement_cost * a.quantity) as total_amount 
                     FROM reservation a 
                     JOIN inventory b 
@@ -333,7 +333,7 @@ const getUserRentalRequests = async(req, res, next) => {
                             c.item_name, image_path, 
                             reservation_start, reservation_end , 
                             DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
-                            quantity, a.reserve_status, mode_of_payment, 
+                            quantity, a.reserve_status, mode_of_payment, rental_rate, replacement_cost,
                             (rental_rate * (reservation_end - reservation_start)* quantity) + (a.quantity * replacement_cost) as total_amount 
                     FROM reservation a 
                     JOIN inventory b 
@@ -352,6 +352,42 @@ const getUserRentalRequests = async(req, res, next) => {
     finally{
         pool.release
         next()
+    }
+}
+const getPayment = async(req, res, next) => {
+    const uploadImage = async (imagePath) => {
+
+        // Use the uploaded file's name as the asset's public ID and 
+        // allow overwriting the asset with new versions
+        const options = {
+            use_filename: true,
+            unique_filename: false,
+            overwrite: true,
+            folder:'mang-hiram-gcash-pictures'
+        };
+    
+        try {
+            // Upload the image
+            const result = await cloudinary.uploader.upload(imagePath, options);
+            console.log(`result: ${result}`);
+            return result.secure_url;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    try{
+        const imagePath = String(req.body.imageFileb64);
+        const imageUrl = await uploadImage(imagePath)
+        let reserve_id = req.body.reservation_id;
+        console.log(reserve_id)
+        await pool.query(`UPDATE reservation SET online_payment = ($1) WHERE reservation_id = ($2)`,[imagePath, reserve_id]) 
+        res.redirect('/dashboard/user/requests')            
+    }
+    catch(ex){
+        res.status(401).render('pages/error401')
+        console.log(`ONLINE PAYMENT ERROR ${ex}`)
+
     }
 }
 
@@ -843,4 +879,4 @@ const updateCourier = async(req, res, next) =>{
 
 module.exports = { viewMainDashboard, userOngoingRentals, userFinishedRentals, userOngoingRentalsExtension, lessorOngoingRentals, lessorFinishedRentals, 
                     getRentalRequests, getUserRentalRequests, getDeniedRentalRequests, approveRentalRequest, denyRentalRequest, update_reservation, addComment, 
-                    getReport, courierDeliveryPage, courierReturnPage, updateCourier, accept_item, reject_item}
+                    getReport, courierDeliveryPage, courierReturnPage, updateCourier, accept_item, reject_item, getPayment }

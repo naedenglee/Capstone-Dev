@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- favicon -->
+<link rel="shortcut icon" href="img/favlogo.ico" type="image/x-icon">
+<link rel="icon" href="img/favlogo.ico" type="image/x-icon">
+
+    <title>Mang Hiram</title>
+   <link rel="stylesheet" href="/assets/view-item.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- for latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+	
+<!-- for date picker -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<!-- for leflet.js (map)-->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+crossorigin=""></script>
+
+<!-- favicon -->
+<link rel="shortcut icon" href="/views/images/favlogo.ico" type="image/x-icon">
+<link rel="icon" href="/views/images/favlogo.ico" type="image/x-icon">
+    <title>Mang Hiram</title>
+</head>
+
+    
+  <!-- Navbar -->
+  <%- include ('navbar') -%>
+      
+  <body>
+    <div class="main">
+      <div class="container">
+          <div class="row align-items-start">
+            <div class="col">
+              <div class="polaroid">
+                  <img src="<%= result[0].image_path %>" alt="" style="width:100%">
+                    <div class="p-container"></div>
+                </div>
+  
+            <h4 style="font-weight: bold;">Description:</h4>
+           
+            <div class="desc" style="font: weight 1px; color: darkslategrey; white-space: pre-wrap;"><%= result[0].item_description %></div>
+                <!-- line separator -->
+              <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+             
+              <p style="font-weight: bold;">Rental fee: ₱<%= result[0].rental_rate %><br>
+                  Deposit fee: ₱<%= result[0].replacement_cost %><br>
+                 
+               </p>
+            </div>
+            <div class="col">
+              <h3 style="text-align: center;"><%= result[0].item_name %></h3>
+              <div class="box1">
+               
+                  <div>
+                    <h4>Choose dates</h4>
+                    <input type="text" id="daterange" name="daterange"/>  
+                    <br>
+                  </div>
+                    <!-- Button trigger modal -->
+                    <% if(user_id == result[0].account_id){ %>
+                      <h6 style="text-align: center;">YOU ARE THE OWNER</h6>
+                    <% } else{ %>
+                      <button type="button" class="btna btna-primary" data-bs-toggle="modal" data-bs-target="#btnModal" onclick="insertDate()">Check Availability</button>
+                    <% }  %>                 
+                </div>
+                
+  <!-- MAP -->
+          <br>
+          <p style="font-weight: bold;">INTERACTIVE MAP</p>
+          <% if(map[0].map_x_coordinate == null || map[0].map_y_coordinate == null){ %>
+            <p>There is no map info for this user.</p>
+          <% }else if(map[0].map_x_coordinate != null && map[0].map_y_coordinate != null){ %>
+            <div id="map"></div>
+          <% } %>
+          
+  
+          
+  <!-- MAP END-->
+          <br>
+       <h4>Item owned by <%= result[0].vusername %></h4>
+       <a target="_blank" href="/profile/<%= result[0].account_id %>">
+        <img class="img2" src="/images/profile.png" alt="profile" style="width:100px"> </a>
+  <!-- CSS STAR RATING -->
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+  <!--  /rating end  -->
+            <br>
+            <br>
+        <a href="/chat/show/<%=result[0].account_id%>/<%=user_id%><%=result[0].account_id%>"><button class="btn-message">Message</button></a>
+        <a href="/profile/<%= result[0].account_id %>"><button class="btn-profile">See Profile</button></a>
+            </div>
+          </div>
+          
+        </div>
+  </div>
+
+  <div class="container" style="margin-top: -100px;">
+    <hr>
+    <% if(ratingsTotal == 0){ %>
+
+      <% } else if(ratingsTotal){ %>
+    <div class="row" style="margin-bottom: 40px;">
+      <div class="col-sm-3">
+          <div class="rating-block">
+              <h4>Average user rating</h4>
+    <p class="mb-4"><strong><%=ratingsTotal[0].average %></strong><i class="fa-solid fa-star" style="color: orange;"></i> <span class="text-primary font-italic me-1"><%=ratingsTotal[0].total %> Reviews</span> 
+    </p>
+
+          </div>
+      </div>
+      
+  
+    <div class="col-sm-3">
+      <h4>Rating Breakdown</h4>
+      <p class="mb-1" style="font-size: .77rem;"><i class="fa-solid fa-star" style="color: orange;"></i> 5.0 (<%=ratingsTotal[0].rating5 %>)</p>
+    <div class="progress rounded" style="height: 8px;">
+      <div class="progress-bar" role="progressbar" id="progress5"  aria-valuenow="85"
+        aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <p class="mt-4 mb-1" style="font-size: .77rem;"><i class="fa-solid fa-star" style="color: orange;"></i> 4.0 (<%=ratingsTotal[0].rating4 %>) </p>
+    <div class="progress rounded" style="height: 8px;">
+      <div class="progress-bar" role="progressbar" id="progress4"  aria-valuenow="43"
+        aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <p class="mt-4 mb-1" style="font-size: .77rem;"><i class="fa-solid fa-star" style="color: orange;"></i> 3.0 (<%=ratingsTotal[0].rating3 %>)</p>
+    <div class="progress rounded" style="height: 8px;">
+      <div class="progress-bar" role="progressbar" id="progress3"  aria-valuenow="19"
+        aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <p class="mt-4 mb-1" style="font-size: .77rem;"><i class="fa-solid fa-star" style="color: orange;"></i> 2.0 (<%=ratingsTotal[0].rating2 %>) </p>
+    <div class="progress rounded" style="height: 8px;">
+      <div class="progress-bar" role="progressbar" id="progress2"  aria-valuenow="0"
+        aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <p class="mt-4 mb-1" style="font-size: .77rem;"><i class="fa-solid fa-star" style="color: orange;"></i> 1.0 (<%=ratingsTotal[0].rating1 %>) </p>
+    <div class="progress rounded mb-1" style="height: 8px;">
+      <div class="progress-bar" role="progressbar" id="progress1"  aria-valuenow="0"
+        aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
+  <% } %>
+  
+    <h4 style="margin-bottom: 30px;">Reviews / Comments</h4>
+
+    <section id="reviews">
+      
+          <div class="review-container">
+            <% if(ratings == 0){ %>
+              <h6>This item has no reviews yet</h6>
+            <% }else if(ratings){ %>
+              <% ratings.forEach(function(rating){ %>
+                <div class="review-box">
+                  <div class="box-top">
+                      <div class="profile"> 
+                          <div class="profile-img">
+                              <img src="/images/profile.png"/>
+                          </div>
+                          <div class="username">
+                              <strong><%=rating.username %></strong>
+                              <span>@<%=rating.username %></span>
+                          </div>
+                      </div>
+                      
+                      <div class="reviews">
+                          <i class="fas fa-star"></i>
+                          <span><%=rating.rating %></span>
+                      </div>
+                  </div>
+                   <!-- comments ----------------->
+                   <div class="comments">
+                      <p><%=rating.comment %></p>
+                   </div>
+              </div>
+              <% }) %>              
+            <% } %>
+          </div>
+      
+      </section>
+  </div>
+  
+    <section style="height: 99px;">
+      
+  
+    </section>
+  
+  
+    
+          
+
+<!-- COD Modal -->
+        <div class="modal fade" id="codModal" role="dialog">
+        <div class="modal-dialog">
+<!-- COD Modal content-->
+            <div class="modal-content" style= "width: 750px; ">
+              <div class="modal-header" style ="background-color: #33cccc; color: white;">
+                  <h4 class="modal-title" style ="background-color: #33cccc; color: white;">Payment Details</h4>
+                <span class="close" data-dismiss="modal" style = " color: white;" onClick="codModal()">&times;</span>
+              </div>
+              <div class="modal-body" style="background-color: white;">
+
+                    <div class="container" style="color: black; width: 650px; height: auto; background-color: white; font-family: 'Poppins'; font-size: medium;" >
+                        <div class="p-5 my-4 bg-white rounded-3">
+                            <img src="/images/system_images/deliver.png" style="width: 200px; height:150px;">
+                            <p><strong>Name: <%= result[0].vusername %></strong>  <br>
+                                <strong>Contact no.: <%= map[0].phone_num %> </strong><br>
+                                <hr>
+                                <strong>Reservation Start: <span id="cResStart"></strong></span><br>
+                                <strong >Reservation End:  <span id="cResEnd"></span></strong><br>
+                                <strong >Item Name:</strong> <%= result[0].item_name %><br>
+                                <strong >Quantity</strong> <span id="cQuantity"></span> <br>
+                                <strong>Rental Fee:</strong> ₱<span id="cRental"></span><br>
+                                <strong>Deposit Fee:</strong> ₱<span id="cReplacement"></span> <br>
+                                <br>
+                                <strong>Total:</strong> ₱<span id="cTotal"></span><br>
+                                <hr>
+                    <br>
+                    <br>
+                    
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onClick="backModal()" disabled>Submit</button>
+               <button type="button" class="btn btn-default" data-dismiss="modal" onClick="backModal()">Cancel</button>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+        </div>
+  </form> 
+
+
+    <!-- Footer -->
+  <footer class="text-center text-lg-start bg-light text-muted" style="margin-left: -300px; margin-right: -300px">
+    <!-- Section: Social media -->
+    <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+      <!-- Left -->
+      <div class="me-5 d-none d-lg-block">
+        <span>Get connected with us on social networks:</span>
+      </div>
+      <!-- Left -->
+  
+      <!-- Right -->
+      <div>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-google"></i>
+        </a>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+      <!-- Right -->
+    </section>
+    <!-- Section: Social media -->
+  
+    <!-- Section: Links  -->
+    <section class="">
+      <div class="container text-center text-md-start mt-5">
+        <!-- Grid row -->
+        <div class="row mt-3">
+          <!-- Grid column -->
+          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+            <!-- Content -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              <i class="fas fa-gem me-3"></i>Mang Hiram
+            </h6>
+            <p>
+              Our technology encourages people to share and brings local communities together. We'd love for you to join us, whether you're looking for a low-cost way to rent what you need locally, or you're a business or individual looking to make money from items you own that are sitting idle.
+            </p>
+          </div>
+          <!-- Grid column -->
+  
+          <!-- Grid column -->
+          <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              Products
+            </h6>
+            <p>
+              <a href="#!" class="text-reset"></a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset"></a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset"></a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset"></a>
+            </p>
+          </div>
+          <!-- Grid column -->
+  
+          <!-- Grid column -->
+          <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              Useful links
+            </h6>
+            <p>
+              <a href="#!" class="text-reset">Pricing</a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset">Settings</a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset">Orders</a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset">Help</a>
+            </p>
+          </div>
+          <!-- Grid column -->
+  
+          <!-- Grid column -->
+          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+            <p><i class="fas fa-home me-3"></i> Manila City, Philippines</p>
+            <p>
+              <i class="fas fa-envelope me-3"></i>
+              manghiram@gmail.com
+            </p>
+            <p><i class="fas fa-phone me-3"></i> + 01 234 567 88</p>
+            <p><i class="fas fa-print me-3"></i> + 01 234 567 89</p>
+          </div>
+          <!-- Grid column -->
+        </div>
+        <!-- Grid row -->
+      </div>
+    </section>
+    <!-- Section: Links  -->
+  
+    <!-- Copyright -->
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+      © 2021 Copyright:
+      <a class="text-reset fw-bold" href="#">MangHiram.com</a>
+    </div>
+    <!-- Copyright -->
+  </footer>
+  <!-- Footer -->
+  
+  </body>
+  
+  
+  <script>
+      var dateToday = new Date() 
+      var getDate
+
+
+
+            //document.getElementById("acceptItemModal").style.display='block'
+            //document.getElementById("btnModal").style.display='block'
+      function codModal(){
+          cQty = document.getElementById("modalQty").value;
+                gRent = <%= result[0].rental_rate %> * cQty
+                gRep =  <%= result[0].replacement_cost %> * cQty
+                gTotalsing = ((getDate * gRent)) + (gRep)
+          cRental.innerHTML = gRent; 
+          cReplacement.innerHTML = gRep; 
+            cTotal.innerHTML = gTotalsing
+                cQuantity.innerHTML = cQty; 
+                $('#btnModal').modal('hide')
+                $('#codModal').modal('show')
+        }
+            //<a data-dismiss="modal" data-toggle="modal" href="#lost">Click</a>
+
+
+      function backModal(){
+            $('#GModal').modal('hide')
+            $('#codModal').modal('hide')
+                $('#btnModal').modal('show')
+        }
+      
+      $(function() {
+        $('input[name="daterange"]').daterangepicker({
+          opens: 'left',
+          minDate: dateToday,
+  
+          //for invalid dates
+          isInvalidDate: function(date) {
+            var dateRanges = [];       
+            
+            if('<%= sum_quantity %>' == 0){
+              return null
+            }
+            else if('<%= sum_quantity %>' > 0){
+              if(parseInt('<%= result[0].item_quantity %>') <= parseInt('<%= sum_quantity %>')){
+                <% result_date.forEach(function(reserved){ %>
+                  dateRanges.push({ 'start': moment('<%= reserved.start_date %>'), 'end': moment('<%= reserved.end_date %>')})  
+                <% }) %>
+                return dateRanges.reduce(function(bool, range) {
+                    return bool || (date >= range.start._d && date <= range.end._d);
+                  }, false);
+                  
+              }
+            }
+            
+            console.log(dateRanges)
+  
+                  
+             
+        }
+    },
+
+        function(start, end, label) {
+          startTxtField = document.getElementById("start_date");
+          endTxtField = document.getElementById("end_date");
+          startTxtField.setAttribute("value", start.format('YYYY-MM-DD'));
+          endTxtField.setAttribute("value", end.format('YYYY-MM-DD'));
+            
+                    
+          gQty = document.getElementById("modalQty").value;
+                gRent = <%= result[0].rental_rate %> * gQty
+                gRep =  <%= result[0].replacement_cost %> * gQty
+                getDate = Math.ceil(Math.abs(start -end)/ (1000 * 60 * 60 * 24)) -1;
+                  console.log(getDate)
+
+          gRental.innerHTML = gRent; 
+          gReplacement.innerHTML = gRep; 
+
+          gstartTxtField = document.getElementById("gResStart");
+          gendTxtField = document.getElementById("gResEnd");
+          gstartTxtField.innerHTML = start.format('YYYY-MM-DD');
+          gendTxtField.innerHTML = end.format('YYYY-MM-DD');
+
+
+          cstartTxtField = document.getElementById("cResStart");
+          cendTxtField = document.getElementById("cResEnd");
+          cstartTxtField.innerHTML = start.format('YYYY-MM-DD');
+          cendTxtField.innerHTML = end.format('YYYY-MM-DD');
+          
+          });
+      });
+  
+      x_coord = '<%= map[0].map_x_coordinate %>';
+      y_coord = '<%= map[0].map_y_coordinate %>';
+
+      
+      var map = L.map('map').setView([x_coord, y_coord], 17);
+       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+       maxZoom: 19,
+       attribution: '© OpenStreetMap'
+      }).addTo(map);
+      var marker = L.marker([x_coord, y_coord]).addTo(map);
+      
+
+      
+  
+      function insertDate(){
+  
+      }
+
+      document.getElementById("modalQty").addEventListener("click", function(e) {
+      const value = this.value,
+        max = this.getAttribute("max"),
+        min = this.getAttribute("min"),
+        minned = this.dataset.minned === "true";
+      maxed = this.dataset.maxed === "true";
+      if (value === max && maxed) {
+        alert("The max available quantity is <%= result[0].item_quantity %>");
+      }      
+      this.dataset.maxed = value === max ? "true" : "false";
+      this.dataset.minned = value === min ? "true" : "false";
+    })
+    
+    document.getElementById("progress5").style.width = "<%=ratingsTotal[0].percent5 %>%"
+    document.getElementById("progress4").style.width = "<%=ratingsTotal[0].percent4 %>%"
+    document.getElementById("progress3").style.width = "<%=ratingsTotal[0].percent3 %>%"
+    document.getElementById("progress2").style.width = "<%=ratingsTotal[0].percent2 %>%"
+    document.getElementById("progress1").style.width = "<%=ratingsTotal[0].percent1 %>%"
+   </script>
+</html>

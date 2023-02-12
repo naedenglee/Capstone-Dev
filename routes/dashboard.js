@@ -12,6 +12,7 @@ router.get("/user/rentals/ongoing", dashboardController.userOngoingRentals)
 router.get("/user/rentals/finished", dashboardController.userFinishedRentals)
 
 router.get('/user/requests', dashboardController.getUserRentalRequests)
+router.post("/user/requests", dashboardController.getPayment)
 
 router.get("/lessor/rentals/ongoing", dashboardController.lessorOngoingRentals)
 

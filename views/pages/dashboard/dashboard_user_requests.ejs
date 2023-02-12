@@ -44,6 +44,7 @@
             <th scope="col">Return Date</th>
             <th scope="col">Quantity</th>
             <th scope="col">Total Amount</th>
+            <th scope="col">Payment</th>
             <th scope="col">Status</th>
           </tr>
         </thead>
@@ -57,7 +58,14 @@
               <td id="returnDate"><%= rental.reservation_end.toDateString() %></td>
               <td id="qty"><%= rental.quantity %></td>
               <td id="totalAmount"><%= rental.total_amount.toFixed(2) %></td>
+              <% if(rental.mode_of_payment == 2 ){%>
+              <td id="modePayment">Gcash<br> </td>              
+              <td id="status">Your rental request is still pending. Payment awaiting by the lessor.                                   
+                  <br><br><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#GModal" onClick="showModal(<%= rental.reservation_id %>,`<%= rental.reservation_start.toDateString() %>`, `<%= rental.reservation_end.toDateString() %>`, `<%= rental.item_name %>`, `<%=rental.quantity %>`, `<%=rental.rental_rate %>`, `<%=rental.replacement_cost %>`, `<%=rental.total_amount %>`)">Gcash Payment</button><br></td>
+              <% } else if (rental.mode_of_payment == 3 ){%>
+              <td id="modePayment">Cash On Delivery<br> </td>              
               <td id="status">Your rental request is still pending. Please wait for <br> it to be accepted by the lessor.</td>              
+              <%}%>
             </tr>
           <% }) %>  
         </tbody>
@@ -66,6 +74,57 @@
 	</section>
 
         <% } %>
+
+ <form action="/dashboard/user/requests" method="post">
+<!-- Modal -->
+        <div class="modal fade" id="GModal" role="dialog">
+        <div class="modal-dialog">
+<!-- Modal content-->
+            <div class="modal-content" style= "width: 750px; ">
+              <div class="modal-header" style ="background-color: #33cccc; color: white;">
+                  <h4 class="modal-title" style ="background-color: #33cccc; color: white;">Payment Confirmation</h4>
+                <span class="close" data-dismiss="modal" style = " color: white;" >&times;</span>
+              </div>
+              <div class="modal-body" style="background-color: white;">
+
+                    <div class="container" style="color: black; width: 650px; height: auto; background-color: white; font-family: 'Poppins'; font-size: medium;" >
+                        <div class="p-5 my-4 bg-white rounded-3">
+                            <img src="/images/GCash-Logo.png" style="width: 200px; height:120px;">
+                            <p><strong>Name: </strong>  <br>
+                                <strong>Contact no.:  </strong><br>
+                                <hr>
+                                <strong>Reservation Start: <span id="gResStart"></strong></span><br>
+                                <strong >Reservation End:  <span id="gResEnd"></span></strong><br>
+                                <strong >Item Name:<span id="gItemName"></span></strong> <br>
+                                <strong >Quantity</strong> <span id="gQuantity"></span> <br>
+                                <strong>Rental Fee:</strong> ₱<span id="gRental"></span><br>
+                                <strong>Deposit Fee:</strong> ₱<span id="gReplacement"></span> <br>
+                                <br>
+                                <strong>Total:</strong> ₱<span id="gTotal"></span><br>
+                                <hr>
+                                <h4>Proof of Payment</h4>
+                                
+                            <div style="width: 400px;">
+                            <label for="apply" class="form-label"><input type="file" name="imageFile" id="apply" accept="image/*,.pdf"></label>
+                            <input type="hidden" id="imageFileb64" name="imageFileb64">
+                            <input type="hidden" id="reservation_id" name="reservation_id" value="">
+                    </div>
+                   
+                    <br>
+                    <br>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary"  >Submit</button>
+               <button type="button" class="btn btn-default" data-dismiss="modal" >Cancel</button>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+        </div>
+  </form> 
+
+
   <!-- MODAL -->
   <form action="/dashboard/user/rentals/ongoing" method="post">
     <div class="modal fade" id="updateConfirmModal" tabindex="-1" aria-labelledby="updateConfirmModalLabel" aria-hidden="true">
@@ -118,6 +177,31 @@
 </body>
 
 <script>
+
+    document.querySelector("#apply").addEventListener("change", readFile);
+    function readFile() { 
+      if (!this.files || !this.files[0]) return;         
+      const FR = new FileReader();
+         
+      FR.addEventListener("load", function(evt) {
+         document.querySelector("#imageFileb64").value = evt.target.result;
+      });          
+      FR.readAsDataURL(this.files[0]);      
+      }
+
+      function showModal(reserve_id ,reservation_start, reservation_end, item_name, quantity, rental_rate, deposit_fee, total_fee){
+        document.getElementById("gResStart").innerHTML = reservation_start;
+        document.getElementById("gResEnd").innerHTML =reservation_end;
+        document.getElementById("gQuantity").innerHTML = quantity;
+        document.getElementById("gRental").innerHTML =rental_rate;
+        document.getElementById("gReplacement").innerHTML =deposit_fee;
+        document.getElementById("gItemName").innerHTML =item_name;
+        document.getElementById("gTotal").innerHTML = total_fee;
+
+        document.getElementById("reservation_id").setAttribute("value", reserve_id);
+        }
+
+
   function updateBtnFunc(num){
         buttonValModal = document.getElementById("buttonValModal");
         buttonVal = document.getElementById("buttonVal");

@@ -453,3 +453,35 @@ GROUP BY
 ORDER BY 
     account_id ASC;
 
+
+
+
+SELECT 
+    COUNT(reservation_id) OVER (PARTITION BY owner_id) 
+FROM reservation WHERE reserve_status = 5) 
+
+SELECT date_part('month',  reservation_start) AS month
+FROM reservation
+GROUP BY month 
+ORDER BY month ASC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

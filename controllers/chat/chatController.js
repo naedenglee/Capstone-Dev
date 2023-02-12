@@ -104,7 +104,7 @@ var chatRoom = async (req, res, next)=> {
             use_filename: true,
             unique_filename: false,
             overwrite: true,
-            folder:'mang-hiram-seller-pictures'
+            folder:'mang-hiram-chat-pictures'
         };
     
         try {
