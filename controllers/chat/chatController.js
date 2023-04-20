@@ -66,7 +66,7 @@ var showRoom = async (req, res, next)=> {
         }
         else if(chat_id){
             let checkName = allChat.filter(e=> e.chat_id == chat_id)
-            chatname = checkName[0].name
+            chatname = checkName[0]?.name   
         }
 
         res.render('pages/chatbox', 

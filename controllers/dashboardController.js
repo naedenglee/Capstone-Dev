@@ -34,7 +34,6 @@ var viewMainDashboard = async(req, res, next) => {
                 var notif_result = notif
                 //console.log(notif_result)  
             }
-            console.log(summary[0].purchase_orders)
 
             res.render('pages/dashboard/dashboard_graph', 
             {

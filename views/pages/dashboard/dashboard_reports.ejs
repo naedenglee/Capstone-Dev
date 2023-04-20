@@ -61,6 +61,55 @@
                     <tbody>
                       <tr bgcolor="#eee">
                         <td></td>
+                        <% if(total[0]?.sr_sum == null) { %>
+                          <td>0<br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } else if(total[0].sr_sum) { %>
+                          <td><%= total[0].sr_sum %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } %>
+                        
+                        <% if(total[0]?.dr_sum == null) { %>
+                          <td>0<br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } else if(total[0].dr_sum) { %>
+                          <td><%= total[0].dr_sum %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } %>
+
+                        <% if(total[0]?.ac_sum == null) { %>
+                          <td>0<br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } else if(total[0].ac_sum) { %>
+                          <td><%= total[0].ac_sum %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } %>
+
+                        <% if(total[0]?.rm_sum == null) { %>
+                          <td>0<br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } else if(total[0].rm_sum) { %>
+                          <td><%= total[0].rm_sum %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } %>
+
+                        <% if(total[0]?.res_sum == null) { %>
+                          <td>0<br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } else if(total[0].res_sum) { %>
+                          <td><%= total[0].res_sum %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } %>
+
+                        <% if(total[0]?.uq_sum == null) { %>
+                          <td>0<br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } else if(total[0].uq_sum) { %>
+                          <td><%= total[0].uq_sum %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } %>
+
+                        <% if(total[0]?.a2d_percent == null) { %>
+                          <td>0<br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } else if(total[0].a2d_percent) { %>
+                          <td><%= total[0].a2d_percent %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } %>
+
+                        <% if(total[0]?.u2d_percent == null) { %>
+                          <td>0<br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } else if(total[0].u2d_percent) { %>
+                          <td><%= total[0].u2d_percent %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <% } %>
+
+                          <% /* commented to  %>
                         <td><%= total[0].sr_sum %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
                         <td><%= total[0].dr_sum %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
                         <td><%= total[0].ac_sum %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
@@ -68,7 +117,8 @@
                         <td><%= total[0].res_sum %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
                         <td><%= total[0].uq_sum %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
                         <td><%= total[0].a2d_percent %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
-                        <td><%= total[0].u2d_percent %><br><p class="text-muted mb-1">% Total: 100.00%</p></td>
+                        <td><%= total[0].u2d_percent %><br><p class="text-muted mb-1">% Total: 100.00%</p></td> hanggang dito <% */ %>
+                        
                       </tr>
                       <% report.forEach( function(googol){  %>
                           <tr>

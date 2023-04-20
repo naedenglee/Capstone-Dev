@@ -189,7 +189,11 @@
                   <p class="text-primary">PRODUCTS</p>
                   <span class="material-icons-outlined text-blue">inventory_2</span>
                 </div>
-                <span class="text-primary font-weight-bold"><%= summary[0].products %></span>
+                <% if(summary[0]?.products == null) { %>
+                  <span class="text-primary font-weight-bold">0</span>
+                <% } else if(summary[0].products) { %>
+                  <span class="text-primary font-weight-bold"><%= summary[0].products %></span>
+                <% } %>                
               </div>
                 </a> 
               <a href="/dashboard/lessor/requests">
@@ -198,7 +202,11 @@
                   <p class="text-primary">RENTAL REQUESTS</p>
                   <span class="material-icons-outlined text-orange">add_shopping_cart</span>
                 </div>
+                <% if(summary[0]?.purchase_orders == null) { %>
+                  <span class="text-primary font-weight-bold">0</span>
+                <% } else if(summary[0].purchase_orders) { %>
                 <span class="text-primary font-weight-bold"><%= summary[0].purchase_orders %></span>
+                <% } %>  
               </div>
               </a> 
     
@@ -208,7 +216,11 @@
                   <p class="text-primary">ONGOING RENTALS</p>
                   <span class="material-icons-outlined text-green">shopping_cart</span>
                 </div>
+                <% if(summary[0]?.sales_orders == null) { %>
+                  <span class="text-primary font-weight-bold">0</span>
+                <% } else if(summary[0].sales_orders) { %>
                 <span class="text-primary font-weight-bold"><%= summary[0].sales_orders %></span>
+                <% } %>  
               </div>
               </a> 
 
@@ -218,7 +230,11 @@
                   <p class="text-primary">LIFETIME SALES</p>
                   <span class="material-icons-outlined text-red">notification_important</span>
                 </div>
+                <% if(summary[0]?.lifetime_sales == null) { %>
+                  <span class="text-primary font-weight-bold">0</span>
+                <% } else if(summary[0].lifetime_sales) { %>
                 <span class="text-primary font-weight-bold">₱<%= summary[0].lifetime_sales.toFixed(2) %></span>
+                <% } %>
               </div>
               </a> 
     
