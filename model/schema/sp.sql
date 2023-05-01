@@ -125,7 +125,7 @@ END $$;
 --	COMMIT;
 --END $$;
 
-CREATE OR REPLACE PROCEDURE check_reservation(
+CREATE OR REPLACE PROCEDURE check_reservation_test(
     IN OUT vinventory_id  INT, 
     INT, vquantity INT, 
     INT, DATE, DATE)
@@ -143,7 +143,8 @@ BEGIN
                                 reservation_date, reservation_start, 
                                 reservation_end, reserve_status, last_update)
         VALUES ($1, $2, $3, $4, daterange($5::DATE, $6::DATE), $5, $6, NULL, CURRENT_DATE)
-        ON CONFLICT (inventory_id, reservation_date)
+        ON CONFLICT (inventory_id, reservation_date) 
+        WHERE reserve_status <> NULL
         DO NOTHING
         RETURNING inventory_id INTO vinventory_id;
         COMMIT;
@@ -152,6 +153,41 @@ BEGIN
         ROLLBACK;
     END IF;
 END $$;
+
+ DROP PROCEDURE IF EXISTS public.check_reservation_test(integer, integer, integer, integer, date, date);
+
+CREATE OR REPLACE PROCEDURE public.check_reservation_test(
+    INOUT vinventory_id integer,
+    IN integer,
+    IN vquantity integer,
+    IN integer,
+    IN date,
+    IN date,
+    IN integer)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+    IF EXISTS(
+        SELECT inventory_id
+        FROM inventory 
+        WHERE inventory_id = $1
+        AND $3 <= item_quantity
+    )
+    THEN
+        INSERT INTO reservation (inventory_id, owner_id, quantity, customer_id, 
+                                reservation_date, reservation_start, 
+                                reservation_end, mode_of_payment, reserve_status, last_update)
+        VALUES ($1, $2, $3, $4, daterange($5::DATE, $6::DATE), $5, $6,$7, NULL, CURRENT_DATE)
+        RETURNING inventory_id INTO vinventory_id;
+        COMMIT;
+    ELSE
+        ROLLBACK;
+    END IF;
+END 
+$BODY$;
+
+ALTER PROCEDURE public.check_reservation(integer, integer, integer, integer, date, date, integer)
+    OWNER TO naedenglee_user;
 
 -- !!FOR REVISION!! --
 CREATE OR REPLACE PROCEDURE update_reservation_status (IN INT, IN OUT INT)
@@ -484,4 +520,52 @@ ORDER BY month ASC
 
 
 
+-- RESERVATION ORDERS
+SELECT COUNT(reservation_id), to_char(date_trunc('month', reservation_end), 'Mon') as month FROM reservation WHERE owner_id =2 GROUP BY month;
+SELECT COUNT(notification_type), to_char(date_trunc('month', notification_date), 'Month') as r_month FROM notification  WHERE notification_type = 1 GROUP BY month;
+
+
+
+SELECT COUNT(reservation_id), to_char(date_trunc('month', reservation_end), 'Month') as r_month FROM reservation WHERE owner_id =2 GROUP BY r_month ORDER BY to_date(to_char(date_trunc('month', reservation_end), 'Month'), 'Month');
+SELECT COUNT(notification_type), to_char(date_trunc('month', notification_date), 'Month') as w_month FROM notification WHERE owner_id =2  AND notification_type = 1 GROUP BY w_month ORDER BY to_date(to_char(date_trunc('month', notification_date), 'Month'), 'Month');
+
+
+
+
+                    SELECT  a.reservation_id, a.owner_id, d.first_name, d.last_name, d.phone_num,
+                            a.inventory_id, c.item_id,  
+                            c.item_name, image_path, 
+                            reservation_start, reservation_end , 
+                            DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                            quantity, a.reserve_status, mode_of_payment, rental_rate, replacement_cost,
+                            (rental_rate * (reservation_end - reservation_start)* quantity) + (a.quantity * replacement_cost) as total_amount 
+                    FROM reservation a 
+                    JOIN inventory b 
+                    ON b.inventory_id = a.inventory_id 
+                    JOIN item c 
+                    ON c.item_id = b.item_id 
+                    JOIN profile d
+                    ON a.owner_id  = d.account_id
+                    WHERE customer_id = ($1) AND reserve_status IS NULL
+
+
+
+
+                    SELECT  a.reservation_id, a.owner_id, d.first_name, d.last_name, d.phone_num, 
+                            a.inventory_id, c.item_id,  
+                            c.item_name, image_path, 
+                            reservation_start, reservation_end , 
+                            DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                            quantity, a.reserve_status, mode_of_payment, rental_rate, replacement_cost,
+                            (rental_rate * (reservation_end - reservation_start)* quantity) + (a.quantity * replacement_cost) as total_amount 
+                    FROM reservation a 
+                    JOIN inventory b 
+                    ON b.inventory_id = a.inventory_id 
+                    JOIN item c 
+                    ON c.item_id = b.item_id 
+                    JOIN profile d
+                    ON a.owner_id  = d.account_id
+                    WHERE customer_id = 2 
+                    AND reserve_status IS NULL
+                    AND reservation_start >= CURRENT_DATE 
 

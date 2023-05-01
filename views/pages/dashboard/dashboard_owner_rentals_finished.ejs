@@ -148,7 +148,13 @@
                       <td id="totalAmount"><%= rental.total_amount %></td>
                       <% if(rental.reserve_status == 7){ %>
                         <td id="details">Cancelled</td>
-                        <td id="reviews"><div class="p-1">Not Available</div>
+                        <td id="reviews"><div class="p-1">
+                              <% if(rental.rating_id == null) { %>
+                                <span>The client is yet to leave a review.</span>
+                              <% } else{ %>
+                                <span>Client Rating: <%= rental.rating %> Stars</span>
+                              <% } %>
+                            </div>
                       <% }else if(rental.reserve_status == 5){ %>
                         <td id="details">Finished</td>
                         <td id="reviews"><div class="p-1">                        

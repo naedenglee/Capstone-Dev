@@ -31,7 +31,8 @@ var allItemView = async (req, res, next)=> {
             user:req.session.username, 
             cart_count:req.session.cart_count, 
             currency:req.session.currency,
-            user_id:req.session.user_id
+            user_id:req.session.user_id,
+            status:req.query.rentalStatus
         })
     }
     catch(ex){
@@ -64,7 +65,8 @@ var categoryItemView = async(req,res,next) => {
             user:req.session.username, 
             cart_count:req.session.cart_count, 
             currency:req.session.currency,
-            user_id:req.session.user_id
+            user_id:req.session.user_id,
+            status:req.query.rentalStatus
         })
     }
     catch(ex){
@@ -249,6 +251,7 @@ var itemReservation = async (req, res, next) =>{
                     const notif = await pool.query(`INSERT INTO notification (notification_date, owner_id, client_id, notification_type, item_id )
                                             VALUES(CURRENT_DATE, (SELECT account_id FROM inventory WHERE item_id = ($2)), ($1), 1, ($2))`, [user, item_id])
                     req.session.cart_count += 1
+
                 }
                 else if(result.rows){
                     res.send('Item is already in the cart!')
@@ -256,7 +259,7 @@ var itemReservation = async (req, res, next) =>{
                 }
     
                 await Jincr(`item_perf:${req.params.id}`, 'add_cart')
-                res.redirect('/items')
+                res.redirect('/cart')
             }
         }   
         else if(req.body.submitButton == "reserve"){
@@ -272,23 +275,28 @@ var itemReservation = async (req, res, next) =>{
                 let {inventory_id, account_id} = foo.rows[0]
                 console.log(inventory_id, req.session.user_id, req.body.start_date, req.body.end_date)
                 var sqlQuery = {
-                    text: `CALL check_reservation($1, $2, $3, $4, $5, $6, $7)`, // <-- INSERT STATEMENT STORED PROC
+                    text: `CALL check_reservation_test($1, $2, $3, $4, $5, $6, $7)`, // <-- INSERT STATEMENT STORED PROC
                     values: [inventory_id, account_id, req.body.modalQty, req.session.user_id, req.body.start_date, req.body.end_date, req.body.modeOfPayment]
                 }
                 const result2 = await pool.query(sqlQuery)
                 let {vinventory_id} = result2.rows[0]
                 
 
-                if(vinventory_id == null){ // DATABASE RETURNS vinventory_id NULL 
-                    return res.send('Item is already reserved!')
-                }
+                //if(vinventory_id == null){ // DATABASE RETURNS vinventory_id NULL 
+                //    return res.send('No more quantity!')
+                //}
                 
                 
+                //else if(vinventory_id != null){ 
+                //    await Jincr(`item_perf:${req.params.id}`, 'reservations')
+                //    return res.redirect(`/dashboard/user/requests`)
 
-                else if(vinventory_id != null){ // IF ACCOUNT DOES EXIST
+                //}
+
                     await Jincr(`item_perf:${req.params.id}`, 'reservations')
-                    return res.redirect(`/items`)
-                }
+                    return res.redirect(`/items?rentalStatus=requestSuccess`)
+                    //return res.redirect(`/dashboard/user/requests`)
+
             }            
         }
     }

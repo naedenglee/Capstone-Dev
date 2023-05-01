@@ -16,7 +16,6 @@
   </head>
 <body>
 	<%- include ('dashboard_sidebar') -%>
-    
 	<section id="content">
 		<nav>
 			<i class='bx bx-menu toggle-sidebar' ></i>
@@ -133,7 +132,7 @@
                   <div class="col">
                     <%=notif.client_username %> has added your item: <%=notif.item_name %> to their wishlist.
                    <input type="hidden" id="notif_type" value="<%=notif.notification_type %>">
-                   <input type="hidden" id="notif_value" value="The client has sent the item out for delivery.">
+                   <input type="hidden" id="notif_value" value="<%=notif.client_username %> has added your item: <%=notif.item_name %> to their wishlist.">
                   </div></a></li>       
                 </div>
                 <hr class="hr" />
@@ -147,7 +146,7 @@
                   <div class="col">
                    Your rental request for Rental ID Number <%= notif.reservation_id %> has been approved by the owner.
                    <input type="hidden" id="notif_type" value="<%=notif.notification_type %>">
-                   <input type="hidden" id="notif_value" value="The client has sent the item out for delivery.">
+                   <input type="hidden" id="notif_value" value="Your rental request for Rental ID Number <%= notif.reservation_id %> has been approved by the owner.">
                   </div></a></li>       
                 </div>
                 <hr class="hr" />
@@ -161,7 +160,7 @@
                   <div class="col">
                    Your rental request for Rental ID Number <%= notif.reservation_id %> has been denied by the owner.
                    <input type="hidden" id="notif_type" value="<%=notif.notification_type %>">
-                   <input type="hidden" id="notif_value" value="The client has sent the item out for delivery.">
+                   <input type="hidden" id="notif_value" value="Your rental request for Rental ID Number <%= notif.reservation_id %> has been denied by the owner.">
                   </div></a></li>       
                 </div>
                 <hr class="hr" />
@@ -181,6 +180,7 @@
 
             <div id="liveAlertPlaceholder" style="text-align: center; margin-top: 3px;"></div>
             
+        <% if(result[0] != null) { %>
             <div class="main-cards">
     
               <a href="/seller/items">
@@ -291,7 +291,16 @@
         <!-- Custom JS -->
 				
 	</section>
-    <script id="scriptValue" data-stats="<%= JSON.stringify(result) %>"  src="/assets/scripts/graph.js"></script>
+    <% } else { %>
+        <section>
+            <h1 style="text-align: center; padding-top: 20%; padding-left: 2%">Become an Owner to Show Graphs!</h1>
+        </section>
+    <% } %>
+
+
+    <script 
+        id="scriptValue" data-stats="<%= JSON.stringify(result) %>" reserveChart="<%= JSON.stringify(reserveMonth) %>" wishlistChart="<%= JSON.stringify(cartMonth) %>"src="/assets/scripts/graph.js">
+    </script>
 </body>
 
   <script>

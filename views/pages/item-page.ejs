@@ -24,6 +24,7 @@
 
   <!-- Navigation -->
   <%- include ('navbar') -%>
+    <div id="liveAlertPlaceholder" style="text-align: center; margin-top: 85px;"></div>
 
 <!-- END NAV -->
 
@@ -58,7 +59,7 @@
           <span>Drones</span></a>
         <a href="/items/Projectors" class="list-group-item list-group-item-action py-2 ripple">
           <span>Projectors</span></a>
-        <a href="/items/Projectors" class="list-group-item list-group-item-action py-2 ripple">
+        <a href="/items/Costumes" class="list-group-item list-group-item-action py-2 ripple">
           <span>Costumes</span></a>
         <a href="/items/Camping Tents" class="list-group-item list-group-item-action py-2 ripple">
           <span>Camping Tents</span></a>
@@ -121,4 +122,27 @@
 
 
   </body>
+
+<script>
+async function getStatus(){  
+    var status = '<%=status%>'
+   
+    if(status == 'requestSuccess'){
+      const alertPlaceholder = document.getElementById('liveAlertPlaceholder')    
+      const wrapper = document.createElement('div')
+      wrapper.innerHTML = [
+        `<div class="alert alert-success alert-dismissible" role="alert">`,
+        `   <div>The rental has been requested! View <a href="/dashboard/user/requests">here</a></div>`,
+        '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+        '</div>'
+      ].join('')
+       
+      alertPlaceholder.append(wrapper)  
+    }
+
+
+  }
+ 
+  getStatus()
+</script>
   </html>

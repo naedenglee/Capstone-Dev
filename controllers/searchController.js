@@ -24,7 +24,8 @@ const search_text = async (req, res, next) => {
             user:req.session.username, 
             cart_count:req.session.cart_count, 
             currency:req.session.currency,
-            user_id:req.session.user_id
+            user_id:req.session.user_id,
+            status:req.query.rentalStatus
         })
     }
     catch(ex){

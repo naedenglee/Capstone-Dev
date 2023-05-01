@@ -26,18 +26,23 @@
 
                 <% result.forEach(function(item){ %>
                     <form action="/cart/remove/<%= item.cart_id %>" method="post">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="check-<%= item.cart_id %>">
-                            <div class="box">
-                                <img src="<%= item.image_path %>">
-                                <div class="content">
-                                    <h4><%= item.item_name %></h4>
-                                    <p>Description: <br><%= item.item_description %></p>
-                                    <h5>₱<span for="check-<%= item.cart_id %>"><%= item.rental_rate %></span></h5>
-                                    <button type="submit"><p class="btn-area"><i aria-hidden="true" class="fa fa-trash"></i> <span class="btn2">Remove</span></p></button>
+                        <a href="/items/view/<%= item.item_id %>" style="text-decoration: none; color: #000;">
+                        <div class="form-check" >
+                                <div class="box">
+                                    <img src="<%= item.image_path %>">
+                                    <div class="content">
+                                        <h4><%= item.item_name %></h4>
+                                        <h5>₱<span for="check-<%= item.cart_id %>"><%= item.rental_rate %></span> (Per Day)</h5>
+                                        <button type="submit">
+                                            <p class="btn-area">
+                                            <i aria-hidden="true" class="fa fa-trash"></i>
+                                            <span class="btn2">Remove</span>
+                                            </p>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            </div>
+                            </a>
                     </form>                    
                   <% }) %>
 

@@ -8,8 +8,10 @@ router.use(bodyParser.json());
 //router.get("/subscribe", chatController.subs) //
 router.get("/show/", chatController.showRoom) 
 router.get("/show/:room_id", chatController.showRoom) 
-router.get("/show/:chat_id/:room_id", chatController.showRoom)
+router.get("/show/:chat_id/:room_id", chatController.checkRoom)
+router.get("/show/t/:chat_id/:room_id", chatController.showRoom)
 router.post("/show/:chat_id/:room_id", chatController.chatRoom)
+
 
 //router.get("/show/:chat_id/:room_id", chatController.showMessages) 
 //router.post("/show/:chat_id/:room_id", chatController.sendChat) 

@@ -170,10 +170,10 @@ var searchChartOptions = {
   var areaChartOptions = {
     series: [{
       name: 'Wishlist',
-      data: [31, 40, 28, 51, 42, 109, 100]
+      data: []
     }, {
       name: 'Reservation Orders',
-      data: [11, 32, 45, 32, 34, 52, 41]
+      data: []
     }],
     chart: {
       height: 350,
@@ -189,7 +189,7 @@ var searchChartOptions = {
     stroke: {
       curve: 'smooth'
     },
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+    labels: [],
     markers: {
       size: 0
     },
@@ -212,8 +212,6 @@ var searchChartOptions = {
     }
   };
   
-  var areaChart = new ApexCharts(document.querySelector("#area-chart"), areaChartOptions);
-  areaChart.render();
 
   // BAR CHART 2
 // TOP 3 BEST SELLERS 
@@ -303,38 +301,85 @@ var viewedChartOptions = {
   
 
 var stats2 = document.getElementById("scriptValue").getAttribute("data-stats");
+var r_stats = document.getElementById("scriptValue").getAttribute("reserveChart");
+var w_stats = document.getElementById("scriptValue").getAttribute("wishlistChart");
 
 
-            JSON.parse(stats2).forEach( function (graph){
-                if(graph.s_id != null){
-                    searchChartOptions.series[0].data.push(graph.search_rate)
-                    searchChartOptions.xaxis.categories.push(graph.item_name)
-                    if(graph.d_id != null){
-                        viewedChartOptions.series[0].data.push(graph.detail_rate)
-                        viewedChartOptions.xaxis.categories.push(graph.item_name)
-                        if(graph.u_id != null){
-                        bestChartOptions.series[0].data.push(graph.unique_rental)
-                        bestChartOptions.xaxis.categories.push(graph.item_name)
-                        }
-                    }
-                }
-                else if(graph.d_id != null){
-                    viewedChartOptions.series[0].data.push(graph.detail_rate)
-                    viewedChartOptions.xaxis.categories.push(graph.item_name)
 
-                    if(graph.u_id != null){
-                        bestChartOptions.series[0].data.push(graph.unique_rental)
-                        bestChartOptions.xaxis.categories.push(graph.item_name)
-                    }
-                }
-                else if(graph.u_id != null){
-                    bestChartOptions.series[0].data.push(graph.unique_rental)
-                    bestChartOptions.xaxis.categories.push(graph.item_name)
-                }
-            })
+JSON.parse(stats2).forEach( function (graph){
+    if(graph.s_id != null){
+        searchChartOptions.series[0].data.push(graph.search_rate)
+        searchChartOptions.xaxis.categories.push(graph.item_name)
+        if(graph.d_id != null){
+            viewedChartOptions.series[0].data.push(graph.detail_rate)
+            viewedChartOptions.xaxis.categories.push(graph.item_name)
+            if(graph.u_id != null){
+            bestChartOptions.series[0].data.push(graph.unique_rental)
+            bestChartOptions.xaxis.categories.push(graph.item_name)
+            }
+        }
+    }
+    else if(graph.d_id != null){
+        viewedChartOptions.series[0].data.push(graph.detail_rate)
+        viewedChartOptions.xaxis.categories.push(graph.item_name)
+
+        if(graph.u_id != null){
+            bestChartOptions.series[0].data.push(graph.unique_rental)
+            bestChartOptions.xaxis.categories.push(graph.item_name)
+        }
+    }
+    else if(graph.u_id != null){
+        bestChartOptions.series[0].data.push(graph.unique_rental)
+        bestChartOptions.xaxis.categories.push(graph.item_name)
+    }
+})
+
+
+
+//  var areaChartOptions = {
+//    series: [{
+//      name: 'Wishlist',
+//      data: [31, 40, 28, 51, 42, 109, 100]
+//    }, {
+//      name: 'Reservation Orders',
+//      data: [11, 32, 45, 32, 34, 52, 41]
+//    }],
+//
+    //console.log(areaChartOptions.series[0].date) //Wishlist
+    //console.log(areaChartOptions.series[1].date) //reservation
+    //console.log(areaChartOptions.labels)
+
+
+JSON.parse(r_stats).forEach( function(graph){
+    if(graph.count != null && graph.r_month != null ){
+        areaChartOptions.series[1].data.push(graph.count)
+        areaChartOptions.labels.push(graph.r_month)
+    }
+    else{
+        return
+    }
+
+})
+JSON.parse(w_stats).forEach( function(graph){
+    if(graph.count != null && graph.w_month != null ){
+        areaChartOptions.series[0].data.push(graph.count)
+        if(!areaChartOptions.labels.includes(graph.w_month)){
+            areaChartOptions.labels.push(graph.w_month)
+        }
+    }
+    else{
+        return
+    }
+
+})
   var searchbarChart = new ApexCharts(document.querySelector("#bar-chart"), searchChartOptions);
   searchbarChart.render();
   var viewedbarChart = new ApexCharts(document.querySelector("#bar-chart3"), viewedChartOptions);
   viewedbarChart.render();
   var bestbarChart = new ApexCharts(document.querySelector("#bar-chart2"), bestChartOptions);
   bestbarChart.render();
+
+
+
+  var areaChart = new ApexCharts(document.querySelector("#area-chart"), areaChartOptions);
+  areaChart.render();

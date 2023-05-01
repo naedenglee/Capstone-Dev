@@ -141,7 +141,7 @@ crossorigin=""></script>
               <div class="card mb-4" style="margin-top: 20px; ">
                 <div class="card-body">
                   <% if(profile_id == user_id){ %>
-                    <% if(profile[0].map_x_coordinate == null || profile[0].map_y_coordinate == null){ %>
+                    <% if(profile[0].map_x_coordinate == null || profile[0].map_y_coordinate == null || profile[0].map_x_coordinate == '' || profile[0].map_y_coordinate == ''){ %>
                       <center><p style="font-weight: bold;">INTERACTIVE MAP</p></center>
                       <center>
                         <p data-toggle="modal" data-target="#myModal">Insert location coordinates to display an interactive map here.</p>

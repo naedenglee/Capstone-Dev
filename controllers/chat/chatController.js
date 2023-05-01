@@ -18,15 +18,22 @@ var checkRoom = async (req, res, next)=> {
 
         if(chat_id != null || chat_id != ""){
             let check =  await redisClient.sismember(`chatlist:${user_id}`,`${roomnum}`)
-            if(check== 0){
+            if(check == 0){
+                    console.log('room doesnt exist')
+                    console.log('check1')
                 let check2 = await redisClient.sismember(`chatlist:${user_id}`,
                                         `${chat_id1}${user_id}`)
                 if(check2==1){
-                    return res.redirect(`/chat/show/${chat_id1}/${chat_id1}${user_id}`)
+                    console.log('check2')
+                    res.redirect(`/chat/show/t/${chat_id1}/${chat_id1}${user_id}`)
+                }
+                else{
+                    res.redirect(`/chat/show/t/${chat_id1}/${user_id}${chat_id1}`)
                 }
             }
-            else{
-                return res.redirect(`/chat/show/${chat_id1}/${roomnum}`)
+            else if(check == 1){
+                console.log("CHECK IS 1!")
+                res.redirect(`/chat/show/t/${chat_id1}/${roomnum}`)
             }
         }
 }

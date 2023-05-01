@@ -26,6 +26,24 @@ var viewMainDashboard = async(req, res, next) => {
                                     JOIN account b ON a.client_id = b.account_id LEFT JOIN item c ON a.item_id = c.item_id WHERE owner_id = ($1) OR client_id = ($1)
                                     ORDER BY notification_id DESC`, [user_id])
             const {rows: summary} = await pool.query(`SELECT * FROM dashboard_summary($1)`,[user_id])
+            
+
+            const {rows: reserveMonth} = await pool.query(`
+                                    SELECT COUNT(reservation_id), 
+                                    to_char(date_trunc('month', reservation_end), 'Month') as r_month 
+                                    FROM reservation WHERE owner_id =($1) 
+                                    GROUP BY r_month 
+                                    ORDER BY to_date(to_char(date_trunc('month', reservation_end), 'Month'), 'Month');
+                                    `,[user_id])
+
+            const {rows: cartMonth} = await pool.query(`
+                                    SELECT COUNT(notification_type), 
+                                    to_char(date_trunc('month', notification_date), 'Month') as w_month 
+                                    FROM notification WHERE owner_id =($1)
+                                    AND notification_type = 1 
+                                    GROUP BY w_month 
+                                    ORDER BY to_date(to_char(date_trunc('month', notification_date), 'Month'), 'Month');
+                                    `,[user_id])
             if(notif.length == 0){
                 var notif_result = 0   
                 //console.log(notif_result)             
@@ -34,13 +52,17 @@ var viewMainDashboard = async(req, res, next) => {
                 var notif_result = notif
                 //console.log(notif_result)  
             }
+            console.log(JSON.stringify(reserveMonth))
+            console.log(JSON.stringify(cartMonth))
 
             res.render('pages/dashboard/dashboard_graph', 
             {
                 result:stats, 
                 status:req.query.status, 
                 notif_result, user_id,
-                summary
+                summary,
+                reserveMonth,
+                cartMonth
             })
         }
     }
@@ -287,7 +309,7 @@ const getRentalRequests = async(req, res, next) => {
             await pool.query(`SET SCHEMA 'public'`)
             const { rows } = await pool.query
                 (`
-                    SELECT  a.reservation_id, a.customer_id, 
+                    SELECT  a.reservation_id, a.customer_id, d.first_name, d.last_name, d.phone_num,
                             a.inventory_id, c.item_id,  
                             c.item_name, image_path, reservation_start, reservation_end , 
                             DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
@@ -298,7 +320,10 @@ const getRentalRequests = async(req, res, next) => {
                     ON b.inventory_id = a.inventory_id 
                     JOIN item c 
                     ON c.item_id = b.item_id 
+                    JOIN profile d
+                    ON a.customer_id = d.account_id
                     WHERE owner_id = ($1) AND reserve_status IS NULL
+                    AND reservation_start >= CURRENT_DATE 
                 `, [user_id])
             
             //console.log(rows)
@@ -327,7 +352,7 @@ const getUserRentalRequests = async(req, res, next) => {
             await pool.query(`SET SCHEMA 'public'`)
             const { rows } = await pool.query
                 (`
-                    SELECT  a.reservation_id, a.owner_id, 
+                    SELECT  a.reservation_id, a.owner_id, d.first_name, d.last_name, d.phone_num, 
                             a.inventory_id, c.item_id,  
                             c.item_name, image_path, 
                             reservation_start, reservation_end , 
@@ -339,7 +364,11 @@ const getUserRentalRequests = async(req, res, next) => {
                     ON b.inventory_id = a.inventory_id 
                     JOIN item c 
                     ON c.item_id = b.item_id 
+                    JOIN profile d
+                    ON a.owner_id  = d.account_id
                     WHERE customer_id = ($1) AND reserve_status IS NULL
+                    AND reservation_start >= CURRENT_DATE 
+
                 `, [user_id])
 
             res.render('pages/dashboard/dashboard_user_requests', { result:rows, status:req.query.status })            
@@ -452,10 +481,13 @@ const approveRentalRequest = async(req, res, next) => {
                                             VALUES(CURRENT_DATE, ($1), ($2), 2, ($3))`, [owner_id, client_id, reservation_id])
 
             res.redirect('/dashboard/lessor/rentals/ongoing?status=requestAccepted')            
+
         }        
     }
     catch(ex){
-        res.send(ex)
+        res.send(
+            'YOU CANNOT APPROVE TWO REQUESTS HAVING THE SAME DATE'
+        )
     }
     finally{
         pool.release
