@@ -308,7 +308,24 @@ const getRentalRequests = async(req, res, next) => {
         else if(user){
             await pool.query(`SET SCHEMA 'public'`)
             const { rows } = await pool.query
-                (`
+                //(`
+                //    SELECT  a.reservation_id, a.customer_id, d.first_name, d.last_name, d.phone_num,
+                //            a.inventory_id, c.item_id,  
+                //            c.item_name, image_path, reservation_start, reservation_end , 
+                //            DATE_PART('day', a.reservation_end::timestamp - a.reservation_start::timestamp) as days_remaining,
+                //            quantity, a.reserve_status, mode_of_payment, online_payment, rental_rate, replacement_cost,
+                //            (rental_rate * (reservation_end - reservation_start)* a.quantity) + (replacement_cost * a.quantity) as total_amount 
+                //    FROM reservation a 
+                //    JOIN inventory b 
+                //    ON b.inventory_id = a.inventory_id 
+                //    JOIN item c 
+                //    ON c.item_id = b.item_id 
+                //    JOIN profile d
+                //    ON a.customer_id = d.account_id
+                //    WHERE owner_id = ($1) AND reserve_status IS NULL
+                //    AND reservation_start >= CURRENT_DATE 
+                //`, [user_id])
+            (`
                     SELECT  a.reservation_id, a.customer_id, d.first_name, d.last_name, d.phone_num,
                             a.inventory_id, c.item_id,  
                             c.item_name, image_path, reservation_start, reservation_end , 
@@ -324,7 +341,14 @@ const getRentalRequests = async(req, res, next) => {
                     ON a.customer_id = d.account_id
                     WHERE owner_id = ($1) AND reserve_status IS NULL
                     AND reservation_start >= CURRENT_DATE 
-                `, [user_id])
+                    AND a.inventory_id NOT IN (
+                            SELECT inventory_id
+                            FROM reservation 
+                            WHERE (reserve_status IS NOT NULL AND reserve_status != ALL (ARRAY[5,7]))
+                            AND reservation_start >= CURRENT_DATE 
+                            AND a.reservation_date = reservation_date
+                    )
+            `, [user_id])
             
             //console.log(rows)
 
