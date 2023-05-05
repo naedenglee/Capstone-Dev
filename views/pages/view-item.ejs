@@ -197,8 +197,40 @@ crossorigin=""></script>
           </div>
 
       </section>
+      <section>
+          <br><br>
+        <h2 style="margin-top:20px">Others Also Looked For</h2>
+        <div class="card-container" >
+        <% recommend.forEach(function(item, i){ %>
+        <% if(i >= 5 ){ %>
+            <% return; }%>
+            <% console.log(i)%>
+        <% if(result[0].item_id != item.item_id ){ %>
+
+          <div class="col-sm-3" > 
+            <a href="/items/view/<%= item.item_id %>">
+              <div class="card" style="max-height: 300px; overflow:visible;">
+                <img class="w-100" src="<%= item.image_path %>" alt="First slide"  data-slide-to="1">
+              <div class="card-body">
+                <h5 class="Item-Name"><%= item.item_name %></h5>
+                <p class="Item-category" style="color: gray;"><%= item.item_category %></p>
+                <p class="Item-Description" style="white-space: pre-wrap;" > Rate: ₱<%= item.rental_rate %> per day</p>
+                </a>
+                
+                <form method="post" action="/items">
+                  <input type="hidden" name="itemId" value="<%= item.item_id %>">
+                  <!-- <button name="addtocart" type="submit" value="<%= item.item_id %>">Add To Wishlist</button> -->
+                </form>
+              </div>
+              </div>
+          </div>
+            <%  }%>
+        <% }) %>
+        </div>
+      </section>
   </div>
 
+  <br>
     <section style="height: 99px;">
 
 

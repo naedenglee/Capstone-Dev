@@ -47,6 +47,7 @@ var allItemView = async (req, res, next)=> {
 var categoryItemView = async(req,res,next) => {
     try{
         var category = req.params.category
+        console.log(category)
         await pool.query(`SET SCHEMA 'public'`)
         const rows = await getOrSetCache(`${category}`, async () =>{
         const data = await pool.query(`SELECT * FROM item WHERE item_category = ($1)`, [category])
@@ -167,7 +168,19 @@ var viewItem = async  (req, res, next)=>{
             const view = await pool.query(sqlQuery)
             return view
         })
-        
+
+        category = results[0].item_category
+        const recommend = await getOrSetCache(`${category}`, async () =>{
+        const data = await pool.query(`SELECT * FROM item WHERE item_category = ($1)`, [category])
+            if(data.rows.length == 0){
+                return res.status(404).render('pages/error404')
+            }
+            else{
+                return data
+            }
+
+        })
+
         const {rows: dates} = await pool.query(sqlQuery2)
        
         const result_quantity = await pool.query(sqlQuery5)
@@ -219,7 +232,8 @@ var viewItem = async  (req, res, next)=>{
             ratings,
             ratingsTotal,
             map,
-            user_id:req.session.user_id
+            user_id:req.session.user_id,
+            recommend
         })
     }
     catch(ex){

@@ -212,3 +212,25 @@ div.box1{
   border-radius:3px;
 }
 
+
+.card-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    
+    
+}
+.col-sm-3 {
+    align-self: flex-start;
+    margin: 30px;
+    max-width: 250px;
+}
+
+.card img{
+  height: 300px;
+}
+
+.card a{
+  text-decoration: none;
+  color: black;
+
