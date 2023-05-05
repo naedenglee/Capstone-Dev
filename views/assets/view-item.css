@@ -220,7 +220,7 @@ div.box1{
     
     
 }
-.col-sm-3 {
+.card-content-row {
     align-self: flex-start;
     margin: 30px;
     max-width: 250px;
