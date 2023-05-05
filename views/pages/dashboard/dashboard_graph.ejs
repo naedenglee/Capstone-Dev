@@ -131,6 +131,7 @@
                   </div>
                   <div class="col">
                     <%=notif.client_username %> has added your item: <%=notif.item_name %> to their wishlist.
+                    <a href="/chat/show/<%=notif.client_id %>/<%= user_id %><%=notif.client_id %>">Message <%=notif.client_username %></a>
                    <input type="hidden" id="notif_type" value="<%=notif.notification_type %>">
                    <input type="hidden" id="notif_value" value="<%=notif.client_username %> has added your item: <%=notif.item_name %> to their wishlist.">
                   </div></a></li>       
