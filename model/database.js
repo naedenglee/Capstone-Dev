@@ -23,7 +23,7 @@ const redisClient = Redis.createClient({
 });
 
 pool = new Pool({
-    connectionString:'postgres://naedenglee_user:zWxXyIEwfENElFhcC7LLlVXiTTWI4Ged@dpg-ce9e5ikgqg4bcbg0rm10-a.oregon-postgres.render.com/naedenglee',
+    connectionString:'postgres://naedenglee_user:woUfLTxRRI7NW0C6BPBJEmXECUZrLgeI@dpg-cgdgd0t269v52g7rjh8g-a.oregon-postgres.render.com/naedenglee_45im',
     ssl: {
       rejectUnauthorized: false
     }
